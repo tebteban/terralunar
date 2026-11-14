@@ -52,8 +52,23 @@ Desde la ficha se puede abrir el **comparador 3D**: el relieve de un sitio lunar
 de la zona elegida, con métricas de relieve. **Cerrar ficha** vuelve a la vista de globo.
 
 ### Paso 7 — Ver la Luna
-El selector **Tierra / Luna** (arriba a la izquierda del mapa) abre el visor 3D de la Luna (Cesium Moon). Pide un token
-de Cesium ion la primera vez. Doble clic en la superficie para acercarse.
+El selector **Tierra / Luna / Marte** está arriba a la izquierda del mapa. En **Luna** aparece un globo 3D
+de la Luna (imagen LRO y relieve LOLA). Sobre el polo sur hay una "tapa" con el relieve real a 800 m y
+los 9 sitios de Artemis III.
+- Si hay token de Cesium (`VITE_CESIUM_ION_TOKEN`), se usa Cesium Moon. Si no hay, falla o tarda más de
+  25 s, la app cae sola al globo propio (three.js) y lo avisa en pantalla. **Ya no se pide token al usuario.**
+- Clic en un lugar del polo sur → panel con pendiente, rugosidad y desnivel de ese lugar, las zonas de la
+  Tierra con relieve más parecido y el comparador 3D. Clic en una zona terrestre → vuelve a la Tierra
+  con esa ficha abierta.
+
+### Paso 8 — Ver Marte (exploratorio)
+En **Marte** el panel lateral del ranking se oculta, para no mezclar puntajes. Se ve un globo de Marte
+con relieve MOLA (NASA) y, a elección, imágenes Viking (color) o THEMIS (infrarrojo) de NASA Mars Trek.
+- Clic en un punto → métricas de relieve de una ventana de 20 km, lugares parecidos de la Tierra,
+  comparador 3D Marte vs Tierra y los **límites de la analogía para Marte** (gravedad 0,38, atmósfera,
+  radiación, demora de 3 a 22 min).
+- La primera carga es lenta: baja unos 90 MB de relieve. Detalles técnicos en `docs/marte.md`.
+- El parecido de Marte es **exploratorio**: tolerancias sin calibrar, todavía no validado con análogos.
 
 ---
 
@@ -74,8 +89,16 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
   nuevo en `zones.json` → coordinar con datos. (Validez) ~1 h
 - ⬜ **Valor real al lado del puntaje** ("−45 °C; la Luna pide −70 a −25") y dibujo del trapecio
   difuso. Campo nuevo `values` en `zones.json`. (Validez, Presentación) ~1 h
-- ⬜ **Token de Cesium en Vercel** (`VITE_CESIUM_ION_TOKEN`) para el visor 3D de la Luna. Los sitios
-  Artemis III ya se ven en la vista "Polo sur lunar". (Impacto)
+- ⬜ Token de Cesium en Vercel (`VITE_CESIUM_ION_TOKEN`). Ya no es bloqueante: sin token se usa el
+  globo propio. Solo mejora la vista. (Impacto)
+- ⬜ **Desplegable "Destino" dice "Marte (próximamente)"** aunque la pestaña Marte ya existe. Decidir
+  el texto: el ranking de zonas sigue siendo solo Luna. (Presentación)
+- ⬜ **Datos de Marte en el repo (~92 MB en `data/mars/`)**: `CLAUDE.md` pide que lo de más de 10 MB
+  vaya a carpeta compartida. Decidir en equipo: dejarlos (los necesita Vercel), achicarlos o bajarlos
+  de otro lado. Ver D-009.
+- ⬜ Marte: calibrar las tolerancias con análogos reservados (hoy son exploratorias).
+- ⬜ El comparador detallado de Marte baja datos de una copia en Hugging Face (no de NASA): si se cae,
+  usa la grilla de 2 km. Probar antes de la demo.
 - ⬜ Filtro "solo candidatos nuevos" (zonas que no son análogos conocidos). (Creatividad)
 - ⬜ Leyenda de colores del mapa. (Presentación)
 - ⬜ Estado en la URL (preset, pesos, zona) para compartir. (Presentación)
@@ -85,6 +108,9 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 - ✅ Diseño blanco y negro según `docs/DESIGN.md` (lo hizo el equipo)
 - ✅ Comparador 3D Luna vs Tierra (D-008)
 - ✅ Vista "Polo sur lunar": elegir un lugar en la Luna y ver las zonas terrestres parecidas (lo hizo el equipo)
+- ✅ Globo lunar 3D con relieve real del polo sur; Cesium opcional con respaldo automático (D-010)
+- ✅ Marte exploratorio: relieve MOLA, imágenes Viking/THEMIS, comparador y límites de la analogía (D-009)
+- ✅ Rotación lenta del globo (Tierra y Marte) en vista global
 - ⬜ Revisar el fondo decorativo (Júpiter/Saturno junto a la Tierra puede restar en Validez).
 - ⬜ Limpieza: `Workspace.tsx` sin uso, `web/README.md` es la plantilla de Vite, bundle de 1,6 MB.
 
