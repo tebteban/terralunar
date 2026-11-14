@@ -134,7 +134,7 @@ export default function App() {
       <main className="relative min-h-[60vh] flex-1">
         <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
         {body === 'luna' && <MoonView />}
-        <div className="absolute right-4 top-4 z-10 flex gap-1 rounded-lg border border-slate-600 bg-slate-950/95 p-1" aria-label="Cuerpo visualizado">
+        <div className="absolute left-3 top-14 z-10 flex gap-1 rounded-lg border border-slate-600 bg-slate-950/95 p-1" aria-label="Cuerpo visualizado">
           {(['tierra', 'luna'] as const).map(b => <button key={b} type="button" aria-pressed={body === b} onClick={() => setBody(b)} className="rounded px-3 py-2 text-sm text-slate-300 aria-pressed:bg-amber-400/20 aria-pressed:text-amber-200">{b === 'tierra' ? '🌍 Tierra' : '🌕 Luna'}</button>)}
         </div>
         {body === 'tierra' && selectedIndex >= 0 && (
