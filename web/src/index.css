@@ -1,7 +1,24 @@
 @import "tailwindcss";
 
+/* Tokens de docs/DESIGN.md: dúo blanco/negro, sin color de acento (el color queda solo para los datos). */
+@theme {
+  --font-sans: "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --color-ink: #000000;
+  --color-body: #5e5e5e;
+  --color-mute: #afafaf;
+  --color-hairline: #4b4b4b;
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #efefef;
+  --color-canvas-softer: #f3f3f3;
+  --color-pressed: #e2e2e2;
+  --color-elevated: #282828;
+  --shadow-card: 0 4px 16px 0 rgb(0 0 0 / 0.16);
+  --shadow-float: 0 2px 8px 0 rgb(0 0 0 / 0.16);
+}
+
 html, body, #root { height: 100%; }
-body { @apply bg-slate-950 text-slate-100 antialiased; }
+body { @apply bg-canvas text-ink antialiased; font-feature-settings: "ss01"; }
+input[type="range"] { accent-color: #000; }
 
 /* Decorative space stays behind WebGL: the globe occludes it naturally. */
 .space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #020617; }

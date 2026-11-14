@@ -134,7 +134,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
   return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-slate-950">
     <SpaceBackdrop />
     <div ref={container} className="relative h-full w-full" role="region" aria-label="Globo 3D de la Tierra y mapa de zonas análogas" />
-    <button type="button" className="absolute left-3 top-3 rounded-lg border border-slate-600 bg-slate-950/90 px-3 py-2 text-sm text-slate-100 shadow-lg hover:bg-slate-800"
+    <button type="button" className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft"
       onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 0.5, pitch: 0, bearing: 0, duration: 1800 })}>
       Ver planeta
     </button>

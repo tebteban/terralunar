@@ -32,7 +32,7 @@ function Terrain({ item, index, link, slot }: { item: Item; index: Index; link: 
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
     el.appendChild(renderer.domElement)
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color('#020617')
+    scene.background = new THREE.Color('#000000')
     scene.add(new THREE.AmbientLight('#ffffff', 0.35))
     const sun = new THREE.DirectionalLight('#ffffff', 2.2)
     sun.position.set(-size, size * 0.45, size * 0.3) // sol bajo, igual en los dos paneles
@@ -81,13 +81,13 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
     ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel total', 'desnivel_m', ' m'],
   ]
   return (
-    <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-0.5 text-xs">
+    <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
       {rows.map(([label, key, unit]) => (
         <div key={key} className="contents">
-          <dt className="text-slate-400">{label}</dt>
-          <dd className="text-right tabular-nums">
+          <dt className="text-body">{label}</dt>
+          <dd className="text-right font-medium tabular-nums">
             {item[key] as number}{unit}
-            {other && <span className="ml-1 text-slate-500">(Luna {other[key] as number}{unit})</span>}
+            {other && <span className="ml-1 font-normal text-mute">(Luna {other[key] as number}{unit})</span>}
           </dd>
         </div>
       ))}
@@ -127,45 +127,45 @@ export default function Compare3D({ zoneId, onClose }: { zoneId: string; onClose
   const earth = index?.items.find((i) => i.id === zoneId)
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col gap-3 bg-slate-950/98 p-4" role="dialog" aria-label="Comparador 3D Luna y Tierra">
+    <div className="absolute inset-0 z-20 flex flex-col gap-4 bg-canvas p-6 text-ink" role="dialog" aria-label="Comparador 3D Luna y Tierra">
       <header className="flex flex-wrap items-center gap-3">
-        <h2 className="text-lg font-semibold">Comparar relieve en 3D</h2>
+        <h2 className="text-2xl font-bold leading-8">Comparar relieve en 3D</h2>
         <label className="flex items-center gap-2 text-sm">
-          <span className="text-slate-400">Sitio lunar</span>
+          <span className="text-body">Sitio lunar</span>
           <select value={moonId ?? ''} onChange={(e) => setMoonId(e.target.value)}
-            className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1">
+            className="rounded-lg bg-canvas-soft px-4 py-2 text-base">
             {moons.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
         </label>
-        <button type="button" onClick={onClose} className="ml-auto rounded-md border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500">
+        <button type="button" onClick={onClose} className="ml-auto rounded-full bg-ink px-5 py-2 text-base font-medium text-canvas hover:bg-elevated">
           Cerrar
         </button>
       </header>
 
-      {error && <p className="text-red-400">No se pudieron cargar los recortes: {error}</p>}
-      {index && !earth && <p className="text-amber-300">Esta zona todavía no tiene recorte. Correr pipeline/02_compare_patches.py.</p>}
+      {error && <p className="text-ink">No se pudieron cargar los recortes: {error}</p>}
+      {index && !earth && <p className="text-body">Esta zona todavía no tiene recorte. Correr pipeline/02_compare_patches.py.</p>}
 
       {index && moon && earth && (
         <>
           <div className="grid min-h-0 flex-1 grid-rows-2 gap-3 md:grid-cols-2 md:grid-rows-1">
             {[moon, earth].map((it, slot) => (
-              <section key={it.id + slot} className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-800">
-                <div className="flex items-baseline justify-between gap-2 border-b border-slate-800 px-3 py-2">
-                  <h3 className="truncate text-sm font-medium">{it.body === 'luna' ? '🌕' : '🌍'} {it.name}</h3>
-                  <span className="shrink-0 text-xs text-slate-500">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
+              <section key={it.id + slot} className="flex min-h-0 flex-col overflow-hidden rounded-2xl bg-canvas shadow-card">
+                <div className="flex items-baseline justify-between gap-2 px-4 py-3">
+                  <h3 className="truncate text-base font-bold"><span className="mr-2 rounded-full bg-canvas-soft px-2 py-0.5 text-xs font-medium">{it.body === 'luna' ? 'Luna' : 'Tierra'}</span>{it.name}</h3>
+                  <span className="shrink-0 text-xs text-body">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
                 </div>
                 <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} /></div>
-                <div className="border-t border-slate-800 px-3 py-2">
+                <div className="px-4 py-3">
                   <Stats item={it} other={it.body === 'tierra' ? moon : undefined} />
-                  {!!it.agua && <p className="mt-1 text-xs text-amber-300">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
-                  <p className="mt-1 text-[11px] text-slate-500">
+                  {!!it.agua && <p className="mt-2 text-xs text-ink">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
+                  <p className="mt-2 text-xs text-body">
                     Fuente: {it.source}{it.ref && <> · Ubicación: <a className="underline" href={it.url} target="_blank" rel="noreferrer">{it.ref}</a></>}
                   </p>
                 </div>
               </section>
             ))}
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-sm text-body">
             Ambas maquetas: {index.size_km} × {index.size_km} km, celdas de {index.res_m} m, relieve exagerado ×{EXAGGERATION} y la misma luz.
             Arrastrá para girar (las dos giran juntas). A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
           </p>

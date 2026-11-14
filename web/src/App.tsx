@@ -46,36 +46,36 @@ export default function App() {
     if (profile) setWeights(presetWeights(profile, p))
   }
 
-  if (error) return <p className="p-6 text-red-400">No se pudieron cargar los datos: {error}</p>
-  if (!profile) return <p className="p-6 text-slate-400">Cargando datos…</p>
+  if (error) return <p className="p-6 text-ink">No se pudieron cargar los datos: {error}</p>
+  if (!profile) return <p className="p-6 text-body">Cargando datos…</p>
 
   return (
     <div className="flex h-full flex-col md:flex-row">
-      <aside className="flex flex-col gap-5 overflow-y-auto border-slate-800 p-4 md:w-96 md:shrink-0 md:border-r">
+      <aside className="flex flex-col gap-8 overflow-y-auto bg-canvas p-6 md:w-[400px] md:shrink-0">
         <header>
-          <h1 className="text-2xl font-bold tracking-tight">TerraLunar</h1>
-          <p className="text-sm text-slate-400">Lugares de la Tierra que se parecen a los sitios de bases en la Luna.</p>
+          <h1 className="text-[32px] font-bold leading-10">TerraLunar</h1>
+          <p className="mt-2 text-base text-body">Lugares de la Tierra que se parecen a los sitios de bases en la Luna.</p>
         </header>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-slate-300">Destino</span>
-          <select className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2">
+        <label className="flex flex-col gap-2">
+          <span className="text-sm font-medium">Destino</span>
+          <select className="rounded-lg bg-canvas-soft px-4 py-3 text-base">
             <option value="luna">{profile.name}</option>
             <option disabled>Marte (próximamente)</option>
           </select>
         </label>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-sm font-medium text-slate-300">Tipo de prueba</legend>
-          <div className="grid grid-cols-3 gap-2">
+          <legend className="mb-3 text-sm font-medium">Tipo de prueba</legend>
+          <div className="flex flex-wrap gap-2">
             {PRESETS.map((p) => (
               <button
                 key={p.id}
                 type="button"
                 aria-pressed={preset === p.id}
                 onClick={() => choosePreset(p.id)}
-                className={`rounded-md border px-2 py-2 text-xs leading-tight transition-colors ${
-                  preset === p.id ? 'border-amber-400 bg-amber-400/15 text-amber-200' : 'border-slate-700 hover:border-slate-500'
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  preset === p.id ? 'bg-ink text-canvas' : 'bg-canvas-soft text-ink hover:bg-pressed'
                 }`}
               >
                 {p.label}
@@ -85,59 +85,58 @@ export default function App() {
         </fieldset>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium text-slate-300">
-            Pesos <span className="font-normal text-slate-500">(se reparten en proporción)</span>
+          <h2 className="text-xl font-bold leading-7">
+            Pesos <span className="text-sm font-normal text-body">se reparten en proporción</span>
           </h2>
           {Object.entries(profile.dimensions).map(([k, d]) => (
-            <label key={k} className="flex flex-col gap-1 text-xs">
+            <label key={k} className="flex flex-col gap-1 text-sm">
               <span className="flex justify-between">
                 <span>{d.name}</span>
-                <span className="tabular-nums text-slate-400">{Math.round((weights[k] ?? 0) * 100)}</span>
+                <span className="font-medium tabular-nums">{Math.round((weights[k] ?? 0) * 100)}</span>
               </span>
               <input
                 type="range" min={0} max={1} step={0.05} value={weights[k] ?? 0}
                 onChange={(e) => setWeights({ ...weights, [k]: Number(e.target.value) })}
-                className="accent-amber-400"
               />
             </label>
           ))}
         </section>
 
         <section>
-          <h2 className="mb-2 text-sm font-medium text-slate-300">Ranking</h2>
-          <ol className="flex flex-col gap-1">
+          <h2 className="mb-3 text-xl font-bold leading-7">Ranking</h2>
+          <ol className="flex flex-col">
             {ranked.map(({ zone, score }, i) => (
               <li key={zone.id}>
                 <button
                   type="button"
                   onClick={() => { setBody('tierra'); setSelectedId(zone.id) }}
-                  className={`flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
-                    zone.id === selectedId ? 'bg-slate-800' : 'hover:bg-slate-900'
+                  className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors ${
+                    zone.id === selectedId ? 'bg-canvas-soft' : 'hover:bg-canvas-softer'
                   }`}
                 >
-                  <span className="w-5 text-right tabular-nums text-slate-500">{i + 1}</span>
+                  <span className="w-5 text-right text-sm tabular-nums text-mute">{i + 1}</span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate">{zone.name}</span>
-                    <span className="block text-xs text-slate-500">
+                    <span className="block truncate font-medium">{zone.name}</span>
+                    <span className="mt-0.5 flex items-center gap-2 text-sm text-body">
                       {zone.country}
-                      {zone.known && <span className="ml-2 text-sky-400">análogo conocido</span>}
+                      {zone.known && <span className="rounded-full bg-canvas-soft px-2 py-0.5 text-xs font-medium text-ink">análogo conocido</span>}
                     </span>
                   </span>
-                  <span className="tabular-nums text-amber-300">{(score * 100).toFixed(0)}</span>
+                  <span className="text-lg font-bold tabular-nums">{(score * 100).toFixed(0)}</span>
                 </button>
               </li>
             ))}
           </ol>
         </section>
 
-        <p className="text-xs text-amber-500/80">Datos de prueba (mock): los puntajes todavía no son reales.</p>
+        <p className="rounded-xl bg-canvas-soft p-4 text-sm text-body">Datos de prueba (mock): los puntajes todavía no son reales.</p>
       </aside>
 
       <main className="relative min-h-[60vh] flex-1">
         <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
         {body === 'luna' && <MoonView />}
-        <div className="absolute left-3 top-14 z-10 flex gap-1 rounded-lg border border-slate-600 bg-slate-950/95 p-1" aria-label="Cuerpo visualizado">
-          {(['tierra', 'luna'] as const).map(b => <button key={b} type="button" aria-pressed={body === b} onClick={() => setBody(b)} className="rounded px-3 py-2 text-sm text-slate-300 aria-pressed:bg-amber-400/20 aria-pressed:text-amber-200">{b === 'tierra' ? '🌍 Tierra' : '🌕 Luna'}</button>)}
+        <div className="absolute left-4 top-16 z-10 flex gap-1 rounded-full bg-canvas p-1 shadow-float" aria-label="Cuerpo visualizado">
+          {(['tierra', 'luna'] as const).map(b => <button key={b} type="button" aria-pressed={body === b} onClick={() => setBody(b)} className="rounded-full px-4 py-2 text-sm font-medium text-ink hover:bg-canvas-soft aria-pressed:bg-ink aria-pressed:text-canvas">{b === 'tierra' ? 'Tierra' : 'Luna'}</button>)}
         </div>
         {body === 'tierra' && selectedIndex >= 0 && (
           <ZoneCard

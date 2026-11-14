@@ -74,15 +74,15 @@ export default function MoonView() {
   }, [token])
   return <div className="relative h-full w-full bg-slate-950">
     <div ref={target} className="h-full w-full" aria-label="Visor tridimensional de la Luna" />
-    {!token && <div className="absolute inset-0 flex items-center justify-center p-6"><div className="max-w-lg rounded-xl border border-slate-700 bg-slate-900 p-6 shadow-xl">
-      <h2 className="mb-2 text-xl font-semibold">Activar la Luna en 3D</h2>
-      <p className="mb-4 text-sm text-slate-300">Cesium Moon usa imágenes y elevación de la NASA. Para cargarlo, agregá el conjunto Cesium Moon a tu cuenta de Cesium ion y pegá un token de acceso.</p>
-      <a className="text-sm text-amber-300 underline" href="https://ion.cesium.com/" target="_blank" rel="noreferrer">Abrir Cesium ion ↗</a>
-      <form className="mt-4 flex gap-2" onSubmit={e => { e.preventDefault(); const value = draft.trim(); try { localStorage.setItem('terralunar.cesium-token', value) } catch { /* session still works */ }; setToken(value) }}><input aria-label="Token de Cesium ion" type="password" value={draft} onChange={e => setDraft(e.target.value)} className="min-w-0 flex-1 rounded border border-slate-600 bg-slate-950 px-3 py-2 text-sm" placeholder="Token de acceso" /><button className="rounded bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950">Cargar</button></form>
-      <p className="mt-3 text-xs text-slate-400">El token se guarda en este navegador y se envía a Cesium para acceder al servicio.</p>
+    {!token && <div className="absolute inset-0 flex items-center justify-center p-6"><div className="max-w-lg rounded-2xl bg-canvas p-6 text-ink shadow-card">
+      <h2 className="mb-2 text-2xl font-bold leading-8">Activar la Luna en 3D</h2>
+      <p className="mb-4 text-base text-body">Cesium Moon usa imágenes y elevación de la NASA. Para cargarlo, agregá el conjunto Cesium Moon a tu cuenta de Cesium ion y pegá un token de acceso.</p>
+      <a className="text-sm font-medium text-ink underline" href="https://ion.cesium.com/" target="_blank" rel="noreferrer">Abrir Cesium ion ↗</a>
+      <form className="mt-4 flex gap-2" onSubmit={e => { e.preventDefault(); const value = draft.trim(); try { localStorage.setItem('terralunar.cesium-token', value) } catch { /* session still works */ }; setToken(value) }}><input aria-label="Token de Cesium ion" type="password" value={draft} onChange={e => setDraft(e.target.value)} className="min-w-0 flex-1 rounded-lg bg-canvas-soft px-4 py-3 text-base" placeholder="Token de acceso" /><button className="rounded-full bg-ink px-5 py-3 text-base font-medium text-canvas">Cargar</button></form>
+      <p className="mt-3 text-xs text-body">El token se guarda en este navegador y se envía a Cesium para acceder al servicio.</p>
     </div></div>}
-    {status && <div role="status" className="absolute left-4 top-16 max-w-md rounded-lg bg-slate-950/90 p-3 text-sm text-slate-100">{status} {status.startsWith('No se pudo') && <button className="ml-2 text-amber-300 underline" onClick={() => { try { localStorage.removeItem('terralunar.cesium-token') } catch { /* ignore */ }; setToken('') }}>Cambiar token</button>}</div>}
-    <div className="pointer-events-none absolute left-3 top-3 rounded-lg bg-slate-950/85 px-3 py-2 text-xs text-slate-200">Doble clic en la superficie para volar en 3D · Rueda para acercar</div>
-    <div className="absolute bottom-5 left-3 rounded bg-slate-950/80 px-2 py-1 text-xs text-slate-300">Imágenes y relieve: NASA LRO / USGS · Cesium Moon</div>
+    {status && <div role="status" className="absolute left-4 top-28 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status} {status.startsWith('No se pudo') && <button className="ml-2 font-medium underline" onClick={() => { try { localStorage.removeItem('terralunar.cesium-token') } catch { /* ignore */ }; setToken('') }}>Cambiar token</button>}</div>}
+    <div className="pointer-events-none absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">Doble clic en la superficie para volar en 3D · Rueda para acercar</div>
+    <div className="absolute bottom-5 left-4 rounded-full bg-canvas px-3 py-1 text-xs text-body shadow-float">Imágenes y relieve: NASA LRO / USGS · Cesium Moon</div>
   </div>
 }

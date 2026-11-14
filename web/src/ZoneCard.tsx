@@ -48,63 +48,63 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
   const datasets = [...new Set([...zone.sources, ...dims.map((d) => d.dataset)])]
 
   return (
-    <article className="absolute inset-x-2 top-2 bottom-2 flex flex-col gap-4 overflow-y-auto rounded-xl border border-slate-700 bg-slate-950/95 p-4 shadow-2xl backdrop-blur md:inset-x-auto md:right-4 md:top-4 md:bottom-4 md:w-[420px]">
+    <article className="absolute inset-x-2 top-2 bottom-2 z-10 flex flex-col gap-6 overflow-y-auto rounded-2xl bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:right-4 md:top-4 md:bottom-4 md:w-[440px]">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs text-slate-400">
+          <p className="flex flex-wrap items-center gap-2 text-sm text-body">
             #{position} · {zone.country} · {zone.area_km2.toLocaleString('es-AR')} km²
-            {zone.known && <span className="ml-2 text-sky-400">análogo conocido</span>}
+            {zone.known && <span className="rounded-full bg-canvas-soft px-2 py-0.5 text-xs font-medium text-ink">análogo conocido</span>}
           </p>
-          <h2 className="text-xl font-semibold">{zone.name}</h2>
+          <h2 className="mt-1 text-2xl font-bold leading-8">{zone.name}</h2>
         </div>
         <div className="text-right">
-          <p className="text-3xl font-bold tabular-nums text-amber-300">{(score * 100).toFixed(0)}</p>
-          <p className="text-xs text-slate-500">similitud /100</p>
+          <p className="text-[36px] font-bold leading-[44px] tabular-nums">{(score * 100).toFixed(0)}</p>
+          <p className="whitespace-nowrap text-xs text-body">similitud /100</p>
         </div>
       </header>
 
       <button type="button" onClick={onCompare}
-        className="rounded-md bg-amber-400 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300">
+        className="rounded-full bg-ink px-4 py-3 text-base font-medium text-canvas hover:bg-elevated">
         Comparar relieve con la Luna en 3D
       </button>
 
       <section aria-label="Puntaje por variable">
         <ResponsiveContainer width="100%" height={240}>
           <RadarChart data={dims} outerRadius="60%">
-            <PolarGrid stroke="#334155" />
-            <PolarAngleAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 10 }} />
+            <PolarGrid stroke="#e2e2e2" />
+            <PolarAngleAxis dataKey="name" tick={{ fill: '#5e5e5e', fontSize: 11 }} />
             <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
-            <Radar dataKey="score" stroke="#fbbf24" fill="#fbbf24" fillOpacity={0.35} isAnimationActive={false} />
+            <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} isAnimationActive={false} />
           </RadarChart>
         </ResponsiveContainer>
       </section>
 
       <section>
-        <h3 className="mb-2 text-sm font-medium text-slate-300">Aporte de cada variable al puntaje</h3>
-        <ul className="flex flex-col gap-1.5 text-xs">
+        <h3 className="mb-3 text-xl font-bold leading-7">Aporte al puntaje</h3>
+        <ul className="flex flex-col gap-2 text-sm">
           {[...dims].sort((a, b) => b.contribution - a.contribution).map((d) => (
             <li key={d.key} className="grid grid-cols-[1fr_6rem_2.5rem] items-center gap-2">
               <span className="truncate" title={d.dataset}>{d.name}</span>
-              <span className="h-1.5 rounded-full bg-slate-800">
-                <span className="block h-full rounded-full bg-amber-400" style={{ width: `${(d.contribution / (score || 1)) * 100}%` }} />
+              <span className="h-2 rounded-full bg-canvas-soft">
+                <span className="block h-full rounded-full bg-ink" style={{ width: `${(d.contribution / (score || 1)) * 100}%` }} />
               </span>
-              <span className="text-right tabular-nums text-slate-400">+{(d.contribution * 100).toFixed(1)}</span>
+              <span className="text-right font-medium tabular-nums">+{(d.contribution * 100).toFixed(1)}</span>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
-        <h3 className="mb-2 text-sm font-semibold text-amber-200">Límites de la analogía</h3>
-        <ul className="flex flex-col gap-1.5 text-xs text-slate-300">
+      <section className="rounded-2xl bg-ink p-6 text-canvas">
+        <h3 className="mb-3 text-xl font-bold leading-7">Límites de la analogía</h3>
+        <ul className="flex flex-col gap-2 text-sm text-pressed">
           {LIMITS.map(([title, text]) => (
-            <li key={title}><strong className="text-amber-100">{title}:</strong> {text}</li>
+            <li key={title}><strong className="font-medium text-canvas">{title}:</strong> {text}</li>
           ))}
         </ul>
       </section>
 
-      <section className="text-xs text-slate-400">
-        <h3 className="mb-1 text-sm font-medium text-slate-300">Fuentes</h3>
+      <section className="text-sm text-body">
+        <h3 className="mb-2 text-base font-medium text-ink">Fuentes</h3>
         <ul className="list-inside list-disc">
           {datasets.map((s) => <li key={s}>{s}</li>)}
         </ul>
@@ -115,12 +115,12 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
         href={worldviewUrl(zone.polygon.coordinates[0])}
         target="_blank"
         rel="noreferrer"
-        className="rounded-md border border-slate-700 py-2 text-center text-sm hover:border-slate-500"
+        className="rounded-full bg-canvas-soft px-4 py-3 text-center text-base font-medium hover:bg-pressed"
       >
         Abrir en Worldview (imágenes satelitales de la zona) ↗
       </a>
 
-      <button type="button" onClick={onClose} className="mt-auto rounded-md border border-slate-700 py-2 text-sm hover:border-slate-500">
+      <button type="button" onClick={onClose} className="mt-auto rounded-full bg-canvas-soft px-4 py-3 text-base font-medium hover:bg-pressed">
         Cerrar ficha
       </button>
     </article>
