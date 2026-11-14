@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Compare3D from './Compare3D.tsx'
 import MapView from './MapView.tsx'
+import MoonMap from './MoonMap.tsx'
 import MoonView from './MoonView.tsx'
 import ZoneCard from './ZoneCard.tsx'
 import { presetWeights, rank, type Preset, type Profile, type Weights, type Zone } from './score.ts'
@@ -23,7 +24,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [preset, setPreset] = useState<Preset>('movilidad')
   const [weights, setWeights] = useState<Weights>({})
-  const [body, setBody] = useState<'tierra' | 'luna'>('tierra')
+  const [body, setBody] = useState<'tierra' | 'polo' | 'luna'>('tierra')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [comparing, setComparing] = useState(false)
 
@@ -135,8 +136,9 @@ export default function App() {
       <main className="relative min-h-[60vh] flex-1">
         <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
         {body === 'luna' && <MoonView />}
+        {body === 'polo' && <MoonMap onPickEarth={(id) => { setBody('tierra'); setSelectedId(id) }} />}
         <div className="absolute left-4 top-16 z-10 flex gap-1 rounded-full bg-canvas p-1 shadow-float" aria-label="Cuerpo visualizado">
-          {(['tierra', 'luna'] as const).map(b => <button key={b} type="button" aria-pressed={body === b} onClick={() => setBody(b)} className="rounded-full px-4 py-2 text-sm font-medium text-ink hover:bg-canvas-soft aria-pressed:bg-ink aria-pressed:text-canvas">{b === 'tierra' ? 'Tierra' : 'Luna'}</button>)}
+          {(['tierra', 'polo', 'luna'] as const).map(b => <button key={b} type="button" aria-pressed={body === b} onClick={() => setBody(b)} className="rounded-full px-4 py-2 text-sm font-medium text-ink hover:bg-canvas-soft aria-pressed:bg-ink aria-pressed:text-canvas">{{ tierra: 'Tierra', polo: 'Polo sur lunar', luna: 'Luna 3D' }[b]}</button>)}
         </div>
         {body === 'tierra' && selectedIndex >= 0 && (
           <ZoneCard

@@ -82,6 +82,8 @@ En cambio NASADEM, Copernicus y ALOS salen de Planetary Computer **sin login** y
 - **Nomenclátor IAU de la Luna (USGS)** ✅ — coordenadas oficiales de los accidentes que dan nombre a las regiones Artemis III (Mons Mouton 16070, Mons Malapert 16338, Haworth 14502, Nobile 4321, de Gerlache 1439, Slater 15325, Shackleton 5450, Cabeus B 8058): <https://planetarynames.wr.usgs.gov/>. Son **centros de accidentes**, no los polígonos de aterrizaje de NASA (NASA no publicó coordenadas de las regiones).
 - **Comparador 3D** (`pipeline/02_compare_patches.py` → `data/compare/`): recortes de 20 × 20 km a 80 m. Luna = `ldem_80s_80m_float` (LOLA); Tierra = AWS Terrain Tiles z12 (incluye NASA SRTM). Pendiente, pendiente p90, rugosidad (desvío residual tras quitar la media de 400 m) y desnivel, con el mismo código para ambos cuerpos.
 
+- **Mapa del polo sur lunar** (`pipeline/03_moon_map.py` → `data/moon/`): relieve sombreado de LOLA a 320 m/px y grilla de métricas (ventanas de 20 km cada 4 km). Al hacer clic en la Luna, la web busca las zonas de la Tierra con relieve más parecido usando las mismas métricas del comparador.
+
 ## Marte (si entra)
 
 - **HiRISE DTM Jezero** `DTEEC_002387_1985_003798_1985_A01` ✅ — <https://www.uahirise.org/dtm/dtm.php?ID=DTEEC_002387_1985_003798_1985_A01>. Guía para abrirlo: <https://www.uahirise.org/dtm/howto.php>

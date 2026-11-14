@@ -1,0 +1,104 @@
+{
+ "image": "south_pole_hillshade.jpg",
+ "image_px": 1900,
+ "lola_px": 7600,
+ "lola_res_m": 80,
+ "lola_offset": 3799.5,
+ "radius_m": 1737400.0,
+ "grid": {
+  "file": "metrics.bin",
+  "w": 148,
+  "first_center_px": 125.0,
+  "stride_px": 50,
+  "layers": [
+   "pendiente_mediana",
+   "pendiente_p90",
+   "rugosidad_m",
+   "desnivel_m"
+  ],
+  "scale": [
+   10,
+   10,
+   10,
+   1
+  ]
+ },
+ "window_km": 20,
+ "stride_km": 4.0,
+ "sites": [
+  {
+   "name": "Mons Mouton",
+   "lat": -84.6,
+   "lon": 31.0,
+   "line": 2043.7,
+   "sample": 4854.5,
+   "ref": "IAU Gazetteer, Feature 16070",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/16070"
+  },
+  {
+   "name": "Mons Malapert",
+   "lat": -85.98,
+   "lon": 358.33,
+   "line": 2275.8,
+   "sample": 3755.1,
+   "ref": "IAU Gazetteer, Feature 16338",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/16338"
+  },
+  {
+   "name": "Haworth",
+   "lat": -87.45,
+   "lon": 354.83,
+   "line": 2836.7,
+   "sample": 3712.4,
+   "ref": "IAU Gazetteer, Feature 14502",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/14502"
+  },
+  {
+   "name": "Nobile",
+   "lat": -85.2752,
+   "lon": 53.2725,
+   "line": 2727.9,
+   "sample": 5235.7,
+   "ref": "IAU Gazetteer, Feature 4321",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/4321"
+  },
+  {
+   "name": "de Gerlache",
+   "lat": -88.4849,
+   "lon": 271.6553,
+   "line": 3782.9,
+   "sample": 3225.4,
+   "ref": "IAU Gazetteer, Feature 1439",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/1439"
+  },
+  {
+   "name": "Slater",
+   "lat": -88.0792,
+   "lon": 111.2881,
+   "line": 4063.9,
+   "sample": 4477.9,
+   "ref": "IAU Gazetteer, Feature 15325",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/15325"
+  },
+  {
+   "name": "Shackleton",
+   "lat": -89.67,
+   "lon": 129.78,
+   "line": 3879.5,
+   "sample": 3895.6,
+   "ref": "IAU Gazetteer, Feature 5450",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/5450"
+  },
+  {
+   "name": "Cabeus B",
+   "lat": -82.2587,
+   "lon": 305.4154,
+   "line": 2096.5,
+   "sample": 1404.5,
+   "ref": "IAU Gazetteer, Feature 8058",
+   "url": "https://planetarynames.wr.usgs.gov/Feature/8058"
+  }
+ ],
+ "source": "LRO LOLA GDR ldem_80s_80m_float (NASA PDS Geosciences)",
+ "notes": "Pendiente por histograma de 0.5°; rugosidad incluye bordes de ventana. Estereográfica polar: arriba = lon 0°, derecha = lon 90°E."
+}
