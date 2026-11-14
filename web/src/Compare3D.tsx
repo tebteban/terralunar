@@ -222,7 +222,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   const short = (src: string) => src.split(/[;(]/)[0].trim()
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col gap-4 overflow-y-auto bg-[#0a0a0c] p-4 text-canvas md:p-6" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
+    <div className="fixed inset-0 z-50 flex flex-col gap-4 overflow-y-auto bg-[#0a0a0c] p-4 text-canvas md:p-6" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
       <header className="flex flex-wrap items-center gap-3 border-b border-white/10 pb-4">
         <h2 className="mr-2 text-xl leading-7 font-bold tracking-tight">Comparar relieve en 3D</h2>
         {!supplied && <div className="flex gap-1 rounded-full border border-white/15 bg-rail p-1" aria-label="Cuerpo a comparar">

@@ -29,7 +29,8 @@ function toXYZ(lat: number, lon: number, r: number) {
 
 export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
   const box = useRef<HTMLDivElement>(null)
-  const api = useRef<{ showPick: (p: Props['pick'], fly?: boolean) => void; reset: () => void } | null>(null)
+  const cameraLabel = useRef<HTMLOutputElement>(null)
+  const api = useRef<{ showPick: (p: Props['pick'], fly?: boolean) => void; reset: () => void; zoom: (factor: number) => void; north: () => void } | null>(null)
   const handlers = useRef({ onPick, onOutside })
   useEffect(() => { handlers.current = { onPick, onOutside } })
 
@@ -201,6 +202,9 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
         flyTo(c.lat, c.lon, 300 * KM)
       },
       reset: () => flyTo(HOME.lat, HOME.lon, HOME.range),
+      // De Eze (c891b87): botones de acercar/alejar y orientar al norte
+      zoom: (factor) => { autoRotate = false; target.range = THREE.MathUtils.clamp(target.range * factor, MIN_RANGE, MAX_RANGE) },
+      north: () => { autoRotate = false; s.fwd.copy(northAt(s.a)) },
     }
 
     const ray = new THREE.Raycaster()
@@ -277,6 +281,7 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
     const ro = new ResizeObserver(resize)
     ro.observe(el)
 
+    let labelTime = 0
     let frame = 0, last = performance.now()
     const view = new THREE.Vector3()
     const loop = (now: number) => {
@@ -292,6 +297,10 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
         if (s.a.angleTo(target.a) < 1e-5) target.a = null
       }
       place()
+      if (now - labelTime > 400 && cameraLabel.current) {
+        cameraLabel.current.textContent = `Distancia al punto observado: ${(s.range / KM).toFixed(0)} km`
+        labelTime = now
+      }
       view.copy(camera.position).normalize()
       for (const l of siteLabels) l.obj.visible = l.normal.dot(view) > 0.2 // ocultar las del lado de atrás
       renderer.render(scene, camera)
@@ -323,6 +332,13 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
       <div ref={box} className="absolute inset-0 md:right-[470px]" role="region" aria-label="Globo 3D de la Luna. Arrastrá para moverte, rueda para acercar; clic en el polo sur para analizar." />
       <button type="button" onClick={() => api.current?.reset()}
         className="chip-dark absolute left-4 top-4">Ver planeta</button>
+      <output ref={cameraLabel} className="metric pointer-events-none absolute bottom-20 left-6 hidden text-[11px] text-mute md:block" />
+      <div className="absolute right-4 bottom-6 z-[1] flex flex-col gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float md:right-[494px]">
+        <button type="button" aria-label="Acercar Luna" title="Acercar" onClick={() => api.current?.zoom(0.75)} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">+</button>
+        <button type="button" aria-label="Alejar Luna" title="Alejar" onClick={() => api.current?.zoom(1.33)} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">−</button>
+        <button type="button" aria-label="Orientar Luna al norte" title="Norte arriba" onClick={() => api.current?.north()} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">N</button>
+        <button type="button" aria-label="Centrar selección lunar" title="Centrar selección lunar" disabled={!pick} onClick={() => api.current?.showPick(pick)} className="grid size-9 place-items-center rounded-full text-sm text-canvas hover:bg-elevated disabled:opacity-40">◎</button>
+      </div>
     </div>
   )
 }

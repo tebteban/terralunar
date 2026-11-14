@@ -9,6 +9,26 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-016 — Mezcla del rediseño de Eze (`main`, c891b87) con `develop`
+- **Fecha:** 2026-11-14 · **Estado:** vigente. Pedido de Esteban: mezclar las dos versiones.
+- **Situación:** en paralelo, Eze subió a `main` otro rediseño ("interfaz a medias", con Codex, ver
+  `docs/REDESIGN.md`): paleta grafito/ámbar/celeste, barra superior, riel de íconos y paneles de
+  Luna/Marte movidos por portales a una columna de resultados. Chocaba con 9 archivos de `develop`.
+- **Base:** la versión de `develop` (portada, Personalizado, sistema Science Console de D-014).
+- **Se integró de Eze, con el estilo de D-014:** diálogo "Fuentes y método" (`MethodDialog.tsx`, sus
+  textos), pantalla completa (`ConsoleIcon.tsx`), botón "Comparador 3D" en el selector de cuerpo,
+  resumen del cuerpo en la barra lateral para Luna y Marte (los pesos del catálogo no se aplican ahí),
+  aviso "los pesos solo afectan el ranking terrestre", escala métrica / lectura de cámara / aviso de
+  capa / "Centrar selección" / "Cenital-oblicua" en el mapa, +/−/N/◎ y distancia en el globo lunar,
+  lectura de cámara y "Centrar selección" en Marte, reajuste con ResizeObserver, zoom inicial 1,4,
+  comparador a pantalla completa, coordenadas y "puntaje de demostración" en la ficha, y el método de
+  Marte en un desplegable.
+- **No se integró:** su paleta y CSS, la columna de resultados con portales (`PanelOutlet.tsx` y
+  `panelContext.ts` se borraron) y los "Límites de la analogía" plegables: según `CLAUDE.md` los límites
+  nunca se recortan y quedan siempre visibles. Tampoco el texto "relieve polar ×1,5" de la distancia
+  lunar, porque no está verificado.
+- **De paso:** `develop` local seguía a `origin/main`; ahora sigue a `origin/develop`.
+
 ## D-015 — Liberar los contextos WebGL al cerrar escenas 3D
 - **Fecha:** 2026-11-14 · **Estado:** vigente (arreglo).
 - **Problema:** Chrome mantiene unos 16 contextos WebGL activos; al pasarse apaga los más viejos y esas

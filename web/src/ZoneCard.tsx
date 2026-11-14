@@ -32,9 +32,10 @@ interface Props {
   weights: Weights
   onClose: () => void
   onCompare: () => void
+  mock?: boolean
 }
 
-export default function ZoneCard({ ranked: { zone, score }, position, profile, weights, onClose, onCompare }: Props) {
+export default function ZoneCard({ ranked: { zone, score }, position, profile, weights, onClose, onCompare, mock = false }: Props) {
   const total = Object.values(weights).reduce((a, b) => a + b, 0) || 1
   const dims = Object.entries(profile.dimensions).map(([k, d]) => {
     const s = zone.scores[k] ?? 0
@@ -50,6 +51,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
           {zone.known && <span className="rounded-full bg-canvas-soft px-2.5 py-0.5 font-mono text-[11px] font-semibold text-ink">Análogo conocido</span>}
         </div>
         <h2 className="text-2xl leading-8 font-bold tracking-tight">{zone.name}</h2>
+        <p className="metric text-xs text-body">{zone.centroid[1].toFixed(4)}°, {zone.centroid[0].toFixed(4)}°{mock && <span className="font-sans"> · puntaje de demostración</span>}</p>
       </header>
 
       <div className="flex items-center justify-between gap-4 rounded-2xl bg-canvas-softer p-4">
