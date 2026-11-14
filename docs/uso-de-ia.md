@@ -28,3 +28,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Zoom lunar con vuelos progresivos al cursor, inclinación gradual hasta 60°, orientación como Tierra y botón Ver planeta; conserva teselas de relieve lunar | — |
 | 2026-11-14 | OpenAI Codex | Suavizado del zoom lunar por fotogramas con amortiguación temporal, anclaje central estable, orientación conservada e interrupción inmediata al arrastrar; build y lint verificados | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Vista "Polo sur lunar": `pipeline/03_moon_map.py` (mapa LOLA y grilla de métricas) y `web/src/MoonMap.tsx` (clic en la Luna → lugares parecidos en la Tierra); panel y comparador en variante oscura | — |
+
+| 2026-11-14 | OpenAI Codex | Marte MapLibre sin token con MOLA público, extracción regional, ranking exploratorio y comparador Marte/Tierra; documentación y pruebas numéricas | — |
