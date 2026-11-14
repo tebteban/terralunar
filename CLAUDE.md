@@ -53,7 +53,7 @@ MODIS MOD11C3 (temperatura, 0,05°), MOD13C2 (NDVI), MOD10CM (nieve), MCD12C1 (c
 
 ## Forma de trabajar
 1. Primero la web contra un `zones.json` FALSO de 20 zonas. El frontend no espera a los datos reales.
-2. Commits chicos y frecuentes en `main`. Un commit roto se arregla en el siguiente.
+2. Commits chicos y frecuentes en `develop`. Cuando un bloque está terminado se revisa y se mergea a `main` (lo que se publica). Un commit roto se arregla en el siguiente. Cada decisión se anota en `docs/decisiones.md`, el avance en `docs/roadmap.md` y los cambios de herramientas en `docs/arquitectura.md`.
 3. Cada vez que algo necesite un dato que no existe, anotarlo en `docs/datos-faltantes.md` en vez de inventarlo.
 4. Qué se recorta si falta tiempo, en este orden: perfil Marte, zoom a 30 m, imágenes de detalle, tercer preset, diseño fino. Nunca se recorta: validación con sitios reservados, límites de la analogía en cada ficha, tiempo de presentación.
 5. No entra en la v1: machine learning, bases de datos, autenticación, backend.

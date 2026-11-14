@@ -100,5 +100,16 @@
   }
  ],
  "source": "LRO LOLA GDR ldem_80s_80m_float (NASA PDS Geosciences)",
- "notes": "Pendiente por histograma de 0.5°; rugosidad incluye bordes de ventana. Estereográfica polar: arriba = lon 0°, derecha = lon 90°E."
+ "notes": "Pendiente por histograma de 0.5°; rugosidad incluye bordes de ventana. Estereográfica polar: arriba = lon 0°, derecha = lon 90°E.",
+ "globe": {
+  "cap_dem": "cap_dem.bin",
+  "cap_n": 760,
+  "cap_block": 10,
+  "color": "globe_color.jpg",
+  "height": "globe_height.png",
+  "height_min_km": -8.878,
+  "height_max_km": 10.504,
+  "source": "NASA SVS CGI Moon Kit (LRO LROC WAC color, LOLA ldem_4)",
+  "url": "https://svs.gsfc.nasa.gov/4720"
+ }
 }

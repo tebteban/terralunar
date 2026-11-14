@@ -84,6 +84,8 @@ En cambio NASADEM, Copernicus y ALOS salen de Planetary Computer **sin login** y
 
 - **Mapa del polo sur lunar** (`pipeline/03_moon_map.py` → `data/moon/`): relieve sombreado de LOLA a 320 m/px y grilla de métricas (ventanas de 20 km cada 4 km). Al hacer clic en la Luna, la web busca las zonas de la Tierra con relieve más parecido usando las mismas métricas del comparador.
 
+- **Globo lunar 3D** (`pipeline/05_moon_globe.py` → `data/moon/globe_*`): NASA SVS CGI Moon Kit (<https://svs.gsfc.nasa.gov/4720>, dominio público): mosaico de color LRO LROC WAC `lroc_color_poles_4k.tif` y relieve LOLA `ldem_4.tif`. Sobre el polo sur va una malla con relieve real: LOLA `ldem_80s_80m` promediado a 800 m (`data/moon/cap_dem.bin`, exagerado ×1,5) con el mapa detallado de `03_moon_map.py` encima.
+
 ## Marte (si entra)
 
 - **HiRISE DTM Jezero** `DTEEC_002387_1985_003798_1985_A01` ✅ — <https://www.uahirise.org/dtm/dtm.php?ID=DTEEC_002387_1985_003798_1985_A01>. Guía para abrirlo: <https://www.uahirise.org/dtm/howto.php>

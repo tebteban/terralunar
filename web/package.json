@@ -8,9 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test test/score.test.ts"
+    "test": "node --test test/score.test.ts test/mars.test.ts"
   },
   "dependencies": {
+    "geotiff": "^3.0.5",
     "maplibre-gl": "^6.18.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
