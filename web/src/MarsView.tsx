@@ -207,8 +207,8 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       </header>
       <div className="flex flex-wrap gap-1.5">{SITES.map(s=><button key={s.name} className="h-7 rounded-full bg-canvas-soft px-3 font-mono text-xs text-body transition-colors hover:bg-ink hover:text-canvas" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
       <form className="flex items-center gap-2 rounded-2xl bg-canvas-softer p-3" onSubmit={e=>{e.preventDefault();choose.current(Number(coordinates.lon),Number(coordinates.lat))}}>
-        <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-mute">Longitud</span><input aria-label="Longitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/></label>
-        <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-mute">Latitud</span><input aria-label="Latitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" min="-90" max="90" step="any" required value={coordinates.lat} onChange={e=>setCoordinates({...coordinates,lat:e.target.value})}/></label>
+        <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-body">Longitud</span><input aria-label="Longitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/></label>
+        <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-body">Latitud</span><input aria-label="Latitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" min="-90" max="90" step="any" required value={coordinates.lat} onChange={e=>setCoordinates({...coordinates,lat:e.target.value})}/></label>
         <button className="btn-primary h-11 px-5">Ir</button>
       </form>
       <label className="flex flex-col gap-1.5"><span className="label-mono text-body">Capa de superficie</span>
@@ -219,12 +219,12 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       <label className="flex flex-col gap-1.5">
         <span className="flex justify-between"><span className="label-mono text-body">Exageración visual</span><span className="metric text-sm font-bold">{exaggeration.toLocaleString('es-AR')}×</span></span>
         <input className="accent-ink w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/>
-        <span className="flex justify-between font-mono text-[10px] text-mute"><span>1× (real)</span><span>3×</span></span>
+        <span className="flex justify-between text-[10px] text-body"><span>1× (real)</span><span>3×</span></span>
       </label>
       {pick&&<>
         <p className="metric text-xs text-body">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · ventana de 20 × 20 km</p>
         {Math.abs(pick.lat)>85&&<p className="text-xs text-body">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
-        <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4"><dt className="text-[13px] text-body">{label}</dt><dd className="metric text-[22px] leading-7 font-semibold">{pick[k].toLocaleString('es-AR',{maximumFractionDigits:1,minimumFractionDigits:1})} {unit}</dd><span className="label-mono text-[10px] text-mute">MOLA MEGDR</span></div>)}</dl>
+        <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4"><dt className="text-[13px] text-body">{label}</dt><dd className="metric text-[22px] leading-7 font-semibold">{pick[k].toLocaleString('es-AR',{maximumFractionDigits:1,minimumFractionDigits:1})} {unit}</dd><span className="label-mono text-[10px] text-body">MOLA MEGDR</span></div>)}</dl>
         <section className="flex flex-col gap-2">
           <h3 className="flex items-center justify-between gap-2"><span className="text-lg leading-7 font-bold tracking-tight">Lugares parecidos en la Tierra</span><span className="label-mono text-[10px] text-body">relieve /100</span></h3>
           <ol className="flex flex-col gap-2">{matches.slice(0,6).map(({e,score},i)=><li key={e.id} className="flex flex-col gap-2.5 rounded-2xl bg-canvas-softer p-4 transition-colors hover:bg-canvas-soft">

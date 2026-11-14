@@ -9,6 +9,22 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-017 — Ajuste orgánico y suave del sistema Science Console
+- **Fecha:** 2026-11-14 · **Estado:** vigente (pedido de Esteban: "más orgánico, minimalista y suave").
+- **Cómo se eligió:** skill de diseño `ui-ux-pro-max`. Su recomendación general (estilo suizo con paleta
+  celeste clara) no encajaba; se combinaron sus estilos "Soft UI Evolution" (sombras suaves en capas,
+  transiciones de 200–300 ms, foco visible) y "Organic" (radios de 16–24 px, sombra natural difusa,
+  tonos terrosos) sobre el lienzo espacial oscuro, y la tipografía "Friendly SaaS" (Plus Jakarta Sans).
+- **Qué cambió (casi todo en tokens de `web/src/index.css`):** sin blanco ni negro puros (papel
+  `#F3F1EC`, tinta `#16161A`), grises cálidos tipo regolito, terracota de Marte apagado, tarjetas de
+  22 px, sombras difusas, bordes casi invisibles, transición por defecto de 250 ms, foco visible suave,
+  estrellas más tenues, botones que se elevan 1 px al pasar el mouse. Una sola letra: Plus Jakarta Sans;
+  lo que iba en monoespaciada usa la misma letra con cifras tabulares (el token `--font-mono` apunta a
+  ella). Banner de datos discreto en lugar de franja negra. Rótulos chicos sobre tarjetas claras pasan a
+  `text-body` para cumplir contraste 4,5:1.
+- **Se mantiene:** estructura, pantallas, escala de color de similitud del mapa, tarjeta oscura de
+  límites siempre visible.
+
 ## D-016 — Mezcla del rediseño de Eze (`main`, c891b87) con `develop`
 - **Fecha:** 2026-11-14 · **Estado:** vigente. Pedido de Esteban: mezclar las dos versiones.
 - **Situación:** en paralelo, Eze subió a `main` otro rediseño ("interfaz a medias", con Codex, ver

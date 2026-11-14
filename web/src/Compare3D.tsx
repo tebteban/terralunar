@@ -214,7 +214,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   const tag = (body: string) => body === 'marte'
     ? 'border-mars/40 bg-mars/15 text-[#ffb59c]'
     : body === 'luna' ? 'border-white/20 bg-canvas text-ink' : 'border-white/20 bg-pressed text-ink'
-  const toolbar = 'flex items-center gap-2 rounded-full border border-white/15 bg-obsidian px-4 py-2 text-sm'
+  const toolbar = 'flex items-center gap-2 rounded-full border border-white/[0.07] bg-obsidian px-4 py-2 text-sm'
   const bodyName = (b: string) => b === 'luna' ? 'Luna' : b === 'marte' ? 'Marte' : 'Tierra'
   // Parecido de relieve con la misma fórmula y tolerancias que el panel de origen (Luna o Marte)
   const score = moon && earth ? (moon.body === 'marte' ? similarity(moon, earth) : moonSimilarity(moon, earth)) : null
@@ -222,10 +222,10 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   const short = (src: string) => src.split(/[;(]/)[0].trim()
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col gap-4 overflow-y-auto bg-[#0a0a0c] p-4 text-canvas md:p-6" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
+    <div className="fixed inset-0 z-50 flex flex-col gap-4 overflow-y-auto bg-space p-4 text-canvas md:p-6" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
       <header className="flex flex-wrap items-center gap-3 border-b border-white/10 pb-4">
         <h2 className="mr-2 text-xl leading-7 font-bold tracking-tight">Comparar relieve en 3D</h2>
-        {!supplied && <div className="flex gap-1 rounded-full border border-white/15 bg-rail p-1" aria-label="Cuerpo a comparar">
+        {!supplied && <div className="flex gap-1 rounded-full border border-white/[0.07] bg-rail p-1" aria-label="Cuerpo a comparar">
           {(['luna', 'marte'] as const).map((b) => (
             <button key={b} type="button" aria-pressed={planet === b}
               onClick={() => { setPlanet(b); setMarsIndex(null); setError(null); setExaggeration(b === 'marte' ? 6 : EXAGGERATION) }}
@@ -275,7 +275,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
         <>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {[moon, earth].map((it, slot) => (
-              <section key={it.id + slot} className="flex flex-col rounded-2xl border border-white/15 bg-[#16161a] p-5 shadow-limits">
+              <section key={it.id + slot} className="flex flex-col rounded-2xl border border-white/[0.07] bg-rail p-5 shadow-limits">
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <span className={`shrink-0 rounded-full border px-3 py-1 font-mono text-xs font-bold uppercase ${tag(it.body)}`}>{bodyName(it.body)}</span>
@@ -331,7 +331,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
 
           <footer className="flex flex-col items-stretch gap-4 border-t border-white/10 pt-4 md:flex-row">
             {score !== null && (
-              <div className="flex items-center gap-4 rounded-2xl border border-white/15 bg-[#16161a] px-5 py-4 md:w-80 md:shrink-0">
+              <div className="flex items-center gap-4 rounded-2xl border border-white/[0.07] bg-rail px-5 py-4 md:w-80 md:shrink-0">
                 <div className="relative grid size-14 shrink-0 place-items-center">
                   <svg className="absolute inset-0 size-14 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
                     <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" strokeWidth="3" className="text-white/10" />
@@ -346,7 +346,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                 </div>
               </div>
             )}
-            <div className="flex flex-1 flex-col justify-center gap-2 rounded-2xl border border-white/15 bg-[#121214] px-5 py-4 shadow-limits">
+            <div className="flex flex-1 flex-col justify-center gap-2 rounded-2xl border border-white/[0.07] bg-obsidian px-5 py-4 shadow-limits">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded border border-white/20 bg-elevated px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-pressed uppercase">Régimen no análogo</span>
                 <h3 className="text-sm font-bold tracking-tight uppercase">Límites de la comparación</h3>

@@ -108,5 +108,5 @@ Desde la red de la sede, algunos sitios dan error de certificado SSL (`spaceapps
 |---|---|---|
 | Sistema "TerraLunar Science Console" (equipo) | `docs/DESIGN.md` (D-014) | propio |
 | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — análisis de estilo aeroespacial | Sistema anterior, D-012 (reemplazado) | MIT |
-| [Inter](https://fonts.google.com/specimen/Inter) y [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (Google Fonts) | Letra de toda la app (D-014) | SIL Open Font License |
+| [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) (Google Fonts) | Letra de toda la app (D-017; antes Inter + JetBrains Mono) | SIL Open Font License |
 | NASA SVS CGI Moon Kit (`data/moon/globe_color.jpg`) | Luna en puntos de la portada (`web/src/HalftoneMoon.tsx`) | Dominio público NASA |

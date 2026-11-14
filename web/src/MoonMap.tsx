@@ -162,7 +162,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
                 <div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4">
                   <dt className="text-[13px] text-body">{LABELS[k][0]}</dt>
                   <dd className="metric text-[22px] leading-7 font-semibold">{(Math.round(pick.m[k] * 10) / 10).toLocaleString('es-AR')}{LABELS[k][1]}</dd>
-                  <span className="label-mono text-[10px] text-mute">LOLA · ventana 20 km</span>
+                  <span className="label-mono text-[10px] text-body">LOLA · ventana 20 km</span>
                 </div>
               ))}
             </dl>

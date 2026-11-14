@@ -327,12 +327,12 @@ function PlanetOverview({ body, onMethod }: { body: 'luna' | 'marte'; onMethod: 
 // Banner de datos de prueba (DESIGN.md, "Telemetry / Mock Data Banner"): fuentes reales que usa la app.
 function DataBanner({ onMethod, onFullscreen }: { onMethod: () => void; onFullscreen: () => void }) {
   return (
-    <div className="flex h-7 shrink-0 items-center justify-between gap-4 bg-ink px-4 font-mono text-[11px] tracking-wide text-canvas uppercase" role="note">
-      <span className="truncate">Datos de prueba · puntajes simulados para evaluación</span>
+    <div className="flex h-8 shrink-0 items-center justify-between gap-4 border-b border-hairline bg-space px-5 text-xs text-mute" role="note">
+      <span className="flex min-w-0 items-center gap-2"><span className="size-1.5 shrink-0 rounded-full bg-data" aria-hidden="true" /><span className="truncate">Datos de prueba · puntajes simulados para evaluación</span></span>
       <span className="flex shrink-0 items-center gap-3 text-mute">
-        <span className="hidden gap-3 xl:flex"><span>MODIS</span><span>/</span><span>GPM IMERG</span><span>/</span><span>NASADEM</span><span>/</span><span>LRO LOLA</span><span>/</span><span>MOLA</span></span>
-        <button type="button" onClick={onMethod} className="text-canvas underline-offset-2 hover:underline">Fuentes y método</button>
-        <button type="button" onClick={onFullscreen} aria-label="Alternar pantalla completa" title="Pantalla completa" className="grid size-6 place-items-center rounded text-canvas hover:bg-elevated [&_svg]:size-4"><ConsoleIcon name="expand" /></button>
+        <span className="hidden gap-2 xl:flex text-mute/80">MODIS · GPM IMERG · NASADEM · LRO LOLA · MOLA</span>
+        <button type="button" onClick={onMethod} className="cursor-pointer rounded-full px-2 py-0.5 font-medium text-canvas transition-colors hover:bg-elevated">Fuentes y método</button>
+        <button type="button" onClick={onFullscreen} aria-label="Alternar pantalla completa" title="Pantalla completa" className="grid size-7 cursor-pointer place-items-center rounded-full text-canvas transition-colors hover:bg-elevated [&_svg]:size-4"><ConsoleIcon name="expand" /></button>
       </span>
     </div>
   )

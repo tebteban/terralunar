@@ -1,61 +1,70 @@
 @import "tailwindcss";
 
-/* Tokens de docs/DESIGN.md (TerraLunar Science Console, D-014): cromo monocromo, color solo para datos.
-   Inter para texto (títulos en oración), JetBrains Mono con cifras tabulares para números y fuentes. */
+/* Tokens de docs/DESIGN.md (Science Console, D-014) con el ajuste orgánico de D-017:
+   sin blanco ni negro puros, grises cálidos (regolito), radios amplios, sombras difusas,
+   una sola familia (Plus Jakarta Sans) con cifras tabulares para números y coordenadas. */
 @theme {
-  --font-sans: "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
-  --font-display: "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
-  --color-ink: #000000;
-  --color-body: #5e5e5e;          /* texto secundario sobre blanco (AA) */
-  --color-mute: #afafaf;          /* texto secundario sobre negro / bordes inactivos */
-  --color-hairline: #282828;      /* borde sobre superficies oscuras */
-  --color-canvas: #ffffff;
-  --color-canvas-soft: #efefef;   /* hover y sustrato claro */
-  --color-canvas-softer: #f5f3f3;
-  --color-pressed: #e2e2e2;       /* borde de tarjetas claras, estado presionado */
-  --color-elevated: #282828;      /* superficie oscura elevada */
-  --color-rail: #111111;          /* barra lateral */
-  --color-night-soft: #111111;
-  --color-obsidian: #18181b;      /* tarjeta "Límites de la analogía" */
-  --color-space: #050508;         /* lienzo del globo */
-  --color-mars: #c85a32;          /* solo para marcar Marte */
-  --color-data: #d97706;          /* escala de similitud: medio */
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  /* D-017: lo que antes iba en monoespaciada usa la misma letra con cifras tabulares (más suave) */
+  --font-mono: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --color-ink: #16161a;           /* casi negro */
+  --color-body: #615e58;          /* gris cálido sobre papel: 5,6:1 */
+  --color-mute: #a39e95;          /* gris cálido sobre oscuro: 6,9:1 */
+  --color-hairline: #25262d;      /* borde casi invisible sobre oscuro */
+  --color-canvas: #f3f1ec;        /* blanco cálido tipo papel */
+  --color-canvas-soft: #e8e5df;
+  --color-canvas-softer: #eeebe5;
+  --color-pressed: #ddd9d1;
+  --color-elevated: #23242b;
+  --color-rail: #121318;
+  --color-night-soft: #121318;
+  --color-obsidian: #1a1b20;
+  --color-space: #0b0c10;
+  --color-mars: #c4704f;          /* terracota apagado, solo para marcar Marte */
+  --color-data: #d4973f;
   --color-sim-low: #1e293b;
   --color-sim-high: #fef3c7;
-  --shadow-card: 0 4px 16px 0 rgb(0 0 0 / 0.16);
-  --shadow-float: 0 2px 8px 0 rgb(0 0 0 / 0.24);
-  --shadow-limits: 0 6px 20px 0 rgb(0 0 0 / 0.32);
+  --radius-2xl: 1.375rem;         /* 22 px: tarjetas y paneles */
+  --radius-xl: 1rem;
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.06), 0 16px 40px -12px rgb(0 0 0 / 0.45);
+  --shadow-float: 0 1px 2px 0 rgb(0 0 0 / 0.2), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+  --shadow-limits: 0 12px 32px -10px rgb(0 0 0 / 0.5);
+  --default-transition-duration: 250ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 html, body, #root { height: 100%; }
-body { @apply bg-space text-canvas antialiased; }
+body { @apply bg-space text-canvas antialiased; font-feature-settings: "tnum" 1; }
+/* Foco visible y suave para teclado en toda la app */
+:where(button, a, input, select, summary, [tabindex]):focus-visible { outline: 2px solid color-mix(in srgb, var(--color-canvas) 70%, transparent); outline-offset: 2px; border-radius: 9999px; }
+:where(.bg-canvas) :where(button, a, input, select, summary):focus-visible { outline-color: color-mix(in srgb, var(--color-ink) 60%, transparent); }
 
 /* Tipografía del sistema */
-@utility display { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
-@utility label-mono { font-family: var(--font-mono); font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.04em; text-transform: uppercase; }
-@utility micro-cap { font-family: var(--font-mono); font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.04em; text-transform: uppercase; }
-@utility metric { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+@utility display { font-family: var(--font-sans); font-weight: 650; letter-spacing: -0.025em; line-height: 1.15; }
+@utility label-mono { font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 16px; letter-spacing: 0.07em; text-transform: uppercase; }
+@utility micro-cap { font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 16px; letter-spacing: 0.07em; text-transform: uppercase; }
+@utility metric { font-family: var(--font-sans); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 @utility button-cap { font-size: 14px; font-weight: 600; line-height: 20px; }
 /* En la capa de componentes: así las utilidades (h-8, px-4, text-xs…) pueden ajustar cada uso */
 @layer components {
-/* Botones píldora: primario negro (sobre blanco), claro (sobre negro), secundario con borde */
-.btn-primary { @apply button-cap inline-flex h-10 items-center justify-center gap-2 rounded-full bg-ink px-5 text-canvas transition-colors hover:bg-elevated active:bg-pressed active:text-ink disabled:pointer-events-none disabled:opacity-30; }
-.btn-ghost { @apply button-cap inline-flex h-11 items-center justify-center gap-2 rounded-full bg-canvas px-5 text-ink transition-colors hover:bg-pressed disabled:pointer-events-none disabled:opacity-30; }
-.btn-secondary { @apply button-cap inline-flex h-10 items-center justify-center gap-2 rounded-full border border-pressed bg-canvas px-5 text-ink transition-colors hover:bg-canvas-soft; }
-/* Control flotante sobre el lienzo oscuro (Ver planeta, Vista cenital, avisos) */
-.chip-dark { @apply inline-flex items-center gap-2 rounded-full border border-hairline bg-rail px-4 py-2 text-sm font-medium text-canvas shadow-float transition-colors hover:bg-elevated; }
+/* Botones píldora: primario oscuro (sobre papel), claro (sobre oscuro), secundario con borde suave */
+.btn-primary { @apply button-cap inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full bg-ink px-5 text-canvas shadow-[0_6px_16px_-8px_rgb(0_0_0/0.5)] transition-all hover:-translate-y-px hover:bg-elevated active:translate-y-0 disabled:pointer-events-none disabled:opacity-30; }
+.btn-ghost { @apply button-cap inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full bg-canvas px-5 text-ink transition-all hover:-translate-y-px hover:bg-canvas-soft active:translate-y-0 disabled:pointer-events-none disabled:opacity-30; }
+.btn-secondary { @apply button-cap inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-pressed/70 bg-transparent px-5 text-ink transition-colors hover:bg-canvas-soft; }
+/* Control flotante sobre el lienzo oscuro (Ver planeta, Vista cenital, avisos): vidrio suave */
+.chip-dark { @apply inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.07] bg-rail/80 px-4 py-2 text-sm font-medium text-canvas shadow-float backdrop-blur-md transition-colors hover:bg-elevated/90; }
 /* Tarjeta obligatoria "Límites de la analogía" */
-.limits-card { @apply flex flex-col gap-3 rounded-2xl border border-hairline bg-obsidian p-5 text-canvas shadow-limits; }
+.limits-card { @apply flex flex-col gap-3 rounded-2xl border border-white/[0.06] bg-obsidian p-5 text-canvas shadow-limits; }
 }
-input[type="range"] { accent-color: #fff; }
-.bg-canvas input[type="range"], .accent-ink { accent-color: #000; }
+input[type="range"] { accent-color: #f3f1ec; }
+.bg-canvas input[type="range"], .accent-ink { accent-color: #16161a; }
 
 /* Decorative space stays behind WebGL: the globe occludes it naturally. */
-.space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #050508; }
+.space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #0b0c10; }
 .milky-way { position: absolute; inset: -50%; transform: rotate(-32deg); background: radial-gradient(ellipse at 50% 50%, #c0c9f018 0%, #8c79b41a 10%, #4c598318 18%, transparent 33%); filter: blur(16px); }
 .space-stars { position: absolute; inset: 0; }
-.space-stars i { position: absolute; border-radius: 50%; background: #dce8ff; box-shadow: 0 0 4px #a9c9ff70; animation: star-breathe 7s ease-in-out infinite alternate; animation-play-state: var(--space-motion, running); }
+.space-stars i { position: absolute; border-radius: 50%; background: #e9e4da; box-shadow: 0 0 3px #e9e4da40; animation: star-breathe 7s ease-in-out infinite alternate; animation-play-state: var(--space-motion, running); }
 .space-body, .space-saturn { position: absolute; animation: planet-drift 24s ease-in-out infinite alternate; animation-play-state: var(--space-motion, running); }
 .space-body, .saturn-sphere { border-radius: 50%; box-shadow: inset -14px -6px 20px #000c, 0 0 20px #809fff0a; }
 .space-moon { width: 34px; height: 34px; left: 13%; top: 22%; background: radial-gradient(circle at 32% 35%, #73777c 0 8%, transparent 10%), radial-gradient(circle at 58% 65%, #71767d 0 12%, transparent 15%), radial-gradient(circle at 30% 25%, #d2d4d7, #737b86 65%, #242a35); }

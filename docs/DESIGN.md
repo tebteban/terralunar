@@ -232,3 +232,12 @@ Sistema propuesto por el equipo (reemplaza al aeroespacial de D-012). Cómo se a
 - **Lo que NO se toma de las maquetas:** valores inventados (porcentajes, "Hurst", "FID"), el estado
   "TELEMETRY ONLINE", el ícono de usuario (no hay login), entradas de menú que no existen, la insignia
   con el nombre de la agencia y las imágenes generadas. La app muestra solo sus datos.
+
+## Ajuste orgánico (D-017)
+
+Sobre lo anterior se suavizó el sistema: papel `#F3F1EC` en vez de blanco puro y tinta `#16161A` en
+vez de negro, grises cálidos (`#615E58` sobre papel, `#A39E95` sobre oscuro), Marte `#C4704F`, lienzo
+`#0B0C10`, tarjetas de 22 px, sombras difusas en capas, transiciones de 250 ms y foco visible suave.
+Una sola familia, **Plus Jakarta Sans**, con cifras tabulares para números y coordenadas (reemplaza a
+Inter + JetBrains Mono). Los rótulos chicos en mayúsculas usan esa misma letra (600, 11 px, +0,07em).
+

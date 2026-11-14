@@ -72,12 +72,12 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
       <section aria-label="Puntaje por variable" className="flex flex-col gap-1">
         <h3 className="flex items-center justify-between">
           <span className="label-mono text-body">Firma de la zona</span>
-          <span className="label-mono text-mute">{dims.length} variables</span>
+          <span className="label-mono text-body">{dims.length} variables</span>
         </h3>
         <ResponsiveContainer width="100%" height={230}>
           <RadarChart data={dims} outerRadius="55%">
-            <PolarGrid stroke="#e2e2e2" />
-            <PolarAngleAxis dataKey="name" tick={{ fill: '#4c4546', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
+            <PolarGrid stroke="#ddd9d1" />
+            <PolarAngleAxis dataKey="name" tick={{ fill: '#615e58', fontSize: 10.5, fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }} />
             <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
             <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} dot={{ r: 3, fill: '#000' }} isAnimationActive={false} />
           </RadarChart>

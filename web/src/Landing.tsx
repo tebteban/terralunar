@@ -87,7 +87,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
         <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col items-center justify-center gap-14 px-6 pb-12 text-center md:px-8">
           <div className="flex flex-col items-center gap-5">
             <p className="landing-rise label-mono text-mute" style={{ animationDelay: '900ms' }}>Análogos terrestres para la Luna y Marte</p>
-            <h1 className="display title-in text-[56px] leading-none uppercase sm:text-[96px] lg:text-[136px]" aria-label={TITLE}>
+            <h1 className="display title-in text-[52px] leading-none font-semibold tracking-[0.04em] uppercase sm:text-[88px] lg:text-[124px]" aria-label={TITLE}>
               {[...TITLE].map((ch, i) => (
                 <span key={i} className="letter-in" style={{ animationDelay: `${120 + i * 55}ms` }} aria-hidden="true">{ch}</span>
               ))}
