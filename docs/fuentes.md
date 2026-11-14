@@ -1,0 +1,96 @@
+# Fuentes de datos — catálogo verificado
+
+Relevado el **sáb. 14/11/2026** consultando directamente los catálogos (NASA CMR, Microsoft Planetary Computer STAC, PDS Geosciences, USGS). ✅ = existe y el link respondió ese día.
+
+## Recursos oficiales del desafío (pestaña Recursos, leída el 14/11)
+
+Para premios globales hay que usar **al menos uno de los recursos NASA**. Cómo los cubrimos:
+
+| Recurso oficial | Grupo | ¿Lo usamos? | Con qué producto concreto |
+|---|---|---|---|
+| [NASA Earthdata Search](https://search.earthdata.nasa.gov/) | NASA · Tierra | ✅ núcleo | MOD11C3, MOD13C2, MOD10CM, MCD12C1, GPM IMERG, NASADEM (todos se buscan y bajan por Earthdata) |
+| [NASA Worldview](https://worldview.earthdata.nasa.gov/) | NASA · Tierra | ✅ | Botón "Abrir en Worldview" en cada ficha |
+| [NASA PDS](https://pds.nasa.gov/) | NASA · Luna y Marte | ✅ | vía PDS Geosciences (LOLA, Diviner) |
+| [LRO en PDS Geosciences](https://pds-geosciences.wustl.edu/missions/lro/) | NASA · Luna | ✅ perfil Luna | LOLA GDR polares (`ldem_80s_40m`) |
+| [LRO Diviner](https://pds-geosciences.wustl.edu/missions/lro/diviner.htm) | NASA · Luna | ✅ perfil Luna | Polar Resource Products (`dlre_prp_south.tab`) |
+| [RCM — CSA](https://donnees-data.asc-csa.gc.ca/en/dataset/rcm) | Agencia asociada (Canadá) | ⏳ prioridad 3 | radar, opcional |
+| [RADARSAT-1 — CSA](https://donnees-data.asc-csa.gc.ca/en/dataset/radarsat1) | Agencia asociada (Canadá) | ⏳ prioridad 3 | radar, opcional |
+| [Tutorial SAR en Python — CSA](https://github.com/asc-csa/Synthetic_Aperture_Radar_Tutorial) | Agencia asociada (Canadá) | ⏳ | si entra radar |
+| [Copernicus Data Space](https://dataspace.copernicus.eu/) | Agencia asociada (ESA) | ✅ | Copernicus DEM GLO-30 (polos), Sentinel-2 |
+| [ESA Open Science Catalogue](https://opensciencedata.esa.int/) | Agencia asociada (ESA) | — | solo búsqueda |
+| [JAXA G-Portal](https://gportal.jaxa.jp/gpr/index/index) | Agencia asociada (JAXA) | ✅ alternativa | ALOS AW3D30 (lo bajamos por Planetary Computer) |
+
+**Conclusión:** la elegibilidad está cubierta con holgura. Earthdata + PDS/LRO + Worldview son recursos NASA oficiales y forman el núcleo del cálculo (suma en Relevancia). En la entrega, citar el recurso oficial **y** el producto exacto (con DOI).
+
+## Resumen: qué se baja de dónde
+
+| Dimensión | Producto | Resolución | Dónde | ¿Login? | Cómo bajarlo por código |
+|---|---|---|---|---|---|
+| Temperatura (`lst`) | MOD11C3 v061 — LST mensual | 0,05° (~5,5 km) | LP DAAC (cloud) | Sí, Earthdata | `earthaccess` o CMR-STAC `LPCLOUD` |
+| Vegetación (`ndvi`) | MOD13C2 v061 — NDVI mensual | 0,05° | LP DAAC (cloud) | Sí | ídem |
+| Nieve (`nieve`) | MOD10CM v61 — nieve mensual | 0,05° | NSIDC (cloud) | Sí | `earthaccess` |
+| Cobertura (`cobertura`) | MCD12C1 v061 — cobertura anual | 0,05° | LP DAAC (cloud) | Sí | ídem |
+| Lluvia (`lluvia`) | GPM_3IMERGM V07 — lluvia mensual | 0,1° | GES DISC (cloud) | Sí | `earthaccess` |
+| Pendiente / rugosidad | NASADEM_HGT v001 | 1″ (~30 m) | **Planetary Computer** `nasadem` | **No** | `pystac-client` + `planetary-computer` + `odc-stac` |
+| Pendiente lista | NASADEM_SC v001 (pendiente y curvatura ya calculadas) | 1″ | LP DAAC | Sí | `earthaccess` |
+| DEM alternativo 1 | Copernicus DEM GLO-30 | 30 m | Planetary Computer `cop-dem-glo-30` | No | igual que NASADEM |
+| DEM alternativo 2 | ALOS World 3D-30m | 30 m | Planetary Computer `alos-dem` | No | igual que NASADEM |
+
+**Hallazgo clave:** los 4 productos MODIS de 0,05° que propone el CLAUDE.md **no están en Planetary Computer** (ahí solo hay versiones diarias/8 días de 500 m–1 km, mucho más pesadas). Se bajan de Earthdata con login. Lo más simple es la librería oficial de NASA **`earthaccess`** (sugerencia: agregarla a `pipeline/requirements.txt`; maneja el login sola):
+
+```python
+import earthaccess
+earthaccess.login()  # pide usuario/clave de Earthdata la 1ª vez; no guardar credenciales en el repo
+granulos = earthaccess.search_data(short_name="MOD11C3", version="061", temporal=("2023-01-01", "2023-12-31"))
+earthaccess.download(granulos, "pipeline/raw/MOD11C3")  # 12 archivos globales; raw/ va al .gitignore
+```
+
+En cambio NASADEM, Copernicus y ALOS salen de Planetary Computer **sin login** y con el mismo código: eso permite la prueba de sensibilidad a la fuente que pide el Brief (cambiar `nasadem` por `cop-dem-glo-30` y comparar).
+
+## Tierra — fichas y links
+
+- **MOD11C3 v061** ✅ — temperatura de la superficie, promedio mensual, global. Ojo: viene en Kelvin × 0,02 (factor de escala). DOI <https://doi.org/10.5067/MODIS/MOD11C3.061> · [Earthdata Search](https://search.earthdata.nasa.gov/search/granules?p=C2565788897-LPCLOUD)
+- **MOD13C2 v061** ✅ — NDVI ("verdor") mensual. DOI <https://doi.org/10.5067/MODIS/MOD13C2.061> · [Earthdata Search](https://search.earthdata.nasa.gov/search/granules?p=C2565788914-LPCLOUD)
+- **MOD10CM v61** ✅ — % de nieve mensual. [Earthdata Search](https://search.earthdata.nasa.gov/search/granules?p=C3050353608-NSIDC_CPRD)
+- **MCD12C1 v061** ✅ — tipo de cobertura por año (la clase "barren" = suelo desnudo). DOI <https://doi.org/10.5067/MODIS/MCD12C1.061> · [Earthdata Search](https://search.earthdata.nasa.gov/search/granules?p=C2484078896-LPCLOUD)
+- **GPM IMERG Final mensual V07 (GPM_3IMERGM)** ✅ — lluvia mensual 0,1°. [Directorio](https://cmr.earthdata.nasa.gov/virtual-directory/collections/C2723754851-GES_DISC/temporal). En Planetary Computer solo está la versión de media hora (`gpm-imerg-hhr`): no conviene.
+- **NASADEM_HGT v001** ✅ — alturas a ~30 m, cubre de 56° S a 60° N (**no cubre Antártida ni el Ártico alto**: McMurdo, Haughton, Svalbard, Axel Heiberg e Islandia (Holuhraun, 64,9° N) quedan sin pendiente NASADEM; para esos usar Copernicus GLO-30). DOI <https://doi.org/10.5067/MEASURES/NASADEM/NASADEM_HGT.001> · [Planetary Computer](https://planetarycomputer.microsoft.com/dataset/nasadem)
+- **NASADEM_SC v001** ✅ — pendiente ya calculada por NASA a 30 m (ahorra un paso). DOI <https://doi.org/10.5067/MEASURES/NASADEM/NASADEM_SC.001>
+- **Copernicus DEM GLO-30** ✅ (ESA, agencia asociada) — [Planetary Computer](https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-30). Es modelo de *superficie*: incluye vegetación/edificios.
+- **ALOS AW3D30** ✅ (JAXA, agencia asociada) — [Planetary Computer](https://planetarycomputer.microsoft.com/dataset/alos-dem).
+- **Sentinel-2 L2A** ✅ (imágenes de detalle de candidatos) — Planetary Computer `sentinel-2-l2a`. **Sentinel-1 RTC** ✅ (radar, prioridad 3) — `sentinel-1-rtc`.
+- **Worldview** — solo para mirar, no para calcular: <https://worldview.earthdata.nasa.gov/>. Cada ficha de la web tiene un botón que abre Worldview sobre la zona con capas equivalentes a nuestras dimensiones (temperatura 8 días, NDVI mensual, nieve mensual, relieve ASTER; color real visible). El "!" amarillo en Worldview = la capa es más gruesa que el zoom (se ve pixelada), no falta de datos.
+- **SEGEMAR SIGAM** ✅ (geología de candidatos argentinos): <https://sigam.segemar.gov.ar/>
+
+## Análogos conocidos (validación)
+
+- **USGS — Known Terrestrial Analog Sites for Planetary Science** ✅ — capa de **puntos** con campos `Name`, `AnalogType`, `Lat`, `Lon`, `AnalogBody` (sirve filtrar `AnalogBody` = Moon/Mars). DOI <https://doi.org/10.5066/P9J72921>
+  - Ficha: <https://www.sciencebase.gov/catalog/item/5f88940b82cebb8c13d912ee> (Hunter, 2020; dominio público). Archivo: `TerrestrialAnalogs.zip` (shapefile de puntos, ~120 KB). También publicado como servicio ArcGIS y WFS.
+  - ⚠️ Cobertura: latitudes de **−34,7° a 75,7°** → **no incluye la Antártida** (McMurdo no está) ni el sur de Argentina/Chile. Los cráteres vienen de la Earth Impact Database, así que hay muchos cráteres.
+  - 🚩 **Contenido real (revisado):** de los 192 sitios, **190 son cráteres de impacto**, 1 campo de dunas y 1 erupción volcánica. El campo `AnalogBody` está vacío en 191 (solo 1 dice "Mars"); **ninguno marcado como Luna**. No están Atacama, Mauna Kea, Valles Secos, Death Valley, Lanzarote ni Holuhraun; sí Haughton y Barringer. → Sirve para validar un perfil de *cráteres*, **no** para validar movilidad/hábitat en el polo sur lunar. Ver `datos-faltantes.md`.
+  - ⚠️ Son **192 sitios** y las coordenadas del shapefile vienen en **Web Mercator (metros)**, no en grados: `pipeline/01_known_analogs.py` las convierte. El servicio ArcGIS enlazado tiene **solo 4 sitios**: no usarlo.
+  - ⚠️ El propio USGS aclara: *"for identification of research areas, not for analysis"*. Sirve para validar el ranking, no como dato de entrada del puntaje.
+  - Desde scripts, ScienceBase puede frenar con verificación anti-bots: si pasa, bajarlo desde el navegador. Convertir a `data/known_analogs.geojson` y hacer la división `fit`/`test` con semilla fija ANTES de calcular.
+
+## Luna — polo sur (perfil objetivo)
+
+- **LOLA GDR polares** ✅ — alturas del polo sur. Carpeta: <https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/>
+  - Los sitios Artemis III están a menos de ~6° del polo, así que alcanza con **`ldem_80s_40m`** (80–90° S a 40 m/píxel; versión float de 924 MB, en `float_img/`) o **`ldem_85s_20m_float`** (85–90° S a 20 m, 920 MB). Para pruebas rápidas: `ldem_80s_80m_float` (231 MB). Cada `.img` tiene su `.lbl` (la "etiqueta" que GDAL necesita para leerlo: bajar los dos).
+- **Diviner — Polar Resource Products** ✅ — temperaturas del polo (máximas, mínimas, estabilidad del hielo). Archivo `dlre_prp_south.tab` (605 MB) en <https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/>. Hay también productos acumulados (`data_derived_pcp/`).
+- **Coordenadas de las 9 regiones Artemis III:** no hay un archivo oficial con los polígonos; hay que sacarlas del anuncio de NASA (oct. 2024) o de un paper. Pendiente en `datos-faltantes.md`.
+
+## Marte (si entra)
+
+- **HiRISE DTM Jezero** `DTEEC_002387_1985_003798_1985_A01` ✅ — <https://www.uahirise.org/dtm/dtm.php?ID=DTEEC_002387_1985_003798_1985_A01>. Guía para abrirlo: <https://www.uahirise.org/dtm/howto.php>
+- MOLA y SWIM: no relevados todavía.
+
+## Problema de red (para todo el equipo)
+
+Desde la red de la sede, algunos sitios dan error de certificado SSL (`spaceappschallenge.org`, clonar de GitHub). Los servidores de datos de NASA respondieron bien. Si un script de descarga falla por certificado: **no desactivar la verificación**; probar con otra red (datos del celular) o pedirle al organizador el certificado de la red.
+
+## Cómo seguir sin perderse
+
+1. ~~Pegar la lista de Recursos~~ ✅ hecho (tabla de arriba).
+2. Info 2: `earthaccess.login()` con su cuenta Earthdata y bajar **un mes** de MOD11C3 para probar (Fase 0).
+3. Mientras tanto, NASADEM desde Planetary Computer no necesita login: se puede empezar ya con pendiente/rugosidad de 2–3 zonas.
+4. Bajar a mano la capa USGS y hacer la división fit/test.

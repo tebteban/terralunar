@@ -1,0 +1,3269 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     135.45,
+     -32.0167
+    ]
+   },
+   "properties": {
+    "name": "Acraman",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -5.5,
+     31.98333
+    ]
+   },
+   "properties": {
+    "name": "Agoudal",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     134.8333,
+     -20.9167
+    ]
+   },
+   "properties": {
+    "name": "Amelia Creek",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -98.2,
+     36.25
+    ]
+   },
+   "properties": {
+    "name": "Ames",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.38333,
+     26.08333
+    ]
+   },
+   "properties": {
+    "name": "Amguid",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     19.25,
+     19.1
+    ]
+   },
+   "properties": {
+    "name": "Aorounga",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -12.6833,
+     20.25
+    ]
+   },
+   "properties": {
+    "name": "Aouelloul",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.9833,
+     -16.7833
+    ]
+   },
+   "properties": {
+    "name": "Araguainha",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -156.633,
+     71.25
+    ]
+   },
+   "properties": {
+    "name": "Avak",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.33333,
+     25.31667
+    ]
+   },
+   "properties": {
+    "name": "B.P. Structure",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.017,
+     35.03333
+    ]
+   },
+   "properties": {
+    "name": "Barringer (= Meteor)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.16425,
+     35.48927
+    ]
+   },
+   "properties": {
+    "name": "Grand Falls",
+    "analog_type": "Dunes",
+    "body": "Mars",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.79068,
+     34.54488
+    ]
+   },
+   "properties": {
+    "name": "Amboy",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -113.0,
+     44.6
+    ]
+   },
+   "properties": {
+    "name": "Beaverhead",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     121.6667,
+     71.0
+    ]
+   },
+   "properties": {
+    "name": "Beyenchime-Salaaty",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     82.01667,
+     48.56667
+    ]
+   },
+   "properties": {
+    "name": "Bigach",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     32.16667,
+     48.75
+    ]
+   },
+   "properties": {
+    "name": "Boltysh",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -1.41667,
+     6.5
+    ]
+   },
+   "properties": {
+    "name": "Bosumtwi (= Ashanti)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     135.2,
+     -22.6167
+    ]
+   },
+   "properties": {
+    "name": "Boxhole",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -78.4833,
+     46.08333
+    ]
+   },
+   "properties": {
+    "name": "Brent",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -85.95,
+     41.83333
+    ]
+   },
+   "properties": {
+    "name": "Calvin",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -61.7,
+     -27.6333
+    ]
+   },
+   "properties": {
+    "name": "Campo Del Cielo",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -69.05,
+     -16.6667
+    ]
+   },
+   "properties": {
+    "name": "Carancas",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.5,
+     58.45
+    ]
+   },
+   "properties": {
+    "name": "Carswell",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.3,
+     47.53333
+    ]
+   },
+   "properties": {
+    "name": "Charlevoix (=La Malbaie)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -76.0167,
+     37.28333
+    ]
+   },
+   "properties": {
+    "name": "Chesapeake Bay",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.5,
+     21.33333
+    ]
+   },
+   "properties": {
+    "name": "Chicxulub",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     57.85,
+     49.16667
+    ]
+   },
+   "properties": {
+    "name": "Chiyli",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     97.8,
+     75.7
+    ]
+   },
+   "properties": {
+    "name": "Chukcha",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.1167,
+     56.08333
+    ]
+   },
+   "properties": {
+    "name": "Clearwater East",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.5,
+     56.21667
+    ]
+   },
+   "properties": {
+    "name": "Clearwater East",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.75,
+     43.11667
+    ]
+   },
+   "properties": {
+    "name": "Cloud Creek",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -46.7167,
+     -23.8667
+    ]
+   },
+   "properties": {
+    "name": "Colonia",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     124.75,
+     -23.5333
+    ]
+   },
+   "properties": {
+    "name": "Connolly Basin",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -75.3333,
+     60.13333
+    ]
+   },
+   "properties": {
+    "name": "Couture (= Lac Couture)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     139.0333,
+     -34.7167
+    ]
+   },
+   "properties": {
+    "name": "Flaxman",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -91.3833,
+     37.83333
+    ]
+   },
+   "properties": {
+    "name": "Crooked Creek",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     117.2833,
+     -27.6333
+    ]
+   },
+   "properties": {
+    "name": "Dalgaranga",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.7167,
+     37.9
+    ]
+   },
+   "properties": {
+    "name": "Decaturville",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.983,
+     56.4
+    ]
+   },
+   "properties": {
+    "name": "Deep Bay",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.8,
+     61.8
+    ]
+   },
+   "properties": {
+    "name": "Dellen",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.8667,
+     42.05
+    ]
+   },
+   "properties": {
+    "name": "Des Plaines",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     78.13333,
+     25.3
+    ]
+   },
+   "properties": {
+    "name": "Dhala",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     23.25,
+     56.58333
+    ]
+   },
+   "properties": {
+    "name": "Dobele",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.5,
+     49.7
+    ]
+   },
+   "properties": {
+    "name": "Eagle Butte",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     172.0833,
+     67.5
+    ]
+   },
+   "properties": {
+    "name": "El'gygytgyn",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.717,
+     50.98333
+    ]
+   },
+   "properties": {
+    "name": "Elbow",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     139.0667,
+     -34.6167
+    ]
+   },
+   "properties": {
+    "name": "Flaxman",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -85.6667,
+     36.28333
+    ]
+   },
+   "properties": {
+    "name": "Flynn Creek",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     136.7833,
+     -16.6667
+    ]
+   },
+   "properties": {
+    "name": "Foelsche",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     9.0,
+     60.65
+    ]
+   },
+   "properties": {
+    "name": "Gardnos",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.7833,
+     40.6
+    ]
+   },
+   "properties": {
+    "name": "Glasford",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     121.5667,
+     -23.9833
+    ]
+   },
+   "properties": {
+    "name": "Glikson",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.5333,
+     43.96667
+    ]
+   },
+   "properties": {
+    "name": "Glover Bluff",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     126.6667,
+     -18.3333
+    ]
+   },
+   "properties": {
+    "name": "Goat Paddock",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     132.3167,
+     -23.8167
+    ]
+   },
+   "properties": {
+    "name": "Gosses Bluff",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.483,
+     56.45
+    ]
+   },
+   "properties": {
+    "name": "Gow",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     135.0333,
+     -13.4667
+    ]
+   },
+   "properties": {
+    "name": "Goyder",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.93333,
+     58.41667
+    ]
+   },
+   "properties": {
+    "name": "Granby",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     40.53333,
+     48.43333
+    ]
+   },
+   "properties": {
+    "name": "Kamensk",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     21.75,
+     17.41667
+    ]
+   },
+   "properties": {
+    "name": "Gweni-Fada",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.6833,
+     75.36667
+    ]
+   },
+   "properties": {
+    "name": "Haughton",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.1667,
+     37.58333
+    ]
+   },
+   "properties": {
+    "name": "Haviland",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     133.1333,
+     -24.5667
+    ]
+   },
+   "properties": {
+    "name": "Henbury",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -76.6333,
+     44.46667
+    ]
+   },
+   "properties": {
+    "name": "Holleford",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.25,
+     57.36667
+    ]
+   },
+   "properties": {
+    "name": "Hummeln",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -73.8833,
+     50.68333
+    ]
+   },
+   "properties": {
+    "name": "Ile Rouleau",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     27.41667,
+     57.96667
+    ]
+   },
+   "properties": {
+    "name": "Ilumetsa",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     29.1,
+     49.11667
+    ]
+   },
+   "properties": {
+    "name": "Ilyinets",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     27.15,
+     62.18333
+    ]
+   },
+   "properties": {
+    "name": "Iso-Naakkima",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     30.91667,
+     61.96667
+    ]
+   },
+   "properties": {
+    "name": "Janisjarvi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     36.8,
+     31.05
+    ]
+   },
+   "properties": {
+    "name": "Jebel Waqf as Suwwan",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     22.66667,
+     58.4
+    ]
+   },
+   "properties": {
+    "name": "Kaalijarv",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.43333,
+     -32.7167
+    ]
+   },
+   "properties": {
+    "name": "Kalkkop",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     36.2,
+     54.5
+    ]
+   },
+   "properties": {
+    "name": "Kaluga",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     40.5,
+     48.35
+    ]
+   },
+   "properties": {
+    "name": "Kamensk",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     26.08333,
+     22.01667
+    ]
+   },
+   "properties": {
+    "name": "Kamil",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     64.15,
+     69.1
+    ]
+   },
+   "properties": {
+    "name": "Kara",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     73.45,
+     39.01667
+    ]
+   },
+   "properties": {
+    "name": "Kara-Kul",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     22.76667,
+     59.01667
+    ]
+   },
+   "properties": {
+    "name": "Kardla",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     25.25,
+     62.21667
+    ]
+   },
+   "properties": {
+    "name": "Karikkoselka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     48.03333,
+     54.91667
+    ]
+   },
+   "properties": {
+    "name": "Karla",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     133.95,
+     -19.9333
+    ]
+   },
+   "properties": {
+    "name": "Kelly West",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.4,
+     40.75
+    ]
+   },
+   "properties": {
+    "name": "Kentland",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.6,
+     62.13333
+    ]
+   },
+   "properties": {
+    "name": "Keurusselka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     27.58333,
+     -22.4833
+    ]
+   },
+   "properties": {
+    "name": "Kgagodi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     36.0,
+     51.7
+    ]
+   },
+   "properties": {
+    "name": "Kursk",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -66.6167,
+     57.43333
+    ]
+   },
+   "properties": {
+    "name": "La Moinerie",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     23.7,
+     63.2
+    ]
+   },
+   "properties": {
+    "name": "Lappajarvi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     138.65,
+     -18.6667
+    ]
+   },
+   "properties": {
+    "name": "Lawn Hill",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     134.05,
+     -12.4
+    ]
+   },
+   "properties": {
+    "name": "Liverpool",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.81667,
+     63.0
+    ]
+   },
+   "properties": {
+    "name": "Lockne",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     95.93333,
+     65.51667
+    ]
+   },
+   "properties": {
+    "name": "Logancha",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     27.8,
+     54.2
+    ]
+   },
+   "properties": {
+    "name": "Logoisk",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     76.51667,
+     19.96667
+    ]
+   },
+   "properties": {
+    "name": "Lonar",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.0,
+     -10.1667
+    ]
+   },
+   "properties": {
+    "name": "Luizi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     20.1,
+     60.15
+    ]
+   },
+   "properties": {
+    "name": "Lumparn",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     117.5833,
+     60.1
+    ]
+   },
+   "properties": {
+    "name": "Macha",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.55,
+     62.91667
+    ]
+   },
+   "properties": {
+    "name": "Lockne",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.7,
+     51.38333
+    ]
+   },
+   "properties": {
+    "name": "Manicouagan",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -94.55,
+     42.58333
+    ]
+   },
+   "properties": {
+    "name": "Manson",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.1,
+     49.8
+    ]
+   },
+   "properties": {
+    "name": "Maple Creek (= White Valley)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -96.3,
+     31.28333
+    ]
+   },
+   "properties": {
+    "name": "Marquez",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     131.1833,
+     -15.5
+    ]
+   },
+   "properties": {
+    "name": "Matt Wilson",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -83.7333,
+     36.61667
+    ]
+   },
+   "properties": {
+    "name": "Middlesboro",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.86667,
+     56.41667
+    ]
+   },
+   "properties": {
+    "name": "Mien",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.05,
+     58.71667
+    ]
+   },
+   "properties": {
+    "name": "Mishina Gora",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -63.3,
+     55.88333
+    ]
+   },
+   "properties": {
+    "name": "Mistastin",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     23.9,
+     54.01667
+    ]
+   },
+   "properties": {
+    "name": "Mizarai",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     29.66667,
+     73.8
+    ]
+   },
+   "properties": {
+    "name": "Mjolnir",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -64.2167,
+     42.88333
+    ]
+   },
+   "properties": {
+    "name": "Montagnais",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -68.2833,
+     -23.9333
+    ]
+   },
+   "properties": {
+    "name": "Monturaqui",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.9,
+     52.48333
+    ]
+   },
+   "properties": {
+    "name": "Morasko",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     23.53333,
+     -26.4667
+    ]
+   },
+   "properties": {
+    "name": "Morokweng",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     135.3667,
+     -27.95
+    ]
+   },
+   "properties": {
+    "name": "Mount Toondina",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     23.66667,
+     59.33333
+    ]
+   },
+   "properties": {
+    "name": "Neugrund",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -73.6667,
+     61.28333
+    ]
+   },
+   "properties": {
+    "name": "New Quebec (Chubb, Ungava, Pingualuit)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.967,
+     48.96667
+    ]
+   },
+   "properties": {
+    "name": "Newporte",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.683,
+     62.66667
+    ]
+   },
+   "properties": {
+    "name": "Nicholson",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.4,
+     24.58333
+    ]
+   },
+   "properties": {
+    "name": "Oasis",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     32.91667,
+     49.58333
+    ]
+   },
+   "properties": {
+    "name": "Obolon",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.483,
+     31.75
+    ]
+   },
+   "properties": {
+    "name": "Odessa",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -7.55,
+     29.0
+    ]
+   },
+   "properties": {
+    "name": "Ouarkziz",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     29.08333,
+     62.03333
+    ]
+   },
+   "properties": {
+    "name": "Paasselka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     128.4167,
+     -17.5333
+    ]
+   },
+   "properties": {
+    "name": "Piccaninny",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.017,
+     60.28333
+    ]
+   },
+   "properties": {
+    "name": "Pilot",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     111.1833,
+     71.65
+    ]
+   },
+   "properties": {
+    "name": "Popigai",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.8,
+     49.71667
+    ]
+   },
+   "properties": {
+    "name": "Presqu'ile",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     43.71667,
+     56.96667
+    ]
+   },
+   "properties": {
+    "name": "Puchezh-Katunki",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     61.8,
+     58.73333
+    ]
+   },
+   "properties": {
+    "name": "Ragozinka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.55,
+     47.6
+    ]
+   },
+   "properties": {
+    "name": "Red Wing",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -46.65,
+     -7.71667
+    ]
+   },
+   "properties": {
+    "name": "Riachao Ring",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.61667,
+     48.88333
+    ]
+   },
+   "properties": {
+    "name": "Ries",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -64.2333,
+     -32.8667
+    ]
+   },
+   "properties": {
+    "name": "Rio Cuarto",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     6.43333,
+     59.23333
+    ]
+   },
+   "properties": {
+    "name": "Ritland",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -16.49586,
+     64.92814
+    ]
+   },
+   "properties": {
+    "name": "Ritland",
+    "analog_type": "Volcanic Eruption",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     0.93333,
+     45.83333
+    ]
+   },
+   "properties": {
+    "name": "Rochechouart",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.2333,
+     44.71667
+    ]
+   },
+   "properties": {
+    "name": "Rock Elm",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.3,
+     -27.7667
+    ]
+   },
+   "properties": {
+    "name": "Roter Kamm",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     32.0,
+     49.0
+    ]
+   },
+   "properties": {
+    "name": "Boltysh",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     22.4,
+     61.4
+    ]
+   },
+   "properties": {
+    "name": "Saaksjarvi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.38333,
+     65.28333
+    ]
+   },
+   "properties": {
+    "name": "Saarijarvi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -98.5333,
+     51.78333
+    ]
+   },
+   "properties": {
+    "name": "Saint Martin",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.933,
+     35.75
+    ]
+   },
+   "properties": {
+    "name": "Santa Fe",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -45.25,
+     -10.1667
+    ]
+   },
+   "properties": {
+    "name": "Santa Marta",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     38.7,
+     29.58333
+    ]
+   },
+   "properties": {
+    "name": "Saqqar",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -83.4,
+     39.03333
+    ]
+   },
+   "properties": {
+    "name": "Serpent Mound",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -46.8667,
+     -8.08333
+    ]
+   },
+   "properties": {
+    "name": "Serra da Cangalha",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     120.8833,
+     -25.8667
+    ]
+   },
+   "properties": {
+    "name": "Shoemaker (formerly Teague)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     72.7,
+     47.2
+    ]
+   },
+   "properties": {
+    "name": "Shunak",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.917,
+     30.6
+    ]
+   },
+   "properties": {
+    "name": "Sierra Madera",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     134.6667,
+     46.11667
+    ]
+   },
+   "properties": {
+    "name": "Sikhote Alin",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     14.86667,
+     61.03333
+    ]
+   },
+   "properties": {
+    "name": "Siljan",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.0,
+     48.66667
+    ]
+   },
+   "properties": {
+    "name": "Slate Islands",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.8667,
+     46.3
+    ]
+   },
+   "properties": {
+    "name": "Sobolev",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     21.58333,
+     63.03333
+    ]
+   },
+   "properties": {
+    "name": "Soderfjarden",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     126.0833,
+     -16.7333
+    ]
+   },
+   "properties": {
+    "name": "Spider",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -117.633,
+     59.5
+    ]
+   },
+   "properties": {
+    "name": "Steen River",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.06667,
+     48.68333
+    ]
+   },
+   "properties": {
+    "name": "Steinheim",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     133.5833,
+     -15.2
+    ]
+   },
+   "properties": {
+    "name": "Strangways",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.38333,
+     63.11667
+    ]
+   },
+   "properties": {
+    "name": "Suavjarvi",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.1833,
+     46.6
+    ]
+   },
+   "properties": {
+    "name": "Sudbury",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.16667,
+     62.7
+    ]
+   },
+   "properties": {
+    "name": "Suvasvesi N",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.21667,
+     62.6
+    ]
+   },
+   "properties": {
+    "name": "Suvasvesi S",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     109.65,
+     44.11667
+    ]
+   },
+   "properties": {
+    "name": "Tabun-Khara-Obo",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     4.03333,
+     33.31667
+    ]
+   },
+   "properties": {
+    "name": "Talemzane (= Maadna)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -10.4,
+     22.91667
+    ]
+   },
+   "properties": {
+    "name": "Tenoumer",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     33.51667,
+     48.13333
+    ]
+   },
+   "properties": {
+    "name": "Ternovka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     5.11667,
+     27.6
+    ]
+   },
+   "properties": {
+    "name": "Tin Bider",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     142.8333,
+     -27.1167
+    ]
+   },
+   "properties": {
+    "name": "Tookoonooka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     28.08333,
+     -25.4
+    ]
+   },
+   "properties": {
+    "name": "Tswaing (formerly Pretoria Saltpan)",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     17.41667,
+     58.76667
+    ]
+   },
+   "properties": {
+    "name": "Tvaren",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.9,
+     38.43333
+    ]
+   },
+   "properties": {
+    "name": "Upheaval Dome",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.1167,
+     -26.8333
+    ]
+   },
+   "properties": {
+    "name": "Vargeao Dome",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     125.3667,
+     -22.9667
+    ]
+   },
+   "properties": {
+    "name": "Veevers",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     24.58333,
+     55.08333
+    ]
+   },
+   "properties": {
+    "name": "Vepriai",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.067,
+     49.58333
+    ]
+   },
+   "properties": {
+    "name": "Viewfield",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.6833,
+     -25.95
+    ]
+   },
+   "properties": {
+    "name": "Vista Alegre",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     27.5,
+     -27.0
+    ]
+   },
+   "properties": {
+    "name": "Vredefort",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     50.46667,
+     21.5
+    ]
+   },
+   "properties": {
+    "name": "Wabar",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.75,
+     46.75
+    ]
+   },
+   "properties": {
+    "name": "Wanapitei",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.6667,
+     36.38333
+    ]
+   },
+   "properties": {
+    "name": "Wells Creek",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.1833,
+     49.76667
+    ]
+   },
+   "properties": {
+    "name": "West Hawk",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -86.1667,
+     32.51667
+    ]
+   },
+   "properties": {
+    "name": "Wetumpka",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -115.6,
+     54.0
+    ]
+   },
+   "properties": {
+    "name": "Whitecourt",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     127.8,
+     -19.1667
+    ]
+   },
+   "properties": {
+    "name": "Wolfe Creek",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     114.65,
+     -26.05
+    ]
+   },
+   "properties": {
+    "name": "Woodleigh",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     123.45,
+     40.35
+    ]
+   },
+   "properties": {
+    "name": "Xiuyan",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     118.8333,
+     -27.1667
+    ]
+   },
+   "properties": {
+    "name": "Yarrabubba",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     29.0,
+     49.73333
+    ]
+   },
+   "properties": {
+    "name": "Zapadnaya",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     32.75,
+     48.06667
+    ]
+   },
+   "properties": {
+    "name": "Zeleny Gai",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "test",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     60.96667,
+     48.4
+    ]
+   },
+   "properties": {
+    "name": "Zhamanshin",
+    "analog_type": "Impact Crater",
+    "body": "",
+    "split": "fit",
+    "source": "USGS Known Terrestrial Analog Sites (doi:10.5066/P9J72921)"
+   }
+  }
+ ]
+}

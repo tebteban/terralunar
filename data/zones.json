@@ -1,0 +1,1122 @@
+[
+ {
+  "id": "mcmurdo-dry-valleys",
+  "name": "Valles Secos de McMurdo",
+  "country": "Antártida",
+  "centroid": [
+   161.8,
+   -77.5
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      160.3581,
+      -77.8121
+     ],
+     [
+      163.2419,
+      -77.8121
+     ],
+     [
+      163.2419,
+      -77.1879
+     ],
+     [
+      160.3581,
+      -77.1879
+     ],
+     [
+      160.3581,
+      -77.8121
+     ]
+    ]
+   ]
+  },
+  "area_km2": 4800,
+  "scores": {
+   "lst": 1.0,
+   "ndvi": 1.0,
+   "nieve": 0.45,
+   "lluvia": 1.0,
+   "cobertura": 0.95,
+   "pendiente": 0.6,
+   "rugosidad": 0.7
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "haughton-crater",
+  "name": "Cráter Haughton (Isla Devon)",
+  "country": "Canadá",
+  "centroid": [
+   -89.67,
+   75.38
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -90.1071,
+      75.2697
+     ],
+     [
+      -89.2329,
+      75.2697
+     ],
+     [
+      -89.2329,
+      75.4903
+     ],
+     [
+      -90.1071,
+      75.4903
+     ],
+     [
+      -90.1071,
+      75.2697
+     ]
+    ]
+   ]
+  },
+  "area_km2": 600,
+  "scores": {
+   "lst": 0.85,
+   "ndvi": 0.9,
+   "nieve": 0.35,
+   "lluvia": 0.95,
+   "cobertura": 0.85,
+   "pendiente": 0.75,
+   "rugosidad": 0.8
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "atacama-yungay",
+  "name": "Desierto de Atacama (Yungay)",
+  "country": "Chile",
+  "centroid": [
+   -70.0,
+   -24.1
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -70.2703,
+      -24.3467
+     ],
+     [
+      -69.7297,
+      -24.3467
+     ],
+     [
+      -69.7297,
+      -23.8533
+     ],
+     [
+      -70.2703,
+      -23.8533
+     ],
+     [
+      -70.2703,
+      -24.3467
+     ]
+    ]
+   ]
+  },
+  "area_km2": 3000,
+  "scores": {
+   "lst": 0.15,
+   "ndvi": 1.0,
+   "nieve": 0.0,
+   "lluvia": 1.0,
+   "cobertura": 1.0,
+   "pendiente": 0.8,
+   "rugosidad": 0.6
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "mauna-kea",
+  "name": "Mauna Kea",
+  "country": "EE.UU. (Hawái)",
+  "centroid": [
+   -155.47,
+   19.82
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -155.5529,
+      19.742
+     ],
+     [
+      -155.3871,
+      19.742
+     ],
+     [
+      -155.3871,
+      19.898
+     ],
+     [
+      -155.5529,
+      19.898
+     ],
+     [
+      -155.5529,
+      19.742
+     ]
+    ]
+   ]
+  },
+  "area_km2": 300,
+  "scores": {
+   "lst": 0.35,
+   "ndvi": 0.8,
+   "nieve": 0.1,
+   "lluvia": 0.4,
+   "cobertura": 0.7,
+   "pendiente": 0.55,
+   "rugosidad": 0.75
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "barringer-crater",
+  "name": "Cráter Barringer",
+  "country": "EE.UU.",
+  "centroid": [
+   -111.02,
+   35.03
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -111.0589,
+      34.9981
+     ],
+     [
+      -110.9811,
+      34.9981
+     ],
+     [
+      -110.9811,
+      35.0619
+     ],
+     [
+      -111.0589,
+      35.0619
+     ],
+     [
+      -111.0589,
+      34.9981
+     ]
+    ]
+   ]
+  },
+  "area_km2": 50,
+  "scores": {
+   "lst": 0.25,
+   "ndvi": 0.85,
+   "nieve": 0.0,
+   "lluvia": 0.85,
+   "cobertura": 0.8,
+   "pendiente": 0.65,
+   "rugosidad": 0.7
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "black-point-lava",
+  "name": "Colada Black Point",
+  "country": "EE.UU.",
+  "centroid": [
+   -111.4,
+   35.68
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -111.4607,
+      35.6307
+     ],
+     [
+      -111.3393,
+      35.6307
+     ],
+     [
+      -111.3393,
+      35.7293
+     ],
+     [
+      -111.4607,
+      35.7293
+     ],
+     [
+      -111.4607,
+      35.6307
+     ]
+    ]
+   ]
+  },
+  "area_km2": 120,
+  "scores": {
+   "lst": 0.25,
+   "ndvi": 0.85,
+   "nieve": 0.0,
+   "lluvia": 0.85,
+   "cobertura": 0.85,
+   "pendiente": 0.7,
+   "rugosidad": 0.9
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "svalbard-bockfjorden",
+  "name": "Bockfjorden (Svalbard)",
+  "country": "Noruega",
+  "centroid": [
+   13.9,
+   79.4
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      13.4103,
+      79.3099
+     ],
+     [
+      14.3897,
+      79.3099
+     ],
+     [
+      14.3897,
+      79.4901
+     ],
+     [
+      13.4103,
+      79.4901
+     ],
+     [
+      13.4103,
+      79.3099
+     ]
+    ]
+   ]
+  },
+  "area_km2": 400,
+  "scores": {
+   "lst": 0.8,
+   "ndvi": 0.75,
+   "nieve": 0.6,
+   "lluvia": 0.6,
+   "cobertura": 0.7,
+   "pendiente": 0.45,
+   "rugosidad": 0.65
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "holuhraun",
+  "name": "Holuhraun / Askja",
+  "country": "Islandia",
+  "centroid": [
+   -16.8,
+   64.85
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -17.118,
+      64.7149
+     ],
+     [
+      -16.482,
+      64.7149
+     ],
+     [
+      -16.482,
+      64.9851
+     ],
+     [
+      -17.118,
+      64.9851
+     ],
+     [
+      -17.118,
+      64.7149
+     ]
+    ]
+   ]
+  },
+  "area_km2": 900,
+  "scores": {
+   "lst": 0.6,
+   "ndvi": 0.9,
+   "nieve": 0.4,
+   "lluvia": 0.35,
+   "cobertura": 0.9,
+   "pendiente": 0.8,
+   "rugosidad": 0.9
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "rio-tinto",
+  "name": "Río Tinto",
+  "country": "España",
+  "centroid": [
+   -6.6,
+   37.7
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -6.6805,
+      37.6363
+     ],
+     [
+      -6.5195,
+      37.6363
+     ],
+     [
+      -6.5195,
+      37.7637
+     ],
+     [
+      -6.6805,
+      37.7637
+     ],
+     [
+      -6.6805,
+      37.6363
+     ]
+    ]
+   ]
+  },
+  "area_km2": 200,
+  "scores": {
+   "lst": 0.2,
+   "ndvi": 0.45,
+   "nieve": 0.0,
+   "lluvia": 0.55,
+   "cobertura": 0.4,
+   "pendiente": 0.5,
+   "rugosidad": 0.55
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "death-valley",
+  "name": "Valle de la Muerte",
+  "country": "EE.UU.",
+  "centroid": [
+   -116.9,
+   36.5
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -117.1802,
+      36.2748
+     ],
+     [
+      -116.6198,
+      36.2748
+     ],
+     [
+      -116.6198,
+      36.7252
+     ],
+     [
+      -117.1802,
+      36.7252
+     ],
+     [
+      -117.1802,
+      36.2748
+     ]
+    ]
+   ]
+  },
+  "area_km2": 2500,
+  "scores": {
+   "lst": 0.0,
+   "ndvi": 0.95,
+   "nieve": 0.0,
+   "lluvia": 1.0,
+   "cobertura": 0.95,
+   "pendiente": 0.75,
+   "rugosidad": 0.6
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "craters-of-the-moon",
+  "name": "Craters of the Moon",
+  "country": "EE.UU.",
+  "centroid": [
+   -113.5,
+   43.4
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -113.748,
+      43.2198
+     ],
+     [
+      -113.252,
+      43.2198
+     ],
+     [
+      -113.252,
+      43.5802
+     ],
+     [
+      -113.748,
+      43.5802
+     ],
+     [
+      -113.748,
+      43.2198
+     ]
+    ]
+   ]
+  },
+  "area_km2": 1600,
+  "scores": {
+   "lst": 0.4,
+   "ndvi": 0.7,
+   "nieve": 0.3,
+   "lluvia": 0.75,
+   "cobertura": 0.75,
+   "pendiente": 0.8,
+   "rugosidad": 0.85
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "lanzarote-timanfaya",
+  "name": "Timanfaya (Lanzarote)",
+  "country": "España",
+  "centroid": [
+   -13.78,
+   29.0
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -13.8164,
+      28.9681
+     ],
+     [
+      -13.7436,
+      28.9681
+     ],
+     [
+      -13.7436,
+      29.0319
+     ],
+     [
+      -13.8164,
+      29.0319
+     ],
+     [
+      -13.8164,
+      28.9681
+     ]
+    ]
+   ]
+  },
+  "area_km2": 50,
+  "scores": {
+   "lst": 0.15,
+   "ndvi": 0.9,
+   "nieve": 0.0,
+   "lluvia": 0.95,
+   "cobertura": 0.9,
+   "pendiente": 0.7,
+   "rugosidad": 0.85
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "pilbara",
+  "name": "Pilbara",
+  "country": "Australia",
+  "centroid": [
+   118.0,
+   -21.2
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      117.6584,
+      -21.5185
+     ],
+     [
+      118.3416,
+      -21.5185
+     ],
+     [
+      118.3416,
+      -20.8815
+     ],
+     [
+      117.6584,
+      -20.8815
+     ],
+     [
+      117.6584,
+      -21.5185
+     ]
+    ]
+   ]
+  },
+  "area_km2": 5000,
+  "scores": {
+   "lst": 0.0,
+   "ndvi": 0.75,
+   "nieve": 0.0,
+   "lluvia": 0.8,
+   "cobertura": 0.7,
+   "pendiente": 0.85,
+   "rugosidad": 0.5
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "axel-heiberg",
+  "name": "Isla Axel Heiberg",
+  "country": "Canadá",
+  "centroid": [
+   -91.0,
+   79.4
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -91.8483,
+      79.244
+     ],
+     [
+      -90.1517,
+      79.244
+     ],
+     [
+      -90.1517,
+      79.556
+     ],
+     [
+      -91.8483,
+      79.556
+     ],
+     [
+      -91.8483,
+      79.244
+     ]
+    ]
+   ]
+  },
+  "area_km2": 1200,
+  "scores": {
+   "lst": 0.9,
+   "ndvi": 0.85,
+   "nieve": 0.75,
+   "lluvia": 0.9,
+   "cobertura": 0.8,
+   "pendiente": 0.4,
+   "rugosidad": 0.6
+  },
+  "known": true,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "campo-piedra-pomez",
+  "name": "Campo de Piedra Pómez (Puna)",
+  "country": "Argentina",
+  "centroid": [
+   -67.4,
+   -26.6
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -67.538,
+      -26.7234
+     ],
+     [
+      -67.262,
+      -26.7234
+     ],
+     [
+      -67.262,
+      -26.4766
+     ],
+     [
+      -67.538,
+      -26.4766
+     ],
+     [
+      -67.538,
+      -26.7234
+     ]
+    ]
+   ]
+  },
+  "area_km2": 750,
+  "scores": {
+   "lst": 0.35,
+   "ndvi": 1.0,
+   "nieve": 0.05,
+   "lluvia": 1.0,
+   "cobertura": 1.0,
+   "pendiente": 0.75,
+   "rugosidad": 0.8
+  },
+  "known": false,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "payunia",
+  "name": "La Payunia",
+  "country": "Argentina",
+  "centroid": [
+   -69.3,
+   -36.4
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -69.6754,
+      -36.7022
+     ],
+     [
+      -68.9246,
+      -36.7022
+     ],
+     [
+      -68.9246,
+      -36.0978
+     ],
+     [
+      -69.6754,
+      -36.0978
+     ],
+     [
+      -69.6754,
+      -36.7022
+     ]
+    ]
+   ]
+  },
+  "area_km2": 4500,
+  "scores": {
+   "lst": 0.3,
+   "ndvi": 0.7,
+   "nieve": 0.1,
+   "lluvia": 0.8,
+   "cobertura": 0.75,
+   "pendiente": 0.85,
+   "rugosidad": 0.75
+  },
+  "known": false,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "ischigualasto",
+  "name": "Ischigualasto (Valle de la Luna)",
+  "country": "Argentina",
+  "centroid": [
+   -67.95,
+   -30.15
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      -68.0776,
+      -30.2603
+     ],
+     [
+      -67.8224,
+      -30.2603
+     ],
+     [
+      -67.8224,
+      -30.0397
+     ],
+     [
+      -68.0776,
+      -30.0397
+     ],
+     [
+      -68.0776,
+      -30.2603
+     ]
+    ]
+   ]
+  },
+  "area_km2": 600,
+  "scores": {
+   "lst": 0.1,
+   "ndvi": 0.9,
+   "nieve": 0.0,
+   "lluvia": 0.95,
+   "cobertura": 0.9,
+   "pendiente": 0.65,
+   "rugosidad": 0.7
+  },
+  "known": false,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "qaidam",
+  "name": "Cuenca de Qaidam",
+  "country": "China",
+  "centroid": [
+   93.0,
+   37.8
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      92.4901,
+      37.3971
+     ],
+     [
+      93.5099,
+      37.3971
+     ],
+     [
+      93.5099,
+      38.2029
+     ],
+     [
+      92.4901,
+      38.2029
+     ],
+     [
+      92.4901,
+      37.3971
+     ]
+    ]
+   ]
+  },
+  "area_km2": 8000,
+  "scores": {
+   "lst": 0.45,
+   "ndvi": 0.95,
+   "nieve": 0.05,
+   "lluvia": 0.95,
+   "cobertura": 0.95,
+   "pendiente": 0.9,
+   "rugosidad": 0.4
+  },
+  "known": false,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "wadi-rum",
+  "name": "Wadi Rum",
+  "country": "Jordania",
+  "centroid": [
+   35.42,
+   29.57
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      35.281,
+      29.4491
+     ],
+     [
+      35.559,
+      29.4491
+     ],
+     [
+      35.559,
+      29.6909
+     ],
+     [
+      35.281,
+      29.6909
+     ],
+     [
+      35.281,
+      29.4491
+     ]
+    ]
+   ]
+  },
+  "area_km2": 720,
+  "scores": {
+   "lst": 0.0,
+   "ndvi": 0.95,
+   "nieve": 0.0,
+   "lluvia": 1.0,
+   "cobertura": 0.95,
+   "pendiente": 0.5,
+   "rugosidad": 0.65
+  },
+  "known": false,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ },
+ {
+  "id": "gobi-flaming-cliffs",
+  "name": "Gobi (Bayanzag)",
+  "country": "Mongolia",
+  "centroid": [
+   103.7,
+   44.2
+  ],
+  "polygon": {
+   "type": "Polygon",
+   "coordinates": [
+    [
+     [
+      103.419,
+      43.9986
+     ],
+     [
+      103.981,
+      43.9986
+     ],
+     [
+      103.981,
+      44.4014
+     ],
+     [
+      103.419,
+      44.4014
+     ],
+     [
+      103.419,
+      43.9986
+     ]
+    ]
+   ]
+  },
+  "area_km2": 2000,
+  "scores": {
+   "lst": 0.35,
+   "ndvi": 0.8,
+   "nieve": 0.15,
+   "lluvia": 0.85,
+   "cobertura": 0.8,
+   "pendiente": 0.85,
+   "rugosidad": 0.55
+  },
+  "known": false,
+  "sources": [
+   "MODIS MOD11C3",
+   "MODIS MOD13C2",
+   "MODIS MOD10CM",
+   "GPM IMERG",
+   "MODIS MCD12C1",
+   "NASADEM"
+  ],
+  "notes": "MOCK: puntajes inventados para desarrollo, no medidos."
+ }
+]

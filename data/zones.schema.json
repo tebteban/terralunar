@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zones.schema.json",
+  "title": "TerraLunar — zonas candidatas (data/zones.json)",
+  "description": "Contrato congelado el sáb. 14/11/2026 13:00. Desde ahí solo se AGREGAN campos opcionales; nunca se renombran ni se borran.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "required": ["id", "name", "country", "centroid", "polygon", "area_km2", "scores", "known", "sources", "notes"],
+    "additionalProperties": true,
+    "properties": {
+      "id": {
+        "description": "Identificador estable en kebab-case. No cambia entre corridas si la zona es la misma.",
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      },
+      "name": { "description": "Nombre legible en español.", "type": "string", "minLength": 1 },
+      "country": { "description": "País o territorio, en español.", "type": "string", "minLength": 1 },
+      "centroid": {
+        "description": "[longitud, latitud] en grados WGS84 (EPSG:4326). Ojo: primero lon, después lat.",
+        "type": "array",
+        "prefixItems": [
+          { "type": "number", "minimum": -180, "maximum": 180 },
+          { "type": "number", "minimum": -90, "maximum": 90 }
+        ],
+        "items": false,
+        "minItems": 2
+      },
+      "polygon": {
+        "description": "Geometría GeoJSON tipo Polygon en WGS84 (lon, lat). Primer anillo = borde exterior, cerrado (primer punto = último).",
+        "type": "object",
+        "required": ["type", "coordinates"],
+        "properties": {
+          "type": { "const": "Polygon" },
+          "coordinates": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "array",
+              "minItems": 4,
+              "items": {
+                "type": "array",
+                "prefixItems": [
+                  { "type": "number", "minimum": -180, "maximum": 180 },
+                  { "type": "number", "minimum": -90, "maximum": 90 }
+                ],
+                "minItems": 2
+              }
+            }
+          }
+        }
+      },
+      "area_km2": { "description": "Área del polígono en km².", "type": "number", "exclusiveMinimum": 0 },
+      "scores": {
+        "description": "Puntaje difuso 0..1 por dimensión; las claves son las de profiles.json (lst, ndvi, ...). Si una dimensión NO se midió, se OMITE la clave (no se pone 0): la web marca la zona como incompleta.",
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "known": { "description": "true si es un análogo conocido (lista USGS u otra fuente citada); false si es un candidato nuevo.", "type": "boolean" },
+      "sources": {
+        "description": "Datasets usados para esta zona (ej. \"MODIS MOD11C3\", \"NASADEM\").",
+        "type": "array",
+        "minItems": 1,
+        "items": { "type": "string", "minLength": 1 }
+      },
+      "notes": { "description": "Texto libre: advertencias, calidad del dato, qué falta comprobar. Puede ser \"\".", "type": "string" }
+    }
+  }
+}

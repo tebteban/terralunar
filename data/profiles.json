@@ -1,0 +1,16 @@
+{
+  "luna": {
+    "name": "Luna — polo sur (candidatos Artemis III)",
+    "sites": ["Peak near Cabeus B", "Haworth", "Malapert Massif", "Mons Mouton", "Nobile Rim 1", "Nobile Rim 2", "de Gerlache Rim 2", "Slater Plain"],
+    "notes": "Umbrales difusos PROVISORIOS, a validar con el equipo de ciencia del análogo. Ver docs/datos-faltantes.md.",
+    "dimensions": {
+      "lst":       { "name": "Temperatura superficial", "unit": "°C", "dataset": "MODIS MOD11C3", "fuzzy": { "type": "trapezoid", "a": -80, "b": -70, "c": -25, "d": 5 },  "weights": { "movilidad": 0.05, "excavacion": 0.25, "habitat": 0.20 } },
+      "ndvi":      { "name": "Ausencia de vegetación", "unit": "NDVI", "dataset": "MODIS MOD13C2", "fuzzy": { "type": "trapezoid", "a": -1, "b": -1, "c": 0.08, "d": 0.2 }, "weights": { "movilidad": 0.10, "excavacion": 0.10, "habitat": 0.10 } },
+      "nieve":     { "name": "Hielo / nieve permanente", "unit": "% cobertura", "dataset": "MODIS MOD10CM", "fuzzy": { "type": "trapezoid", "a": 20, "b": 60, "c": 100, "d": 100 }, "weights": { "movilidad": 0.05, "excavacion": 0.30, "habitat": 0.05 } },
+      "lluvia":    { "name": "Aridez (poca lluvia)", "unit": "mm/año", "dataset": "GPM IMERG", "fuzzy": { "type": "trapezoid", "a": 0, "b": 0, "c": 100, "d": 400 }, "weights": { "movilidad": 0.05, "excavacion": 0.05, "habitat": 0.15 } },
+      "cobertura": { "name": "Suelo desnudo", "unit": "% clase 'barren'", "dataset": "MODIS MCD12C1", "fuzzy": { "type": "trapezoid", "a": 40, "b": 80, "c": 100, "d": 100 }, "weights": { "movilidad": 0.15, "excavacion": 0.15, "habitat": 0.10 } },
+      "pendiente": { "name": "Pendiente", "unit": "°", "dataset": "NASADEM", "fuzzy": { "type": "trapezoid", "a": 0, "b": 2, "c": 12, "d": 25 }, "weights": { "movilidad": 0.30, "excavacion": 0.05, "habitat": 0.25 } },
+      "rugosidad": { "name": "Rugosidad del terreno", "unit": "m (desvío de altura)", "dataset": "NASADEM", "fuzzy": { "type": "trapezoid", "a": 0, "b": 1, "c": 8, "d": 20 }, "weights": { "movilidad": 0.30, "excavacion": 0.10, "habitat": 0.15 } }
+    }
+  }
+}
