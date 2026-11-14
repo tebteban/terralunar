@@ -9,6 +9,17 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-018 — Portada: opciones sin cajas, con entrada deslizada y resalte al pasar el cursor
+- **Fecha:** 2026-11-14 · **Estado:** vigente (pedido de Esteban: más sofisticado, sacar los bloques).
+- **Cómo:** las tres opciones (Luna, Marte, Personalizado) dejaron de ser tarjetas. Son columnas
+  separadas por líneas finas que se dibujan de arriba hacia abajo; cada opción entra deslizándose y
+  enfocándose (escalonadas, después del título). Al pasar el cursor o con foco de teclado: la opción
+  sube 6 px, el planeta crece y gira con un halo suave, se dibuja una línea bajo el nombre, aparece
+  "Explorar →" y las otras dos se atenúan. En celular son una lista con flecha. Estilos `.option-*` en
+  `web/src/index.css`; con "reducir movimiento" no hay animaciones.
+- **De paso:** la Luna de fondo bajó y su borde superior se desvanece (máscara) para no quedar detrás del
+  texto; se quitó la línea "También con las teclas 1 · 2 · 3" (los atajos siguen funcionando).
+
 ## D-017 — Ajuste orgánico y suave del sistema Science Console
 - **Fecha:** 2026-11-14 · **Estado:** vigente (pedido de Esteban: "más orgánico, minimalista y suave").
 - **Cómo se eligió:** skill de diseño `ui-ux-pro-max`. Su recomendación general (estilo suizo con paleta

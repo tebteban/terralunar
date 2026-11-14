@@ -75,7 +75,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
       <SpaceBackdrop bodies={false} />
 
       {/* La Luna asoma desde abajo, tenue, como horizonte: acompaña sin competir con el contenido */}
-      <div className="hero-moon pointer-events-none absolute left-1/2 top-[52%] aspect-square w-[max(150vw,900px)] -translate-x-1/2 md:top-[46%] md:w-[min(115vw,1300px)]" aria-hidden="true">
+      <div className="hero-moon pointer-events-none absolute left-1/2 top-[72%] aspect-square w-[max(160vw,900px)] -translate-x-1/2 md:top-[68%] md:w-[min(120vw,1400px)]" aria-hidden="true">
         <HalftoneMoon className="h-full w-full" annotate={false} />
       </div>
 
@@ -99,30 +99,36 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
 
           <section className="flex w-full flex-col items-center gap-5" aria-labelledby="pick-title">
             <h2 id="pick-title" className="landing-rise text-lg font-semibold text-canvas" style={{ animationDelay: '1150ms' }}>¿Qué querés explorar?</h2>
-            <ul className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+            {/* Opciones sin cajas: entran deslizándose de a una; al pasar el cursor, la elegida se eleva
+                y las demás se atenúan (estilos .option-* en index.css) */}
+            <ul className="option-row grid w-full max-w-[1040px] grid-cols-1 sm:grid-cols-3">
               {OPTIONS.map((o, i) => (
-                <li key={o.id} className="landing-rise" style={{ animationDelay: `${1250 + i * 110}ms` }}>
-                  <button type="button" onClick={() => onPick(o.id)}
-                    className="group relative flex h-full w-full flex-row items-center gap-4 rounded-2xl border border-hairline bg-rail p-4 text-left shadow-float transition-colors hover:border-mute hover:bg-elevated focus-visible:border-canvas focus-visible:outline-none sm:flex-col sm:items-start sm:gap-5 sm:p-6">
-                    <span className="flex shrink-0 items-start justify-between sm:w-full">
+                <li key={o.id} className="option-slide relative" style={{ animationDelay: `${1300 + i * 160}ms` }}>
+                  {i > 0 && <span className="option-divider absolute top-6 bottom-6 left-0 hidden w-px bg-white/10 sm:block" style={{ animationDelay: `${1500 + i * 160}ms` }} aria-hidden="true" />}
+                  {i > 0 && <span className="absolute inset-x-6 top-0 h-px bg-white/10 sm:hidden" aria-hidden="true" />}
+                  <button type="button" onClick={() => onPick(o.id)} aria-describedby={`opt-${o.id}`}
+                    className="option group relative flex w-full cursor-pointer items-center gap-5 px-6 py-6 text-left sm:flex-col sm:gap-4 sm:px-8 sm:py-8 sm:text-center">
+                    <span className="option-icon relative grid shrink-0 place-items-center">
+                      <span className="option-halo absolute -inset-3 rounded-full" aria-hidden="true" />
                       {o.id === 'personalizado'
                         ? <SlidersIcon />
                         : <span className={`pick-icon ${o.id === 'luna' ? 'pick-moon' : 'pick-mars'}`} aria-hidden="true" />}
-                      <span className="micro-cap hidden text-mute sm:inline">{o.tag}</span>
                     </span>
-                    <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-                      <span className="text-2xl leading-8 font-bold tracking-tight">{o.title}</span>
-                      <span className="text-sm leading-[1.5] text-mute">{o.text}</span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1.5 sm:items-center">
+                      <span className="micro-cap text-mute">{o.tag}</span>
+                      <span className="relative text-[26px] leading-9 font-semibold tracking-tight sm:text-[30px]">
+                        {o.title}
+                        <span className="option-line absolute -bottom-1 left-0 h-px w-full origin-left bg-canvas sm:origin-center" aria-hidden="true" />
+                      </span>
+                      <span id={`opt-${o.id}`} className="option-text max-w-[28ch] text-sm leading-[1.55] text-mute">{o.text}</span>
                     </span>
-                    <span className="mt-1 hidden h-9 items-center gap-2 rounded-full bg-canvas px-4 text-sm font-semibold text-ink transition-transform group-hover:translate-x-1 sm:inline-flex">
-                      Elegir <Chevron />
+                    <span className="option-cta flex shrink-0 items-center gap-1.5 text-sm font-medium text-canvas sm:mt-1" aria-hidden="true">
+                      <span className="hidden sm:inline">Explorar</span> <Chevron />
                     </span>
-                    <span className="grid size-10 shrink-0 place-items-center rounded-full border border-canvas sm:hidden"><Chevron /></span>
                   </button>
                 </li>
               ))}
             </ul>
-            <p className="landing-rise micro-cap hidden bg-ink px-3 text-mute sm:block" style={{ animationDelay: '1600ms' }}>También con las teclas 1 · 2 · 3</p>
           </section>
         </main>
 
