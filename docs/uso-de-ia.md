@@ -20,4 +20,11 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Vuelo lunar inclinado al hacer doble clic y persistencia local del token de Cesium | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Comparador 3D Luna vs Tierra: `pipeline/02_compare_patches.py` (recortes LOLA y tiles de elevación, métricas) y `web/src/Compare3D.tsx` (three.js) | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Aplicación de docs/DESIGN.md a la web: tokens de color, Inter, pills, cards y límites en card negra | — |
+
+| 2026-11-14 | OpenAI Codex | Cámara lunar con vuelo inclinado al acercarse y selección del terreno 3D real | — |
+
+| 2026-11-14 | OpenAI Codex | Encuadre lunar inclinado y más amplio para visualizar el relieve en contexto | — |
+
+| 2026-11-14 | OpenAI Codex | Zoom lunar con vuelos progresivos al cursor, inclinación gradual hasta 60°, orientación como Tierra y botón Ver planeta; conserva teselas de relieve lunar | — |
+| 2026-11-14 | OpenAI Codex | Suavizado del zoom lunar por fotogramas con amortiguación temporal, anclaje central estable, orientación conservada e interrupción inmediata al arrastrar; build y lint verificados | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Vista "Polo sur lunar": `pipeline/03_moon_map.py` (mapa LOLA y grilla de métricas) y `web/src/MoonMap.tsx` (clic en la Luna → lugares parecidos en la Tierra); panel y comparador en variante oscura | — |
