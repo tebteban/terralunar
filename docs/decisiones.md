@@ -9,6 +9,30 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-010 — Luna: globo 3D propio, Cesium solo si hay token
+- **Fecha:** 2026-11-14 · **Estado:** vigente (equipo, commits `2c2ee93` y `5d04948`). Actualiza D-002.
+- **Por qué:** sin token de Cesium la vista Luna era un callejón sin salida para el jurado. Además
+  pedirle un token al usuario es raro en una demo.
+- **Cómo:** `web/src/MoonGlobe.tsx` dibuja la Luna con three.js usando texturas del NASA SVS CGI Moon Kit
+  (`pipeline/05_moon_globe.py`) y una malla LOLA a 800 m sobre el polo sur. `MoonView.tsx` (Cesium) se
+  usa solo si existe el token. Si falla o tarda más de 25 s, se pasa al globo propio y se avisa. Se
+  quitó el formulario para pegar el token.
+
+## D-009 — Marte con MapLibre y MOLA público, sin token
+- **Fecha:** 2026-11-14 · **Estado:** vigente, exploratorio (equipo, commits `a587816` a `5d04948`)
+- **Por qué:** el perfil Marte era opcional (primero en la lista de recortes), pero sumar un segundo
+  destino da Impacto y Creatividad. Se hizo sin credenciales para que funcione en cualquier deploy.
+- **Cómo:** `pipeline/04_mars_public.py` baja la grilla MOLA MEGDR de 32 px/° (PDS) y la parte en 16
+  bandas comprimidas (`data/mars/mola32-*.dat`). `web/src/MarsView.tsx` la muestra con el mismo motor
+  que la Tierra (MapLibre) y suma imágenes Viking y THEMIS de NASA Mars Trek. `marsData.ts` calcula
+  pendiente, rugosidad y desnivel en ventanas de 20 km y las compara con recortes terrestres. El
+  comparador detallado baja relieve MOLA/HRSC de 200 m de una copia en Hugging Face con la librería
+  `geotiff`. Detalle completo en `docs/marte.md`.
+- **Límites:** tolerancias sin calibrar ("no es probabilidad ni validación"), carga inicial de ~90 MB,
+  y la copia de Hugging Face no depende de NASA.
+- **Pendiente:** los ~92 MB en `data/mars/` chocan con la regla de `CLAUDE.md` (más de 10 MB va
+  afuera de git). Hay que decidirlo en equipo.
+
 ## D-008 — Comparador 3D Luna vs Tierra con three.js
 - **Fecha:** 2026-11-14 · **Estado:** vigente (lo agregó el equipo en `main`, commit `fc9e81c`)
 - **Por qué:** ver lado a lado el relieve de un sitio lunar (LOLA) y el de la zona terrestre hace
@@ -59,7 +83,7 @@ borra: se marca como **Reemplazada por D-XXX**.
 - **Consecuencia:** `CLAUDE.md` se actualizó para reflejar el flujo.
 
 ## D-002 — Visor lunar con Cesium cargado por CDN
-- **Fecha:** 2026-11-14 · **Estado:** vigente, con pendiente
+- **Fecha:** 2026-11-14 · **Estado:** **Actualizada por D-010** (Cesium pasó a ser opcional)
 - **Por qué:** mostrar la superficie lunar real (datos LRO) le da contexto al usuario: "contra esto
   comparamos". Cesium Moon ya trae esos datos listos en 3D.
 - **Cómo:** `MoonView.tsx` carga Cesium desde jsDelivr solo cuando se elige "Luna", así no engorda la
