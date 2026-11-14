@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { fromUrl } from 'geotiff'
+import { offset } from './marsData.ts'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 // Comparador Luna vs Tierra: dos maquetas del MISMO tamaño (20 x 20 km), misma resolución (80 m),
@@ -22,7 +24,7 @@ async function loadHeights(file: string) {
 type Shared = { cams: THREE.PerspectiveCamera[]; controls: OrbitControls[]; syncing: boolean }
 type Link = { register: (slot: number, cam: THREE.PerspectiveCamera, ctl: OrbitControls) => void; follow: (slot: number) => void }
 
-function Terrain({ item, index, link, slot, exaggeration }: { item: Item; index: CompareIndex; link: Link; slot: number; exaggeration: number }) {
+function Terrain({ item, index, link, slot, exaggeration, meshHeights, meshN }: { item: Item; index: CompareIndex; link: Link; slot: number; exaggeration: number; meshHeights?: Float32Array; meshN?: number }) {
   const box = useRef<HTMLDivElement>(null)
   const [terrainError, setTerrainError] = useState('')
   useEffect(() => {
@@ -59,11 +61,12 @@ function Terrain({ item, index, link, slot, exaggeration }: { item: Item; index:
     }
     const ro = new ResizeObserver(resize)
     ro.observe(el)
-    ;(item.heights ? Promise.resolve(item.heights) : loadHeights(item.file)).then((h) => {
+    ;(meshHeights ? Promise.resolve(meshHeights) : item.heights ? Promise.resolve(item.heights) : loadHeights(item.file)).then((h) => {
+      const inputN = meshN ?? index.n
       if (disposed) return
-      if (h.length !== index.n * index.n) throw new Error('Tamaño de recorte inválido')
+      if (h.length !== inputN * inputN) throw new Error('Tamaño de recorte inválido')
       // Smooth rendering only: bilinear interpolation cannot add observed terrain detail.
-      const n = index.n < 32 ? 100 : index.n
+      const n = inputN < 32 ? 100 : inputN
       const geo = new THREE.PlaneGeometry(size, size, n - 1, n - 1)
       geo.rotateX(-Math.PI / 2)
       const pos = geo.attributes.position
@@ -72,10 +75,10 @@ function Terrain({ item, index, link, slot, exaggeration }: { item: Item; index:
       for (const value of h) sum += value
       const mean = sum / h.length
       for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-        const gx = x / (n - 1) * (index.n - 1), gy = y / (n - 1) * (index.n - 1)
-        const x0 = Math.floor(gx), y0 = Math.floor(gy), x1 = Math.min(index.n - 1, x0 + 1), y1 = Math.min(index.n - 1, y0 + 1)
+        const gx = x / (n - 1) * (inputN - 1), gy = y / (n - 1) * (inputN - 1)
+        const x0 = Math.floor(gx), y0 = Math.floor(gy), x1 = Math.min(inputN - 1, x0 + 1), y1 = Math.min(inputN - 1, y0 + 1)
         const fx = gx - x0, fy = gy - y0
-        const value = h[y0 * index.n + x0] * (1-fx) * (1-fy) + h[y0 * index.n + x1] * fx * (1-fy) + h[y1 * index.n + x0] * (1-fx) * fy + h[y1 * index.n + x1] * fx * fy
+        const value = h[y0 * inputN + x0] * (1-fx) * (1-fy) + h[y0 * inputN + x1] * fx * (1-fy) + h[y1 * inputN + x0] * (1-fx) * fy + h[y1 * inputN + x1] * fx * fy
         pos.setY(y * n + x, (value - mean) * exaggeration)
       }
       geo.computeVertexNormals()
@@ -84,7 +87,7 @@ function Terrain({ item, index, link, slot, exaggeration }: { item: Item; index:
       render()
     }).catch(e => { if (!disposed) setTerrainError(String(e)) })
     return () => { scene.traverse(object => { if (object instanceof THREE.Mesh) { object.geometry.dispose(); const materials = Array.isArray(object.material) ? object.material : [object.material]; materials.forEach(m => m.dispose()) } }); disposed = true; ro.disconnect(); controls.dispose(); renderer.dispose(); el.innerHTML = '' }
-  }, [item, index, link, slot, exaggeration])
+  }, [item, index, link, slot, exaggeration, meshHeights, meshN])
   return <div className="relative h-full w-full"><div ref={box} className="h-full w-full" aria-label={`Relieve 3D de ${item.name}`} />{terrainError && <p role="alert" className="absolute top-2 left-2 text-white">{terrainError}</p>}</div>
 }
 
@@ -111,6 +114,8 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
 export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: string; onClose: () => void; supplied?: CompareIndex }) {
   const [loadedIndex, setIndex] = useState<CompareIndex | null>(null)
   const index = supplied ?? loadedIndex
+  const [highRes, setHighRes] = useState<{mars: Float32Array; earth: Float32Array} | null>(null)
+  const [detailStatus, setDetailStatus] = useState('')
   const [exaggeration, setExaggeration] = useState(supplied ? 6 : EXAGGERATION)
   const [error, setError] = useState<string | null>(null)
   const [moonId, setMoonId] = useState<string | null>(null)
@@ -141,6 +146,49 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   const moons = index?.items.filter((i) => i.body !== 'tierra') ?? []
   const moon = moons.find((i) => i.id === moonId) ?? moons[0]
   const earth = index?.items.find((i) => i.id === zoneId)
+  useEffect(() => {
+    if (!supplied || !moon || !earth) return
+    let cancelled = false
+    // 200 m cell centres on the same 20 km footprint, independent of the coarse ranking.
+    const run = async () => {
+      setDetailStatus('Cargando elevaciones detalladas de Marte y Tierra…')
+      const url = 'https://huggingface.co/datasets/Biscut4Biscuit/mola-hrsc-baseline-cog/resolve/main/Mars_HRSC_MOLA_BlendDEM_Global_200mp_v2_cog.tif'
+      const tiff = await fromUrl(url)
+      const image = await tiff.getImage()
+      const width = image.getWidth(), height = image.getHeight(), bbox = image.getBoundingBox()
+      const points: [number, number][] = []
+      for (let y=0;y<100;y++) for (let x=0;x<100;x++) points.push(offset(moon.lon,moon.lat,(x-49.5)*200,(49.5-y)*200))
+      const px=points.map(([lon])=>(lon-bbox[0])/(bbox[2]-bbox[0])*width-.5)
+      const py=points.map(([,lat])=>(bbox[3]-lat)/(bbox[3]-bbox[1])*height-.5)
+      const minX=Math.floor(Math.min(...px))-1,maxX=Math.ceil(Math.max(...px))+2,minY=Math.floor(Math.min(...py))-1,maxY=Math.ceil(Math.max(...py))+2
+      if(minX<0||maxX>width||minY<0||maxY>height||maxX-minX>4000||maxY-minY>4000) throw new Error('Esta región cruza el borde del modelo global o está demasiado cerca de un polo')
+      const raster=await image.readRasters({window:[minX,minY,maxX,maxY],samples:[0],interleave:true})
+      const w=maxX-minX, out=new Float32Array(10000), noData=image.getGDALNoData()
+      for(let i=0;i<out.length;i++) {
+        const x=px[i]-minX,y=py[i]-minY,x0=Math.floor(x),y0=Math.floor(y),fx=x-x0,fy=y-y0
+        const z=[raster[y0*w+x0],raster[y0*w+x0+1],raster[(y0+1)*w+x0],raster[(y0+1)*w+x0+1]]
+        if(z.some(v=>!Number.isFinite(v)||v===noData)) throw new Error('El modelo detallado contiene celdas sin datos en esta región')
+        out[i]=z[0]*(1-fx)*(1-fy)+z[1]*fx*(1-fy)+z[2]*(1-fx)*fy+z[3]*fx*fy
+      }
+      const r=await fetch(`/compare/${earth.file}`)
+      if(!r.ok) throw new Error('No se pudo cargar el recorte terrestre detallado')
+      const data=await r.arrayBuffer(); if(data.byteLength!==250*250*2) throw new Error('Recorte terrestre inválido')
+      const view=new DataView(data), ground=new Float32Array(10000)
+      for(let y=0;y<100;y++) for(let x=0;x<100;x++) {
+        // 200 m cells average 80 m samples with fractional overlap.
+        let total=0, weight=0
+        for(let j=Math.floor(y*2.5);j<Math.ceil((y+1)*2.5);j++) for(let i=Math.floor(x*2.5);i<Math.ceil((x+1)*2.5);i++) {
+          const f=(Math.min((x+1)*2.5,i+1)-Math.max(x*2.5,i))*(Math.min((y+1)*2.5,j+1)-Math.max(y*2.5,j))
+          total+=view.getUint16((j*250+i)*2,true)*f;weight+=f
+        }
+        ground[y*100+x]=total/weight
+      }
+      if(!cancelled){setHighRes({mars:out,earth:ground});setDetailStatus('Relieve detallado: MOLA/HRSC 200 m y Tierra promediada a 200 m. Las métricas del ranking siguen calculadas a 2 km.')}
+    }
+    run().catch(e=>{if(!cancelled)setDetailStatus(`No se pudo cargar el relieve detallado: ${String(e)}. Se muestra el modelo regional de 2 km.`)})
+    return()=>{cancelled=true}
+  }, [supplied, moon, earth])
+
 
   return (
     <div className="absolute inset-0 z-20 flex flex-col gap-4 bg-ink p-6 text-canvas" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
@@ -173,7 +221,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                   <h3 className="truncate text-base font-bold"><span className="mr-2 rounded-full bg-ink px-2 py-0.5 text-xs font-medium">{it.body === 'luna' ? 'Luna' : it.body === 'marte' ? 'Marte' : 'Tierra'}</span>{it.name}</h3>
                   <span className="shrink-0 text-xs text-mute">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
                 </div>
-                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} /></div>
+                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={highRes ? (slot === 0 ? highRes.mars : highRes.earth) : undefined} meshN={highRes ? 100 : undefined} /></div>
                 <div className="px-4 py-3">
                   <Stats item={it} other={it.body === 'tierra' ? moon : undefined} />
                   {!!it.agua && <p className="mt-2 text-xs text-canvas">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
@@ -184,8 +232,9 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
               </section>
             ))}
           </div>
+          {detailStatus && <p role="status" className="text-sm text-mute">{detailStatus}</p>}
           <p className="text-sm text-mute">
-            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas de {index.res_m} m, relieve exagerado ×{exaggeration} y la misma luz.
+            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas visuales de {highRes ? 200 : index.res_m} m, relieve exagerado ×{exaggeration} y la misma luz.
             Arrastrá para girar (las dos giran juntas). {supplied && 'La malla se suaviza por interpolación: no agrega detalles medidos. Cambiar la exageración solo afecta la vista, no las métricas. '}A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
           </p>
         </>
