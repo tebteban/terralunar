@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 // Cesium is loaded only for the lunar view, so the original Earth map stays untouched.
 type CesiumApi = {
   Ion: { defaultAccessToken: string }
-  Ellipsoid: { default: unknown; MOON: unknown }
+  Ellipsoid: { new (x: number, y: number, z: number): unknown; default: unknown; MOON: unknown }
   Math: { toRadians: (n: number) => number }
   Cartesian2: new (x: number, y: number) => unknown
   Matrix4: { new (): unknown; IDENTITY: unknown; inverseTransformation: (matrix: unknown, result: unknown) => unknown; multiplyByPoint: (matrix: unknown, point: unknown, result: unknown) => { x: number; y: number; z: number } }
@@ -11,7 +11,7 @@ type CesiumApi = {
   BoundingSphere: new (center: unknown, radius: number) => unknown
   HeadingPitchRange: new (heading: number, pitch: number, range: number) => unknown
   Cartographic: { fromCartesian: (p: unknown) => { longitude: number; latitude: number } }
-  ScreenSpaceEventType: { LEFT_DOUBLE_CLICK: unknown }
+  ScreenSpaceEventType: { LEFT_DOUBLE_CLICK: unknown; LEFT_CLICK: unknown }
   ScreenSpaceEventHandler: new (canvas: unknown) => { setInputAction: (fn: (e: { position: unknown }) => void, event: unknown) => void; destroy: () => void }
   Viewer: new (node: HTMLElement, options: Record<string, unknown>) => {
     scene: { primitives: { add: (tileset: unknown) => void }; canvas: HTMLCanvasElement; pickPosition: (p: unknown) => unknown; pickPositionSupported: boolean }
@@ -40,26 +40,34 @@ function loadCesium(): Promise<CesiumApi> {
   })
 }
 
-export default function MoonView() {
+export default function MoonView({ onPick, onUnavailable, mars = false }: { onPick?: (lat: number, lon: number) => void; onUnavailable?: () => void; mars?: boolean }) {
+  const unavailableRef = useRef(onUnavailable)
+  useEffect(() => { unavailableRef.current = onUnavailable })
+  const pickRef = useRef(onPick)
+  useEffect(() => { pickRef.current = onPick })
   const target = useRef<HTMLDivElement>(null)
   const resetCamera = useRef<() => void>(() => {})
-  const [token, setToken] = useState(() => { try { return localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN || '' } catch { return import.meta.env.VITE_CESIUM_ION_TOKEN || '' } })
-  const [draft, setDraft] = useState(token)
+  const [token] = useState(() => { try { return localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN || '' } catch { return import.meta.env.VITE_CESIUM_ION_TOKEN || '' } })
   const [status, setStatus] = useState('')
   useEffect(() => {
-    if (!token || !target.current) return
+    if (!token) { unavailableRef.current?.(); return }
+    if (!target.current) return
     let cancelled = false
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) { setStatus('Abriendo superficie lunar local…'); unavailableRef.current?.() }
+    }, 25000)
     let viewer: InstanceType<CesiumApi['Viewer']> | undefined
     let handler: InstanceType<CesiumApi['ScreenSpaceEventHandler']> | undefined
     let zoomFrame = 0
     let removeWheel = () => {}
-    setStatus('Cargando superficie lunar…')
+    setStatus(mars ? 'Cargando Marte…' : 'Cargando superficie lunar…')
     loadCesium().then(async (C) => {
       if (cancelled || !target.current) return
       C.Ion.defaultAccessToken = token
-      C.Ellipsoid.default = C.Ellipsoid.MOON
+      const ellipsoid = mars ? new C.Ellipsoid(3396190, 3396190, 3376200) : C.Ellipsoid.MOON
+      C.Ellipsoid.default = ellipsoid
       viewer = new C.Viewer(target.current, { globe: false, baseLayerPicker: false, geocoder: false, sceneModePicker: false, homeButton: false, animation: false, timeline: false, navigationHelpButton: false, skyAtmosphere: false, baseLayer: false })
-      const tiles = await C.Cesium3DTileset.fromIonAssetId(2684829)
+      const tiles = await C.Cesium3DTileset.fromIonAssetId(mars ? 3644333 : 2684829)
       if (cancelled || !viewer || viewer.isDestroyed()) return
       viewer.scene.primitives.add(tiles)
       const canvas = viewer.scene.canvas
@@ -74,7 +82,7 @@ export default function MoonView() {
         if (viewer.scene.pickPositionSupported) {
           try { hit = viewer.scene.pickPosition(position) } catch { /* tiles may still be loading */ }
         }
-        hit ||= viewer.camera.pickEllipsoid(position, C.Ellipsoid.MOON)
+        hit ||= viewer.camera.pickEllipsoid(position, ellipsoid)
         if (!hit) return false
         anchor = hit
         desiredRange = Math.max(1500, Math.min(8000000, range))
@@ -100,6 +108,16 @@ export default function MoonView() {
       viewer.screenSpaceEventHandler.removeInputAction(C.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
       handler = new C.ScreenSpaceEventHandler(canvas)
       handler.setInputAction((event) => { flyOver(event.position, 45000, 2.8) }, C.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
+      // Clic simple: punto de la superficie -> panel de análisis de TerraLunar
+      handler.setInputAction((event) => {
+        if (!viewer || !pickRef.current) return
+        let hit: unknown
+        if (viewer.scene.pickPositionSupported) { try { hit = viewer.scene.pickPosition(event.position) } catch { /* profundidad no lista */ } }
+        hit ||= viewer.camera.pickEllipsoid(event.position, C.Ellipsoid.MOON)
+        if (!hit) return
+        const c = C.Cartographic.fromCartesian(hit)
+        pickRef.current((c.latitude * 180) / Math.PI, (c.longitude * 180) / Math.PI)
+      }, C.ScreenSpaceEventType.LEFT_CLICK)
       // A single damped animation consumes wheel input, without restarting camera flights.
       // Anchor at the view center so zoom never snaps the cursor location to the center.
       let zoomAnchor: unknown
@@ -139,11 +157,11 @@ export default function MoonView() {
           if (viewer.scene.pickPositionSupported) {
             try { zoomAnchor = viewer.scene.pickPosition(center) } catch { /* depth not ready */ }
           }
-          zoomAnchor ||= viewer.camera.pickEllipsoid(center, C.Ellipsoid.MOON)
+          zoomAnchor ||= viewer.camera.pickEllipsoid(center, ellipsoid)
           if (!zoomAnchor) return
           viewer.camera.cancelFlight()
           // Recover the exact camera offset in the target's local frame, including lunar curvature.
-          const frame = C.Transforms.eastNorthUpToFixedFrame(zoomAnchor, C.Ellipsoid.MOON)
+          const frame = C.Transforms.eastNorthUpToFixedFrame(zoomAnchor, ellipsoid)
           const inverse = C.Matrix4.inverseTransformation(frame, new C.Matrix4())
           const local = C.Matrix4.multiplyByPoint(inverse, viewer.camera.positionWC, new C.Cartesian3())
           currentRange = Math.hypot(local.x, local.y, local.z)
@@ -170,22 +188,16 @@ export default function MoonView() {
         window.removeEventListener('blur', interrupt)
       }
       resetCamera.current()
+      clearTimeout(timeout)
       setStatus('')
-    }).catch(() => { if (!cancelled) setStatus('No se pudo cargar la Luna. Verificá tu conexión y que el token tenga acceso a Cesium Moon.') })
-    return () => { cancelled = true; resetCamera.current = () => {}; cancelAnimationFrame(zoomFrame); removeWheel(); handler?.destroy(); if (viewer && !viewer.isDestroyed()) viewer.destroy() }
-  }, [token])
+    }).catch(() => { clearTimeout(timeout); if (!cancelled) { setStatus('Abriendo superficie lunar local…'); unavailableRef.current?.() } })
+    return () => { cancelled = true; clearTimeout(timeout); resetCamera.current = () => {}; cancelAnimationFrame(zoomFrame); removeWheel(); handler?.destroy(); if (viewer && !viewer.isDestroyed()) viewer.destroy() }
+  }, [token, mars])
   return <div className="relative h-full w-full bg-slate-950">
-    <div ref={target} className="h-full w-full" aria-label="Visor tridimensional de la Luna" />
-    {!token && <div className="absolute inset-0 flex items-center justify-center p-6"><div className="max-w-lg rounded-2xl bg-canvas p-6 text-ink shadow-card">
-      <h2 className="mb-2 text-2xl font-bold leading-8">Activar la Luna en 3D</h2>
-      <p className="mb-4 text-base text-body">Cesium Moon usa imágenes y elevación de la NASA. Para cargarlo, agregá el conjunto Cesium Moon a tu cuenta de Cesium ion y pegá un token de acceso.</p>
-      <a className="text-sm font-medium text-ink underline" href="https://ion.cesium.com/" target="_blank" rel="noreferrer">Abrir Cesium ion ↗</a>
-      <form className="mt-4 flex gap-2" onSubmit={e => { e.preventDefault(); const value = draft.trim(); try { localStorage.setItem('terralunar.cesium-token', value) } catch { /* session still works */ }; setToken(value) }}><input aria-label="Token de Cesium ion" type="password" value={draft} onChange={e => setDraft(e.target.value)} className="min-w-0 flex-1 rounded-lg bg-canvas-soft px-4 py-3 text-base" placeholder="Token de acceso" /><button className="rounded-full bg-ink px-5 py-3 text-base font-medium text-canvas">Cargar</button></form>
-      <p className="mt-3 text-xs text-body">El token se guarda en este navegador y se envía a Cesium para acceder al servicio.</p>
-    </div></div>}
-    {status && <div role="status" className="absolute left-4 top-28 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status} {status.startsWith('No se pudo') && <button className="ml-2 font-medium underline" onClick={() => { try { localStorage.removeItem('terralunar.cesium-token') } catch { /* ignore */ }; setToken('') }}>Cambiar token</button>}</div>}
+    <div ref={target} className="h-full w-full" aria-label="Visor planetario tridimensional" />
+    {status && <div role="status" className="absolute left-4 top-40 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status}</div>}
     <button type="button" onClick={() => resetCamera.current()} className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft">Ver planeta</button>
-    <div className="pointer-events-none absolute left-4 top-16 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">Acercá con la rueda para ver el relieve 3D · Doble clic para volar a un punto</div>
-    <div className="absolute bottom-5 left-4 rounded-full bg-canvas px-3 py-1 text-xs text-body shadow-float">Imágenes y relieve: NASA LRO / USGS · Cesium Moon</div>
+    <div className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">{mars ? 'Rueda para acercar · doble clic para volar a un punto' : 'Rueda para acercar · doble clic para volar · clic en el polo sur para analizar'}</div>
+    <div className="absolute bottom-5 left-4 rounded-full bg-canvas px-3 py-1 text-xs text-body shadow-float">{mars ? 'NASA MOLA / ESA HRSC · Viking · Cesium Mars' : 'NASA LRO / USGS · Cesium Moon'}</div>
   </div>
 }
