@@ -1,3 +1,4 @@
+import PanelOutlet from './PanelOutlet.tsx'
 import { startGlobeRotation } from './globeRotation.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapLibre, NavigationControl, Marker, addProtocol, removeProtocol, type GeoJSONSource } from 'maplibre-gl'
@@ -27,6 +28,7 @@ let protocolCount = 0
 export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void}) {
   const container=useRef<HTMLDivElement>(null), scene=useRef<HTMLDivElement>(null), map=useRef<MapLibre|null>(null)
   const choose=useRef<(lon:number,lat:number)=>void>(()=>{})
+  const [cameraInfo,setCameraInfo]=useState('')
   const [status,setStatus]=useState('Cargando topografía NASA MOLA…'),[error,setError]=useState('')
   const [pick,setPick]=useState<Patch|null>(null),[earth,setEarth]=useState<Patch[]>([])
   const [compare,setCompare]=useState<string|null>(null),[flat,setFlat]=useState(false)
@@ -37,6 +39,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
   const flatRef=useRef(false),exagRef=useRef(1.5)
   useEffect(()=>{
     let disposed=false
+    let resize: ResizeObserver | undefined
     let m: MapLibre|undefined
     let stopRotation: (() => void) | undefined
     const protocol=`marsdem${++protocolCount}`
@@ -108,8 +111,11 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         } finally { images.forEach(image=>image.close()) }
       })
       imageryInstalled=true
-      m=new MapLibre({container:container.current,center:[0,10],zoom:.5,maxZoom:10,canvasContextAttributes:{antialias:true},style:{version:8,sources:{},layers:[{id:'base',type:'background',paint:{'background-color':'#9d6046'}}]}})
+      m=new MapLibre({container:container.current,center:[0,10],zoom:1.4,maxZoom:10,canvasContextAttributes:{antialias:true},style:{version:8,sources:{},layers:[{id:'base',type:'background',paint:{'background-color':'#9d6046'}}]}})
+      m.on('moveend',()=>{if(m){const c=m.getCenter();setCameraInfo(`${c.lat.toFixed(2)}°, ${c.lng.toFixed(2)}° · zoom ${m.getZoom().toFixed(1)}`)}})
       map.current=m
+      resize = new ResizeObserver(() => m?.resize())
+      resize.observe(container.current)
       m.addControl(new NavigationControl(),'bottom-right')
       m.on('error',(event)=>{if(!disposed && !(event.error instanceof DOMException && event.error.name === 'AbortError'))setError('No se pudo cargar una capa del mapa. Revisá tu conexión y volvé a intentar.')})
       let pickRequest = 0
@@ -128,7 +134,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         // Keep the ring continuous at ±180°.
         const ring=corners.map(([l,p])=>[wrapped+((l-wrapped+540)%360)-180,p]);ring.push(ring[0])
         ;(m.getSource('selection') as GeoJSONSource).setData({type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[ring]}})
-        m.flyTo({center:[wrapped,Math.max(-85,Math.min(85,lat))],zoom:7.5,pitch:flatRef.current?0:60,bearing:m.getBearing(),speed:1.4,padding:{top:60,bottom:60,left:40,right:window.innerWidth>=1100?400:40}})
+        m.flyTo({center:[wrapped,Math.max(-85,Math.min(85,lat))],zoom:7.5,pitch:flatRef.current?0:60,bearing:m.getBearing(),speed:1.4,padding:{top:60,bottom:60,left:40,right:40}})
       }
       choose.current=pickAt
       m.on('load',()=>{
@@ -175,7 +181,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       })
     }).catch(e=>{if(!disposed){setError(String(e));setStatus('')}})
     earthPatches().then(e=>{if(!disposed)setEarth(e)}).catch(e=>{if(!disposed)setError(String(e))})
-    return()=>{disposed=true;stopRotation?.();choose.current=()=>{};m?.remove();map.current=null;if(installed)removeProtocol(protocol);if(imageryInstalled)removeProtocol(imageryProtocol)}
+    return()=>{disposed=true;resize?.disconnect();stopRotation?.();choose.current=()=>{};m?.remove();map.current=null;if(installed)removeProtocol(protocol);if(imageryInstalled)removeProtocol(imageryProtocol)}
   },[])
   const matches=useMemo(()=>pick?earth.map(e=>({e,score:similarity(pick,e)})).sort((a,b)=>b.score-a.score):[],[pick,earth])
   const supplied=useMemo<CompareIndex|undefined>(()=>pick?{size_km:20,res_m:2000,n:10,items:[pick,...earth]}:undefined,[pick,earth])
@@ -183,11 +189,13 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
   return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-slate-950">
     <SpaceBackdrop/><div ref={container} className="relative h-full w-full" aria-label="Marte 3D, topografía NASA MOLA"/>
     <div className="absolute left-4 top-4 flex gap-2">
-      <button className={control} onClick={()=>{setPick(null);map.current?.flyTo({center:[0,10],zoom:.5,pitch:0,bearing:0,duration:1800,padding:0})}}>Ver planeta</button>
+      <button className={control} onClick={()=>{setPick(null);map.current?.flyTo({center:[0,10],zoom:1.4,pitch:0,bearing:0,duration:1800,padding:0})}}>Ver planeta</button>
       <button className={control} onClick={()=>{const next=!flat;setFlat(next);flatRef.current=next;map.current?.easeTo({pitch:next?0:60,duration:800})}}>{flat?'Vista 3D':'Vista cenital'}</button>
     </div>
+    <output className="camera-info">{cameraInfo}</output>
+    {pick && <button className="center-mars" onClick={()=>choose.current(pick.lon,pick.lat)}>Centrar selección</button>}
     {(status||error)&&<p role="status" className="absolute left-4 top-28 max-w-sm rounded-xl bg-canvas p-4 text-sm text-ink">{error||status}</p>}
-    <aside className="absolute inset-x-2 bottom-2 z-10 flex max-h-[60%] flex-col gap-5 overflow-y-auto rounded-2xl bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:bottom-4 md:right-4 md:top-4 md:max-h-none md:w-[440px]">
+    <PanelOutlet><aside className="planet-panel">
       <h2 className="text-2xl font-bold leading-8">{pick?'Punto elegido en Marte':'Elegí un lugar en Marte'}</h2>
       <p className="text-base text-body">Elegí un punto para extraer 20 × 20 km y comparar su relieve con el catálogo terrestre.</p>
       <div className="flex flex-wrap gap-2">{SITES.map(s=><button key={s.name} className="rounded-full bg-canvas-soft px-4 py-2 text-sm font-medium hover:bg-pressed" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
@@ -215,14 +223,16 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         </section>
         <button className="self-start text-sm font-medium underline" onClick={()=>{const blob=new Blob([JSON.stringify({region:{lat:pick.lat,lon:pick.lon,size_km:20,res_m:2000},source:pick.source,metrics:Object.fromEntries(labels.map(([k])=>[k,pick[k]])),matches:matches.map(({e,score})=>({id:e.id,name:e.name,score}))},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='terralunar-marte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}}>Exportar comparación JSON</button>
       </>}
-      <section className="rounded-2xl bg-ink p-6 text-canvas">
-        <h3 className="mb-3 text-xl font-bold leading-7">Límites de la analogía</h3>
+      <details className="method-details limits-card">
+        <summary>Límites de la analogía</summary>
         <ul className="flex flex-col gap-2 text-sm text-pressed">{MARS_LIMITS.map(([title,text])=><li key={title}><strong className="font-medium text-canvas">{title}:</strong> {text}</li>)}</ul>
-      </section>
+      </details>
+      <details className="method-details"><summary>Fuentes y método</summary>
       <p className="text-xs leading-5 text-body">Las imágenes Viking o THEMIS son capas visuales de NASA Mars Trek. La topografía y las métricas provienen de MOLA. Muestreo nominal 1,85 km; hay interpolación y huecos de observación en el producto original. Comparación regional a 2 km por celda: no resuelve rocas, suelo ni transitabilidad de rovers. Ambas maquetas usan la misma escala.</p>
       <p className="text-xs leading-5 text-body">Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
       <a className="block text-xs underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA</a>
-    </aside>
+      </details>
+    </aside></PanelOutlet>
     {compare&&supplied&&<Compare3D zoneId={compare} supplied={supplied} onClose={()=>setCompare(null)}/>}
   </div>
 }

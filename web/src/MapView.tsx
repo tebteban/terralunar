@@ -1,7 +1,7 @@
 import { startGlobeRotation } from './globeRotation.ts'
-import { LngLatBounds, Map as MapLibre, NavigationControl, setWorkerUrl, type GeoJSONSource } from 'maplibre-gl'
+import { LngLatBounds, Map as MapLibre, NavigationControl, ScaleControl, setWorkerUrl, type GeoJSONSource } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
 import type { Ranked } from './score.ts'
 
@@ -42,6 +42,8 @@ interface Props {
 }
 
 export default function MapView({ ranked, selectedId, onSelect }: Props) {
+  const [cameraInfo, setCameraInfo] = useState('')
+  const [mapError, setMapError] = useState('')
   const container = useRef<HTMLDivElement>(null)
   const scene = useRef<HTMLDivElement>(null)
   const map = useRef<MapLibre | null>(null)
@@ -59,10 +61,13 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
   }
 
   useEffect(() => {
-    const m = new MapLibre({ container: container.current!, style: STYLE, center: [-30, 15], zoom: 0.5, minZoom: -0.5,
+    const m = new MapLibre({ container: container.current!, style: STYLE, center: [-30, 15], zoom: 1.4, minZoom: -0.5,
       canvasContextAttributes: { antialias: true } })
     map.current = m
     m.addControl(new NavigationControl(), 'bottom-right')
+    m.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
+    m.on('error', () => setMapError('No se pudo cargar una capa. Revisá la conexión.'))
+    m.on('moveend', () => { const c=m.getCenter(); setCameraInfo(`${c.lat.toFixed(2)}°, ${c.lng.toFixed(2)}° · zoom ${m.getZoom().toFixed(1)}`) })
     const updateSpace = () => {
       const opacity = Math.max(0, Math.min(1, (3 - m.getZoom()) / 1.6))
       scene.current?.style.setProperty('--space-opacity', String(opacity))
@@ -138,7 +143,9 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
         m.on('mouseleave', layer, () => (m.getCanvas().style.cursor = ''))
       }
     })
-    return () => { stopRotation?.(); m.remove() }
+    const resize = new ResizeObserver(() => { if (container.current?.offsetWidth) m.resize() })
+    resize.observe(container.current!)
+    return () => { resize.disconnect(); stopRotation?.(); m.remove() }
   }, [])
 
   useEffect(sync, [ranked, selectedId])
@@ -149,9 +156,12 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
     <SpaceBackdrop />
     <div ref={container} className="relative h-full w-full" role="region" aria-label="Globo 3D de la Tierra y mapa de zonas análogas" />
     <button type="button" className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft"
-      onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 0.5, pitch: 0, bearing: 0, duration: 1800 })}>
+      onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 1.4, pitch: 0, bearing: 0, duration: 1800 })}>
       Ver planeta
     </button>
+    <div className="map-extra-controls"><button onClick={focus} disabled={!selectedId}>Centrar selección</button><button onClick={() => {const m=map.current;if(m)m.easeTo({pitch:m.getPitch()>5?0:60,duration:650})}}>Cenital / oblicua</button></div>
+    <output className="camera-info">{cameraInfo}</output>
+    {mapError && <button className="map-error" onClick={() => setMapError('')}>{mapError} · Cerrar</button>}
   </div>
 
   // Al elegir zona: relieve 3D y cámara inclinada sobre ella (dejando lugar a la ficha a la derecha).
@@ -170,7 +180,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
     const bounds = new LngLatBounds()
     for (const c of zone.polygon.coordinates[0]) bounds.extend(c as [number, number])
     const cam = m.cameraForBounds(bounds, {
-      padding: { top: 60, bottom: 60, left: 60, right: window.innerWidth >= 768 ? 480 : 60 },
+      padding: { top: 60, bottom: 60, left: 60, right: 40 },
     })
     m.flyTo({ ...cam, pitch: 60, bearing: -20, speed: 1.4 })
   }

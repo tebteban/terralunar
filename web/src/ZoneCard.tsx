@@ -42,7 +42,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
   const datasets = [...new Set([...zone.sources, ...dims.map((d) => d.dataset)])]
 
   return (
-    <article className="absolute inset-x-2 top-2 bottom-2 z-10 flex flex-col gap-6 overflow-y-auto rounded-2xl bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:right-4 md:top-4 md:bottom-4 md:w-[440px]">
+    <article className="site-card">
       <header className="flex items-start justify-between gap-3">
         <div>
           <p className="flex flex-wrap items-center gap-2 text-sm text-body">
@@ -51,22 +51,20 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
           </p>
           <h2 className="mt-1 text-2xl font-bold leading-8">{zone.name}</h2>
         </div>
-        <div className="text-right">
-          <p className="text-[36px] font-bold leading-[44px] tabular-nums">{(score * 100).toFixed(0)}</p>
-          <p className="whitespace-nowrap text-xs text-body">similitud /100</p>
-        </div>
       </header>
 
+      <p className="text-sm text-body">{zone.centroid[1].toFixed(4)}°, {zone.centroid[0].toFixed(4)}° · Puntaje de demostración</p>
+      <div className="weighted-index"><div><span>ÍNDICE PONDERADO</span><p>Ajuste del catálogo de prueba</p></div><strong>{(score*100).toFixed(0)}<small> / 100</small></strong></div>
       <button type="button" onClick={onCompare}
         className="rounded-full bg-ink px-4 py-3 text-base font-medium text-canvas hover:bg-elevated">
         Comparar relieve 3D con la Luna o Marte
       </button>
 
-      <section aria-label="Puntaje por variable">
+      <section aria-label="Puntaje por variable"><div className="signature-heading"><span>FIRMA MULTIDIMENSIONAL</span><span>{dims.length} VARIABLES</span></div>
         <ResponsiveContainer width="100%" height={240}>
           <RadarChart data={dims} outerRadius="60%">
-            <PolarGrid stroke="#e2e2e2" />
-            <PolarAngleAxis dataKey="name" tick={{ fill: '#5e5e5e', fontSize: 11 }} />
+            <PolarGrid stroke="#d7d1d1" />
+            <PolarAngleAxis dataKey="name" tick={{ fill: '#746e6e', fontSize: 11 }} />
             <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
             <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} isAnimationActive={false} />
           </RadarChart>
@@ -88,22 +86,22 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
         </ul>
       </section>
 
-      <section className="rounded-2xl bg-ink p-6 text-canvas">
-        <h3 className="mb-3 text-xl font-bold leading-7">Límites de la analogía</h3>
+      <details className="method-details limits-card" open>
+        <summary>Límites de la analogía</summary>
         <ul className="flex flex-col gap-2 text-sm text-pressed">
           {LIMITS.map(([title, text]) => (
             <li key={title}><strong className="font-medium text-canvas">{title}:</strong> {text}</li>
           ))}
         </ul>
-      </section>
+      </details>
 
-      <section className="text-sm text-body">
-        <h3 className="mb-2 text-base font-medium text-ink">Fuentes</h3>
+      <details className="method-details text-sm text-body">
+        <summary>Fuentes</summary>
         <ul className="list-inside list-disc">
           {datasets.map((s) => <li key={s}>{s}</li>)}
         </ul>
         {zone.notes && <p className="mt-2 italic">{zone.notes}</p>}
-      </section>
+      </details>
 
       <a
         href={worldviewUrl(zone.polygon.coordinates[0])}

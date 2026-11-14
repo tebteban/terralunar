@@ -1,3 +1,4 @@
+import PanelOutlet from './PanelOutlet.tsx'
 import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useState } from 'react'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
@@ -125,7 +126,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
       {compare && compareId && <Compare3D zoneId={compareId} supplied={compare} onClose={() => { setCompare(null); setCompareId(null) }} />}
       {error && <p className="absolute left-4 top-40 text-canvas">No se pudieron cargar los datos lunares: {error}</p>}
 
-      <aside className="absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[60%] flex-col gap-5 overflow-y-auto rounded-2xl bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:bottom-4 md:right-4 md:top-4 md:max-h-none md:w-[440px]">
+      <PanelOutlet><aside className="planet-panel">
         {!pick ? (
           <>
             <h2 className="text-2xl font-bold leading-8">Elegí un lugar en la Luna</h2>
@@ -185,19 +186,19 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
                 Solo relieve: no incluye temperatura ni suelo. Tocá un lugar para verlo en la Tierra.
               </p>
             </section>
-            <section className="rounded-2xl bg-ink p-6 text-canvas">
-              <h3 className="mb-3 text-xl font-bold leading-7">Límites de la analogía</h3>
+            <details className="method-details limits-card">
+              <summary>Límites de la analogía</summary>
               <ul className="flex flex-col gap-2 text-sm text-pressed">
                 {LIMITS.map(([t, x]) => <li key={t}><strong className="font-medium text-canvas">{t}:</strong> {x}</li>)}
               </ul>
-            </section>
+            </details>
             <p className="text-xs text-body">Fuente: {index?.source}. Ventanas cada {index ? (index.grid.stride_px * index.lola_res_m) / 1000 : 4} km.</p>
             <button type="button" onClick={() => setPick(null)} className="rounded-full bg-canvas-soft px-4 py-3 text-base font-medium hover:bg-pressed">
               Elegir otro lugar
             </button>
           </>
         )}
-      </aside>
+      </aside></PanelOutlet>
     </div>
   )
 }

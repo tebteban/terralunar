@@ -211,7 +211,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
 
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col gap-4 bg-ink p-6 text-canvas" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
+    <div className="comparison-dialog fixed inset-0 z-20 flex flex-col gap-4 bg-ink p-6 text-canvas" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
       <header className="flex flex-wrap items-center gap-3">
         <h2 className="text-2xl font-bold leading-8">Comparar relieve en 3D</h2>
         {!supplied && <div className="flex gap-1 rounded-full bg-elevated p-1" aria-label="Cuerpo a comparar">
