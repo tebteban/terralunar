@@ -12,6 +12,10 @@ const PRESETS: { id: Preset; label: string }[] = [
   { id: 'habitat', label: 'Cimientos de hábitat' },
 ]
 
+function sameWeights(a: Weights, b: Weights) {
+  return Object.keys(b).every((k) => Math.abs((a[k] ?? 0) - b[k]) < 1e-9)
+}
+
 async function getJSON<T>(path: string): Promise<T> {
   const res = await fetch(path)
   if (!res.ok) throw new Error(`${path}: ${res.status}`)
@@ -40,6 +44,9 @@ export default function App() {
 
   const profile = profiles?.luna
   const ranked = useMemo(() => rank(zones, weights), [zones, weights])
+  const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0)
+  // "Personalizado" se deriva comparando con el preset: no hace falta otro estado que mantener sincronizado
+  const isCustom = profile ? !sameWeights(weights, presetWeights(profile, preset)) : false
   const selectedIndex = ranked.findIndex((r) => r.zone.id === selectedId)
 
   const choosePreset = (p: Preset) => {
@@ -73,27 +80,37 @@ export default function App() {
               <button
                 key={p.id}
                 type="button"
-                aria-pressed={preset === p.id}
+                aria-pressed={preset === p.id && !isCustom}
                 onClick={() => choosePreset(p.id)}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-                  preset === p.id ? 'bg-canvas text-ink' : 'bg-elevated text-canvas hover:bg-hairline'
+                  preset === p.id && !isCustom ? 'bg-canvas text-ink' : 'bg-elevated text-canvas hover:bg-hairline'
                 }`}
               >
                 {p.label}
               </button>
             ))}
           </div>
+          {isCustom && (
+            <p className="flex items-center justify-between gap-2 text-sm text-mute">
+              <span>Personalizado (basado en «{PRESETS.find((p) => p.id === preset)?.label}»)</span>
+              <button type="button" onClick={() => choosePreset(preset)} className="shrink-0 font-medium text-canvas underline hover:text-canvas-soft">
+                Restaurar
+              </button>
+            </p>
+          )}
         </fieldset>
 
         <section className="flex flex-col gap-3">
           <h2 className="text-xl font-bold leading-7">
-            Pesos <span className="text-sm font-normal text-mute">se reparten en proporción</span>
+            Pesos <span className="text-sm font-normal text-mute">cuánto pesa cada variable en el puntaje final</span>
           </h2>
           {Object.entries(profile.dimensions).map(([k, d]) => (
             <label key={k} className="flex flex-col gap-1 text-sm">
               <span className="flex justify-between">
                 <span>{d.name}</span>
-                <span className="font-medium tabular-nums">{Math.round((weights[k] ?? 0) * 100)}</span>
+                <span className="font-medium tabular-nums">
+                  {totalWeight > 0 ? Math.round(((weights[k] ?? 0) / totalWeight) * 100) : 0} %
+                </span>
               </span>
               <input
                 type="range" min={0} max={1} step={0.05} value={weights[k] ?? 0}
@@ -101,6 +118,9 @@ export default function App() {
               />
             </label>
           ))}
+          {totalWeight === 0 && (
+            <p role="alert" className="rounded-xl bg-elevated p-3 text-sm font-medium text-canvas">Todos los pesos están en 0: el ranking no tiene sentido. Subí al menos uno.</p>
+          )}
         </section>
 
         <section>
