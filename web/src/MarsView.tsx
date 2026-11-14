@@ -2,13 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapLibre, NavigationControl, Marker, addProtocol, removeProtocol, type GeoJSONSource } from 'maplibre-gl'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
-import { elevation, earthPatches, loadMars, marsPatch, offset, similarity, type Patch } from './marsData.ts'
+import { MARS_LIMITS } from './limits.ts'
+import { MARS_SITES, elevation, earthPatches, loadMars, marsPatch, offset, similarity, type Patch } from './marsData.ts'
 
-const SITES = [
-  {name:'Olympus Mons',lon:-133.8,lat:18.65}, {name:'Valles Marineris',lon:-60,lat:-13},
-  {name:'Jezero',lon:77.58,lat:18.44}, {name:'Gale',lon:137.4,lat:-4.6},
-  {name:'Elysium Planitia',lon:135.6,lat:4.5}, {name:'Hellas Planitia',lon:70,lat:-42.4},
-]
+const SITES = MARS_SITES
 const labels = [['pendiente_mediana','Pendiente mediana','°'],['pendiente_p90','Pendiente p90','°'],['rugosidad_m','Rugosidad a 6 km','m'],['desnivel_m','Desnivel','m']] as const
 const SOURCE = '<a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html">NASA MGS MOLA · topografía sombreada</a>'
 let protocolCount = 0
@@ -150,32 +147,41 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       <button className={control} onClick={()=>{const next=!flat;setFlat(next);flatRef.current=next;map.current?.easeTo({pitch:next?0:60,duration:800})}}>{flat?'Vista 3D':'Vista cenital'}</button>
     </div>
     {(status||error)&&<p role="status" className="absolute left-4 top-28 max-w-sm rounded-xl bg-canvas p-4 text-sm text-ink">{error||status}</p>}
-    <aside className="absolute right-3 bottom-3 z-10 max-h-[50%] w-[min(380px,calc(100%-24px))] overflow-y-auto rounded-2xl bg-canvas p-5 text-ink shadow-card xl:top-28 xl:max-h-none">
-      <h2 className="text-xl font-bold">{pick?'Región de Marte seleccionada':'Explorar Marte'}</h2>
-      <p className="mt-2 text-sm">Elegí un punto para extraer 20 × 20 km y comparar su relieve con el catálogo terrestre.</p>
-      <div className="my-3 flex flex-wrap gap-2">{SITES.map(s=><button key={s.name} className="rounded-full bg-canvas-soft px-3 py-1 text-xs" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
+    <aside className="absolute inset-x-2 bottom-2 z-10 flex max-h-[60%] flex-col gap-5 overflow-y-auto rounded-2xl bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:bottom-4 md:right-4 md:top-4 md:max-h-none md:w-[440px]">
+      <h2 className="text-2xl font-bold leading-8">{pick?'Punto elegido en Marte':'Elegí un lugar en Marte'}</h2>
+      <p className="text-base text-body">Elegí un punto para extraer 20 × 20 km y comparar su relieve con el catálogo terrestre.</p>
+      <div className="flex flex-wrap gap-2">{SITES.map(s=><button key={s.name} className="rounded-full bg-canvas-soft px-4 py-2 text-sm font-medium hover:bg-pressed" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
       <form className="flex gap-2" onSubmit={e=>{e.preventDefault();choose.current(Number(coordinates.lon),Number(coordinates.lat))}}>
-        <input aria-label="Longitud marciana" className="w-24 rounded bg-canvas-soft p-2" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/>
-        <input aria-label="Latitud marciana" className="w-24 rounded bg-canvas-soft p-2" type="number" min="-90" max="90" step="any" required value={coordinates.lat} onChange={e=>setCoordinates({...coordinates,lat:e.target.value})}/>
-        <button className="rounded bg-ink px-3 text-canvas">Ir</button>
+        <input aria-label="Longitud marciana" className="w-28 rounded-lg bg-canvas-soft px-3 py-2" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/>
+        <input aria-label="Latitud marciana" className="w-28 rounded-lg bg-canvas-soft px-3 py-2" type="number" min="-90" max="90" step="any" required value={coordinates.lat} onChange={e=>setCoordinates({...coordinates,lat:e.target.value})}/>
+        <button className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-canvas hover:bg-elevated">Ir</button>
       </form>
-      <label className="my-4 block text-xs">Capa de superficie
-        <select value={imagery} className="mt-2 w-full rounded bg-canvas-soft p-2 text-sm" onChange={e=>{const v=e.target.value as typeof imagery;setImagery(v);for(const id of ['viking','themis'])if(map.current?.getLayer(id))map.current.setLayoutProperty(id,'visibility',v===id?'visible':'none')}}>
+      <label className="block text-sm font-medium">Capa de superficie
+        <select value={imagery} className="mt-2 w-full rounded-lg bg-canvas-soft px-4 py-2 text-sm" onChange={e=>{const v=e.target.value as typeof imagery;setImagery(v);for(const id of ['viking','themis'])if(map.current?.getLayer(id))map.current.setLayoutProperty(id,'visibility',v===id?'visible':'none')}}>
           <option value="viking">Viking · mosaico en color</option><option value="themis">THEMIS · infrarrojo diurno</option><option value="relieve">Solo relieve MOLA</option>
         </select>
       </label>
-      <label className="my-4 block text-xs">Exageración visual ×{exaggeration}<input className="mt-2 w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/></label>
+      <label className="block text-sm font-medium">Exageración visual ×{exaggeration}<input className="mt-2 w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/></label>
       {pick&&<>
-        <p className="text-sm">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · 20 × 20 km</p>
+        <p className="text-sm text-body">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · ventana de 20 × 20 km</p>
         {Math.abs(pick.lat)>85&&<p className="my-2 text-xs">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
-        <dl className="my-3 grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="rounded-lg bg-canvas-soft p-2"><dt className="text-xs">{label}</dt><dd className="font-bold">{pick[k].toFixed(1)} {unit}</dd></div>)}</dl>
-        <h3 className="font-bold">Candidatos del catálogo ({matches.length})</h3>
-        {matches.map(({e,score})=><div key={e.id} className="border-b border-black/10 py-3"><div className="flex justify-between gap-2 text-sm"><span>{e.name}</span><strong>{Math.round(score*100)}/100</strong></div><div className="mt-2 flex gap-3 text-xs"><button className="underline" onClick={()=>setCompare(e.id)}>Comparar recortes 3D</button><button className="underline" onClick={()=>onPickEarth(e.id)}>Ver en la Tierra</button></div></div>)}
-        <button className="my-3 text-sm underline" onClick={()=>{const blob=new Blob([JSON.stringify({region:{lat:pick.lat,lon:pick.lon,size_km:20,res_m:2000},source:pick.source,metrics:Object.fromEntries(labels.map(([k])=>[k,pick[k]])),matches:matches.map(({e,score})=>({id:e.id,name:e.name,score}))},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='terralunar-marte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}}>Exportar comparación JSON</button>
+        <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="rounded-xl bg-canvas-soft p-3"><dt className="text-xs text-body">{label}</dt><dd className="text-xl font-bold tabular-nums">{pick[k].toFixed(1)} {unit}</dd></div>)}</dl>
+        <section>
+          <h3 className="mb-3 text-xl font-bold leading-7">Lugares parecidos en la Tierra</h3>
+          <ol className="flex flex-col gap-1">{matches.slice(0,6).map(({e,score})=><li key={e.id} className="rounded-xl px-3 py-2 hover:bg-canvas-soft">
+            <div className="flex items-center gap-3"><span className="min-w-0 flex-1 truncate font-medium">{e.name}</span><span className="text-lg font-bold tabular-nums">{Math.round(score*100)}</span></div>
+            <div className="mt-2 flex gap-2"><button className="rounded-full bg-ink px-3 py-1 text-xs font-medium text-canvas" onClick={()=>setCompare(e.id)}>Comparar relieve 3D</button><button className="rounded-full bg-canvas-soft px-3 py-1 text-xs font-medium" onClick={()=>onPickEarth(e.id)}>Ver en la Tierra</button></div>
+          </li>)}</ol>
+        </section>
+        <button className="self-start text-sm font-medium underline" onClick={()=>{const blob=new Blob([JSON.stringify({region:{lat:pick.lat,lon:pick.lon,size_km:20,res_m:2000},source:pick.source,metrics:Object.fromEntries(labels.map(([k])=>[k,pick[k]])),matches:matches.map(({e,score})=>({id:e.id,name:e.name,score}))},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='terralunar-marte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}}>Exportar comparación JSON</button>
       </>}
-      <p className="mt-4 text-xs leading-5">Las imágenes Viking o THEMIS son capas visuales de NASA Mars Trek. La topografía y las métricas provienen de MOLA. Muestreo nominal 1,85 km; hay interpolación y huecos de observación en el producto original. Comparación regional a 2 km por celda: no resuelve rocas, suelo ni transitabilidad de rovers. Ambas maquetas usan la misma escala.</p>
-      <p className="mt-2 text-xs leading-5">Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
-      <a className="mt-3 block text-xs underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA</a>
+      <section className="rounded-2xl bg-ink p-6 text-canvas">
+        <h3 className="mb-3 text-xl font-bold leading-7">Límites de la analogía</h3>
+        <ul className="flex flex-col gap-2 text-sm text-pressed">{MARS_LIMITS.map(([title,text])=><li key={title}><strong className="font-medium text-canvas">{title}:</strong> {text}</li>)}</ul>
+      </section>
+      <p className="text-xs leading-5 text-body">Las imágenes Viking o THEMIS son capas visuales de NASA Mars Trek. La topografía y las métricas provienen de MOLA. Muestreo nominal 1,85 km; hay interpolación y huecos de observación en el producto original. Comparación regional a 2 km por celda: no resuelve rocas, suelo ni transitabilidad de rovers. Ambas maquetas usan la misma escala.</p>
+      <p className="text-xs leading-5 text-body">Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
+      <a className="block text-xs underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA</a>
     </aside>
     {compare&&supplied&&<Compare3D zoneId={compare} supplied={supplied} onClose={()=>setCompare(null)}/>}
   </div>

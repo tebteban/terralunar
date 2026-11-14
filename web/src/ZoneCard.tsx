@@ -59,7 +59,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
 
       <button type="button" onClick={onCompare}
         className="rounded-full bg-ink px-4 py-3 text-base font-medium text-canvas hover:bg-elevated">
-        Comparar relieve con la Luna en 3D
+        Comparar relieve 3D con la Luna o Marte
       </button>
 
       <section aria-label="Puntaje por variable">

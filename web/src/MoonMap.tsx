@@ -1,25 +1,17 @@
-import { Map as MapLibre, Marker, NavigationControl, type GeoJSONSource } from 'maplibre-gl'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import Compare3D, { type CompareIndex } from './Compare3D.tsx'
 import { LIMITS } from './limits.ts'
+import MoonGlobe, { type GlobeIndex } from './MoonGlobe.tsx'
+import MoonView from './MoonView.tsx'
+import { latLonToPx } from './moonProj.ts'
 
-// Mapa del polo sur lunar (LOLA, estereográfica polar). La imagen se apoya en un cuadrado "falso" de
-// ±L grados para usar MapLibre (zoom, arrastre, clic); las coordenadas lunares se calculan aparte.
-const L = 5
-const mercY = (lat: number) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360))
-const YL = mercY(L)
-const toMap = (fx: number, fy: number): [number, number] =>
-  [-L + 2 * L * fx, ((2 * Math.atan(Math.exp(YL - 2 * YL * fy)) - Math.PI / 2) * 180) / Math.PI]
-const fromMap = (lng: number, lat: number) => ({ fx: (lng + L) / (2 * L), fy: (YL - mercY(lat)) / (2 * YL) })
-
-interface MoonIndex {
-  image: string; lola_px: number; lola_res_m: number; lola_offset: number; radius_m: number
+interface MoonIndex extends GlobeIndex {
   grid: { file: string; w: number; first_center_px: number; stride_px: number; layers: Metric[]; scale: number[] }
-  window_km: number; source: string
-  sites: { name: string; lat: number; lon: number; line: number; sample: number; ref: string; url: string }[]
+  source: string
 }
 type Metric = 'pendiente_mediana' | 'pendiente_p90' | 'rugosidad_m' | 'desnivel_m'
 type Metrics = Record<Metric, number>
-interface EarthItem extends Metrics { id: string; name: string; body: string }
+interface EarthItem extends Metrics { id: string; name: string; body: string; file: string; lat: number; lon: number; source: string }
 
 const LABELS: Record<Metric, [string, string]> = {
   pendiente_mediana: ['Pendiente mediana', '°'], pendiente_p90: ['Pendiente alta (p90)', '°'],
@@ -36,13 +28,18 @@ function similarity(a: Metrics, b: Metrics) {
 interface Pick { line: number; sample: number; lat: number; lon: number; m: Metrics }
 
 export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string) => void }) {
-  const container = useRef<HTMLDivElement>(null)
-  const map = useRef<MapLibre | null>(null)
   const [index, setIndex] = useState<MoonIndex | null>(null)
   const [grid, setGrid] = useState<Uint16Array | null>(null)
   const [earth, setEarth] = useState<EarthItem[]>([])
   const [pick, setPick] = useState<Pick | null>(null)
+  const [compare, setCompare] = useState<CompareIndex | null>(null)
+  const [compareId, setCompareId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+  // Con token de Cesium se usa la Luna de alta resolución (MoonView); sin token, el globo propio (MoonGlobe).
+  const [hiRes, setHiRes] = useState(() => {
+    try { return !!(localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN) } catch { return !!import.meta.env.VITE_CESIUM_ION_TOKEN }
+  })
 
   useEffect(() => {
     Promise.all([
@@ -70,52 +67,6 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
     return { line, sample, lat, lon, m }
   }, [index, grid])
 
-  useEffect(() => {
-    if (!index || !container.current) return
-    const n = index.lola_px
-    const m = new MapLibre({
-      container: container.current,
-      style: { version: 8, sources: {}, layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#000000' } }] },
-      center: [0, 0], zoom: 4, minZoom: 3, maxZoom: 10, renderWorldCopies: false,
-      maxBounds: [[-L * 1.4, -L * 1.4], [L * 1.4, L * 1.4]], attributionControl: false,
-    })
-    map.current = m
-    m.addControl(new NavigationControl({ showCompass: false }), 'bottom-right')
-    m.on('load', () => {
-      m.addSource('moon', { type: 'image', url: `/moon/${index.image}`, coordinates: [toMap(0, 0), toMap(1, 0), toMap(1, 1), toMap(0, 1)] })
-      m.addLayer({ id: 'moon', type: 'raster', source: 'moon' })
-      m.addSource('pick', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
-      m.addLayer({ id: 'pick', type: 'line', source: 'pick', paint: { 'line-color': '#ffffff', 'line-width': 2 } })
-      m.fitBounds([toMap(0, 1), toMap(1, 0)], { padding: { top: 20, bottom: 20, left: 20, right: 480 }, duration: 0 })
-    })
-    for (const s of index.sites) {
-      const el = document.createElement('div')
-      el.className = 'flex items-center gap-1 text-xs font-medium'
-      el.innerHTML = `<span class="h-2 w-2 rounded-full bg-white"></span><span class="rounded-full bg-black/70 px-2 py-0.5 text-white"></span>`
-      el.lastElementChild!.textContent = s.name
-      new Marker({ element: el, anchor: 'left' }).setLngLat(toMap((s.sample + 0.5) / n, (s.line + 0.5) / n)).addTo(m)
-    }
-    m.on('click', (e) => {
-      const { fx, fy } = fromMap(e.lngLat.lng, e.lngLat.lat)
-      if (fx < 0 || fx > 1 || fy < 0 || fy > 1) return
-      setPick(pickAt(fy * n - 0.5, fx * n - 0.5))
-    })
-    return () => m.remove()
-  }, [index, pickAt])
-
-  // cuadrado de 20 x 20 km alrededor del punto elegido
-  useEffect(() => {
-    const m = map.current
-    const src = m?.getSource('pick') as GeoJSONSource | undefined
-    if (!src || !index) return
-    if (!pick) { src.setData({ type: 'FeatureCollection', features: [] }); return }
-    const n = index.lola_px
-    const h = (index.window_km * 1000) / index.lola_res_m / 2
-    const c = (dl: number, ds: number) => toMap((pick.sample + ds + 0.5) / n, (pick.line + dl + 0.5) / n)
-    src.setData({ type: 'Feature', properties: {}, geometry: { type: 'Polygon', coordinates: [[c(-h, -h), c(-h, h), c(h, h), c(h, -h), c(-h, -h)]] } })
-    m!.easeTo({ center: c(0, 0), padding: { top: 0, bottom: 0, left: 0, right: window.innerWidth >= 768 ? 460 : 0 }, duration: 600 })
-  }, [pick, index])
-
   const matches = useMemo(() => pick
     ? earth.map((e) => ({ e, s: similarity(pick.m, e) })).sort((a, b) => b.s - a.s).slice(0, 6)
     : [], [pick, earth])
@@ -125,12 +76,47 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
     return d.sort((a, b) => a.km - b.km)[0]
   }, [pick, index])
 
+  const openCompare = async (e: EarthItem) => {
+    if (!pick || !index) return
+    const N = index.globe.cap_n, K = index.globe.cap_block, C = 25 // 25 celdas de 800 m = 20 km
+    const dem = new Int16Array(await (await fetch(`/moon/${index.globe.cap_dem}`)).arrayBuffer())
+    const i0 = Math.round((pick.line + 0.5) / K - 0.5) - 12, j0 = Math.round((pick.sample + 0.5) / K - 0.5) - 12
+    const moonH = new Float32Array(C * C)
+    for (let i = 0; i < C; i++) for (let j = 0; j < C; j++) {
+      const ii = Math.min(N - 1, Math.max(0, i0 + i)), jj = Math.min(N - 1, Math.max(0, j0 + j))
+      moonH[i * C + j] = dem[ii * N + jj]
+    }
+    const src = new DataView(await (await fetch(`/compare/${e.file}`)).arrayBuffer()), earthH = new Float32Array(C * C)
+    for (let y = 0; y < C; y++) for (let x = 0; x < C; x++) { // promedio de bloques 10 x 10 de 80 m
+      let sum = 0
+      for (let j = 0; j < 10; j++) for (let i = 0; i < 10; i++) sum += src.getUint16(((y * 10 + j) * 250 + x * 10 + i) * 2, true)
+      earthH[y * C + x] = sum / 100
+    }
+    setCompare({ size_km: 20, res_m: 800, n: C, items: [
+      { id: 'luna-elegido', name: 'Punto elegido en la Luna', body: 'luna', file: '', lat: pick.lat, lon: pick.lon, heights: moonH, ...pick.m,
+        source: 'LRO LOLA (métricas a 80 m; maqueta promediada a 800 m)' },
+      { ...e, body: 'tierra', heights: earthH, source: `${e.source}; maqueta promediada a 800 m` },
+    ] })
+    setCompareId(e.id)
+  }
+
+  const outside = (lat: number) => setNotice(`Tocaste ${lat.toFixed(0)}°: por ahora analizamos el relieve del polo sur (80°–90° S), donde están los sitios de Artemis III. Girá la Luna hacia abajo.`)
+
   return (
     <div className="relative h-full w-full bg-ink">
-      <div ref={container} className="h-full w-full" role="region" aria-label="Mapa de relieve del polo sur lunar" />
-      <p className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">
-        Polo sur lunar (80°–90° S) · arriba = longitud 0°
-      </p>
+      {index && hiRes && <MoonView onPick={(lat, lon) => {
+        if (lat > -80) return outside(lat)
+        const p = latLonToPx(index, lat, lon)
+        setNotice(null); setPick(pickAt(p.line, p.sample))
+      }} />}
+      {index && !hiRes && <MoonGlobe index={index} pick={pick}
+        onPick={(line, sample) => { setNotice(null); setPick(pickAt(line, sample)) }}
+        onOutside={outside} />}
+      {!hiRes && <p className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">
+        Arrastrá para moverte · rueda para acercar (se inclina) · clic derecho para girar · clic en el polo sur
+      </p>}
+      {notice && <p className="absolute left-4 top-40 max-w-sm rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{notice}</p>}
+      {compare && compareId && <Compare3D zoneId={compareId} supplied={compare} onClose={() => { setCompare(null); setCompareId(null) }} />}
       {error && <p className="absolute left-4 top-40 text-canvas">No se pudieron cargar los datos lunares: {error}</p>}
 
       <aside className="absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[60%] flex-col gap-5 overflow-y-auto rounded-2xl bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:bottom-4 md:right-4 md:top-4 md:max-h-none md:w-[440px]">
@@ -138,7 +124,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
           <>
             <h2 className="text-2xl font-bold leading-8">Elegí un lugar en la Luna</h2>
             <p className="text-base text-body">
-              Hacé clic en cualquier punto del mapa. Medimos el relieve de una ventana de {index?.window_km ?? 20} × {index?.window_km ?? 20} km
+              Girá la Luna y hacé clic en cualquier punto del polo sur (el círculo blanco). Medimos el relieve de una ventana de {index?.window_km ?? 20} × {index?.window_km ?? 20} km
               con el altímetro láser LOLA y buscamos los lugares de la Tierra con relieve más parecido.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -148,6 +134,9 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
               ))}
             </div>
             <p className="text-xs text-body">Son los accidentes que dan nombre a las regiones candidatas de Artemis III (centros según la IAU).</p>
+            <button type="button" onClick={() => setHiRes(!hiRes)} className="self-start text-sm font-medium underline">
+              {hiRes ? 'Usar el globo liviano (sin token)' : 'Ver con relieve 3D de alta resolución (Cesium, requiere token)'}
+            </button>
           </>
         ) : (
           <>
@@ -169,9 +158,8 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
               <h3 className="mb-3 text-xl font-bold leading-7">Lugares parecidos en la Tierra</h3>
               <ol className="flex flex-col gap-1">
                 {matches.map(({ e, s }) => (
-                  <li key={e.id}>
-                    <button type="button" onClick={() => onPickEarth(e.id)}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left hover:bg-canvas-soft">
+                  <li key={e.id} className="rounded-xl px-3 py-2 hover:bg-canvas-soft">
+                    <div className="flex items-center gap-3">
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">{e.name}</span>
                         <span className="block text-xs text-body">
@@ -179,7 +167,11 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
                         </span>
                       </span>
                       <span className="text-lg font-bold tabular-nums">{Math.round(s * 100)}</span>
-                    </button>
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <button type="button" onClick={() => openCompare(e)} className="rounded-full bg-ink px-3 py-1 text-xs font-medium text-canvas">Comparar relieve 3D</button>
+                      <button type="button" onClick={() => onPickEarth(e.id)} className="rounded-full bg-canvas-soft px-3 py-1 text-xs font-medium">Ver en la Tierra</button>
+                    </div>
                   </li>
                 ))}
               </ol>

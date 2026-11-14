@@ -49,13 +49,16 @@ export function metrics(h: Float32Array, n = PATCH_N, step = PATCH_STEP): Relief
   return { pendiente_mediana: slopes[Math.floor(slopes.length*.5)], pendiente_p90: slopes[Math.floor(slopes.length*.9)], rugosidad_m: Math.sqrt(residuals.reduce((s,v)=>s+(v-mean)**2,0)/residuals.length), desnivel_m: Math.max(...h)-Math.min(...h) }
 }
 export function marsPatch(grid: Int16Array, lon: number, lat: number): Patch {
+  return patchFrom((l, p) => elevation(grid, l, p), lon, lat)
+}
+function patchFrom(elev: (lon: number, lat: number) => number, lon: number, lat: number): Patch {
   const heights=new Float32Array(PATCH_N*PATCH_N)
   // Area averaging over each 2 km cell, also applied to Earth below.
   for(let y=0;y<PATCH_N;y++) for(let x=0;x<PATCH_N;x++) {
     let sum=0
     for(let j=0;j<5;j++) for(let i=0;i<5;i++) {
       const [l,p]=offset(lon,lat,(x-4.5)*2000+(i-2)*400,(4.5-y)*2000+(2-j)*400)
-      sum+=elevation(grid,l,p)
+      sum+=elev(l,p)
     }
     heights[y*PATCH_N+x]=sum/25
   }
@@ -83,4 +86,43 @@ export async function earthPatches(): Promise<Patch[]> {
 export const TOLERANCES: Relief = {pendiente_mediana:5,pendiente_p90:8,rugosidad_m:200,desnivel_m:1000}
 export function similarity(a: Relief,b: Relief) {
   return Object.entries(TOLERANCES).reduce((s,[k,t])=>s+Math.max(0,1-Math.abs(a[k as keyof Relief]-b[k as keyof Relief])/t),0)/4
+}
+
+// Sitios de referencia en Marte (compartidos por la vista de Marte y el comparador de la ficha terrestre)
+export const MARS_SITES = [
+  {name:'Olympus Mons',lon:-133.8,lat:18.65}, {name:'Valles Marineris',lon:-60,lat:-13},
+  {name:'Jezero',lon:77.58,lat:18.44}, {name:'Gale',lon:137.4,lat:-4.6},
+  {name:'Elysium Planitia',lon:135.6,lat:4.5}, {name:'Hellas Planitia',lon:70,lat:-42.4},
+]
+
+// Recorte de un sitio sin bajar todo MOLA: solo las franjas de 11,25° de latitud que toca (~6 MB c/u)
+const bands = new Map<number, Promise<Int16Array>>()
+function loadBand(band: number) {
+  if (!bands.has(band)) bands.set(band, (async () => {
+    const response = await fetch(`/mars/mola32-${band}.dat`)
+    if (!response.ok || !response.body) throw new Error('No se pudo cargar MOLA')
+    const buffer = await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer()
+    if (buffer.byteLength !== 11520 * 360 * 2) throw new Error('Franja MOLA incompleta')
+    const view = new DataView(buffer), out = new Int16Array(11520 * 360)
+    for (let i = 0; i < out.length; i++) out[i] = view.getInt16(i * 2, false)
+    return out
+  })().catch(e => { bands.delete(band); throw e }))
+  return bands.get(band)!
+}
+export async function marsSitePatch(site: { name: string; lon: number; lat: number }): Promise<Patch> {
+  const row = (lat: number) => Math.max(0, Math.min(5759, (90 - lat) * 32 - 0.5))
+  const needed = new Set<number>()
+  for (const dLat of [-0.5, 0, 0.5]) for (const dy of [0, 1]) needed.add(Math.min(15, Math.floor((Math.floor(row(site.lat + dLat)) + dy) / 360)))
+  const loaded = new Map(await Promise.all([...needed].map(async b => [b, await loadBand(b)] as const)))
+  const at = (xx: number, yy: number) => {
+    const y = Math.min(5759, yy), band = loaded.get(Math.floor(y / 360))
+    if (!band) throw new Error('Franja MOLA faltante')
+    return band[(y % 360) * 11520 + ((xx % 11520) + 11520) % 11520]
+  }
+  const elev = (lon: number, lat: number) => { // misma interpolación bilineal que elevation()
+    const x = ((lon % 360 + 360) % 360) * 32 - 0.5, y = row(lat)
+    const x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0
+    return at(x0,y0)*(1-fx)*(1-fy)+at(x0+1,y0)*fx*(1-fy)+at(x0,y0+1)*(1-fx)*fy+at(x0+1,y0+1)*fx*fy
+  }
+  return { ...patchFrom(elev, site.lon, site.lat), id: `marte-${site.name}`, name: site.name }
 }

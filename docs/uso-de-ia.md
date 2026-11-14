@@ -20,15 +20,16 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Vuelo lunar inclinado al hacer doble clic y persistencia local del token de Cesium | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Comparador 3D Luna vs Tierra: `pipeline/02_compare_patches.py` (recortes LOLA y tiles de elevación, métricas) y `web/src/Compare3D.tsx` (three.js) | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Aplicación de docs/DESIGN.md a la web: tokens de color, Inter, pills, cards y límites en card negra | — |
-
 | 2026-11-14 | OpenAI Codex | Cámara lunar con vuelo inclinado al acercarse y selección del terreno 3D real | — |
-
 | 2026-11-14 | OpenAI Codex | Encuadre lunar inclinado y más amplio para visualizar el relieve en contexto | — |
-
 | 2026-11-14 | OpenAI Codex | Zoom lunar con vuelos progresivos al cursor, inclinación gradual hasta 60°, orientación como Tierra y botón Ver planeta; conserva teselas de relieve lunar | — |
 | 2026-11-14 | OpenAI Codex | Suavizado del zoom lunar por fotogramas con amortiguación temporal, anclaje central estable, orientación conservada e interrupción inmediata al arrastrar; build y lint verificados | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Vista "Polo sur lunar": `pipeline/03_moon_map.py` (mapa LOLA y grilla de métricas) y `web/src/MoonMap.tsx` (clic en la Luna → lugares parecidos en la Tierra); panel y comparador en variante oscura | — |
-
 | 2026-11-14 | OpenAI Codex | Marte MapLibre sin token con MOLA público, extracción regional, ranking exploratorio y comparador Marte/Tierra; documentación y pruebas numéricas | — |
-
 | 2026-11-14 | OpenAI Codex | Capas públicas NASA Mars Trek Viking y THEMIS reproyectadas a MapLibre sobre relieve MOLA, con selector y atribución | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Globo lunar 3D (`web/src/MoonGlobe.tsx`, three.js) y `pipeline/05_moon_globe.py`; reemplaza el mapa plano del polo sur | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Fusión de la Luna: pestaña única con Cesium de Eze (si hay token) o globo propio three.js (sin token), clic en el polo sur → panel de análisis; `web/src/moonProj.ts` | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Zoom del globo lunar: hacia el cursor, proporcional a la altura, vuelos por la curva de la Luna y puntos de sitios de tamaño fijo (`web/src/MoonGlobe.tsx`) | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Cámara del globo lunar estilo mapa (igual que la de Eze): zoom al centro, inclinación 0°–60° entre 800 y 45 km, arrastre que desplaza, clic derecho gira, botón Ver planeta | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Relieve 3D real del polo sur en el globo lunar (malla LOLA a 800 m, cámara y marcas sobre el terreno) | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Unificación Tierra/Luna/Marte: inclinación automática al hacer zoom en la Tierra, panel de Marte con el formato de la Luna y límites de la analogía de Marte (`web/src/limits.ts`), comparador 3D Luna o Marte desde la ficha terrestre (franjas MOLA bajo demanda en `web/src/marsData.ts`) y desde el panel lunar (LOLA a 800 m) | — |

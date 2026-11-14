@@ -69,6 +69,17 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
     }
     m.on('zoom', updateSpace)
     updateSpace()
+    // Misma regla que Marte y la Luna: al acercarse la cámara se inclina sola (0° lejos, 60° cerca)
+    let autoPitch = false
+    m.on('zoomend', (e) => {
+      if (autoPitch || !e.originalEvent) return // solo zoom del usuario; los vuelos ya traen su inclinación
+      const pitch = Math.max(0, Math.min(60, (m.getZoom() - 3) * 15))
+      if (Math.abs(m.getPitch() - pitch) > 3) {
+        autoPitch = true
+        m.easeTo({ pitch, duration: 700 })
+        m.once('moveend', () => { autoPitch = false })
+      }
+    })
     m.on('load', () => {
       m.setProjection({ type: 'globe' })
       m.setSky({ 'sky-color': 'rgba(2,6,23,0)', 'horizon-color': '#93c5fd', 'fog-color': '#020617', 'atmosphere-blend': 0.85 })

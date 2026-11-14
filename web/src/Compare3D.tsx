@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { fromUrl } from 'geotiff'
 import { offset } from './marsData.ts'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { MARS_SITES, earthPatches, marsSitePatch } from './marsData.ts'
 
 // Comparador Luna vs Tierra: dos maquetas del MISMO tamaño (20 x 20 km), misma resolución (80 m),
 // misma exageración vertical y misma luz. Girar una gira la otra.
@@ -113,10 +114,15 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
 
 export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: string; onClose: () => void; supplied?: CompareIndex }) {
   const [loadedIndex, setIndex] = useState<CompareIndex | null>(null)
-  const index = supplied ?? loadedIndex
-  const [highRes, setHighRes] = useState<{mars: Float32Array; earth: Float32Array} | null>(null)
+  // Desde la ficha terrestre se puede comparar con la Luna (LOLA 80 m) o con Marte (MOLA, celdas de 2 km)
+  const [planet, setPlanet] = useState<'luna' | 'marte'>('luna')
+  const [marsSite, setMarsSite] = useState(MARS_SITES[2].name) // Jezero
+  const [marsIndex, setMarsIndex] = useState<CompareIndex | null>(null)
+  const index = supplied ?? (planet === 'marte' ? marsIndex : loadedIndex)
+  // celdas de 2 km (Marte) aplanan el relieve: arranca más exagerado; a 80–800 m alcanza con ×2
+  const [exaggeration, setExaggeration] = useState(supplied && supplied.res_m >= 2000 ? 6 : EXAGGERATION)
+  const [highRes, setHighRes] = useState<{key: string; mars: Float32Array; earth: Float32Array} | null>(null)
   const [detailStatus, setDetailStatus] = useState('')
-  const [exaggeration, setExaggeration] = useState(supplied ? 6 : EXAGGERATION)
   const [error, setError] = useState<string | null>(null)
   const [moonId, setMoonId] = useState<string | null>(null)
   const shared = useRef<Shared>({ cams: [], controls: [], syncing: false })
@@ -143,11 +149,25 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
       .catch((e) => setError(String(e)))
   }, [supplied])
 
+  useEffect(() => {
+    if (supplied || planet !== 'marte') return
+    let off = false
+    const site = MARS_SITES.find((s) => s.name === marsSite)!
+    Promise.all([marsSitePatch(site), earthPatches()]).then(([mars, patches]) => {
+      if (off) return
+      const zone = patches.find((p) => p.id === zoneId)
+      if (!zone) return setError('esta zona incluye mar aplanado y no entra en la comparación con Marte')
+      setMarsIndex({ size_km: 20, res_m: 2000, n: 10, items: [mars, zone] })
+    }).catch((e) => { if (!off) setError(String(e)) })
+    return () => { off = true }
+  }, [supplied, planet, marsSite, zoneId])
+
   const moons = index?.items.filter((i) => i.body !== 'tierra') ?? []
   const moon = moons.find((i) => i.id === moonId) ?? moons[0]
   const earth = index?.items.find((i) => i.id === zoneId)
+  const detail = highRes && moon && earth && highRes.key === `${moon.id}|${moon.lat}|${moon.lon}|${earth.id}` ? highRes : null // nunca el relieve de otro sitio
   useEffect(() => {
-    if (!supplied || !moon || !earth) return
+    if (!moon || !earth || moon.body !== 'marte') return // el modelo de 200 m es solo de Marte
     let cancelled = false
     // 200 m cell centres on the same 20 km footprint, independent of the coarse ranking.
     const run = async () => {
@@ -183,7 +203,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
         }
         ground[y*100+x]=total/weight
       }
-      if(!cancelled){setHighRes({mars:out,earth:ground});setDetailStatus('Relieve detallado: MOLA/HRSC 200 m y Tierra promediada a 200 m. Las métricas del ranking siguen calculadas a 2 km.')}
+      if(!cancelled){setHighRes({key:`${moon.id}|${moon.lat}|${moon.lon}|${earth.id}`,mars:out,earth:ground});setDetailStatus('Relieve detallado: MOLA/HRSC 200 m y Tierra promediada a 200 m. Las métricas del ranking siguen calculadas a 2 km.')}
     }
     run().catch(e=>{if(!cancelled)setDetailStatus(`No se pudo cargar el relieve detallado: ${String(e)}. Se muestra el modelo regional de 2 km.`)})
     return()=>{cancelled=true}
@@ -194,14 +214,26 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
     <div className="absolute inset-0 z-20 flex flex-col gap-4 bg-ink p-6 text-canvas" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
       <header className="flex flex-wrap items-center gap-3">
         <h2 className="text-2xl font-bold leading-8">Comparar relieve en 3D</h2>
-        <label className="flex items-center gap-2 text-sm">
+        {!supplied && <div className="flex gap-1 rounded-full bg-elevated p-1" aria-label="Cuerpo a comparar">
+          {(['luna', 'marte'] as const).map((b) => (
+            <button key={b} type="button" aria-pressed={planet === b}
+              onClick={() => { setPlanet(b); setMarsIndex(null); setError(null); setExaggeration(b === 'marte' ? 6 : EXAGGERATION) }}
+              className="rounded-full px-4 py-1.5 text-sm font-medium aria-pressed:bg-canvas aria-pressed:text-ink">{b === 'luna' ? 'Luna' : 'Marte'}</button>
+          ))}
+        </div>}
+        {!supplied && planet === 'marte' ? <label className="flex items-center gap-2 text-sm">
+          <span className="text-mute">Sitio en Marte</span>
+          <select value={marsSite} onChange={(e) => { setMarsSite(e.target.value); setMarsIndex(null); setError(null) }} className="rounded-lg bg-elevated px-4 py-2 text-base text-canvas">
+            {MARS_SITES.map((s) => <option key={s.name}>{s.name}</option>)}
+          </select>
+        </label> : <label className="flex items-center gap-2 text-sm">
           <span className="text-mute">Sitio planetario</span>
           <select value={moon?.id ?? ''} onChange={(e) => setMoonId(e.target.value)}
             className="rounded-lg bg-elevated px-4 py-2 text-base text-canvas">
             {moons.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
-        </label>
-        {supplied && <label className="flex items-center gap-2 text-sm text-mute">Exageración vertical ×{exaggeration}
+        </label>}
+        {(supplied || planet === 'marte') && <label className="flex items-center gap-2 text-sm text-mute">Exageración vertical ×{exaggeration}
           <input aria-label="Exageración vertical" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
         </label>}
         <button type="button" onClick={onClose} className="ml-auto rounded-full bg-canvas px-5 py-2 text-base font-medium text-ink hover:bg-pressed">
@@ -210,6 +242,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
       </header>
 
       {error && <p className="text-canvas">No se pudieron cargar los recortes: {error}</p>}
+      {!supplied && planet === 'marte' && !marsIndex && !error && <p className="text-mute">Cargando la franja de MOLA de {marsSite} (~6 MB)…</p>}
       {index && !earth && <p className="text-mute">Esta zona todavía no tiene recorte. Correr pipeline/02_compare_patches.py.</p>}
 
       {index && moon && earth && (
@@ -221,7 +254,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                   <h3 className="truncate text-base font-bold"><span className="mr-2 rounded-full bg-ink px-2 py-0.5 text-xs font-medium">{it.body === 'luna' ? 'Luna' : it.body === 'marte' ? 'Marte' : 'Tierra'}</span>{it.name}</h3>
                   <span className="shrink-0 text-xs text-mute">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
                 </div>
-                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={highRes ? (slot === 0 ? highRes.mars : highRes.earth) : undefined} meshN={highRes ? 100 : undefined} /></div>
+                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={detail ? (slot === 0 ? detail.mars : detail.earth) : undefined} meshN={detail ? 100 : undefined} /></div>
                 <div className="px-4 py-3">
                   <Stats item={it} other={it.body === 'tierra' ? moon : undefined} />
                   {!!it.agua && <p className="mt-2 text-xs text-canvas">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
@@ -232,9 +265,9 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
               </section>
             ))}
           </div>
-          {detailStatus && <p role="status" className="text-sm text-mute">{detailStatus}</p>}
+          {detailStatus && moon?.body === 'marte' && <p role="status" className="text-sm text-mute">{detailStatus}</p>}
           <p className="text-sm text-mute">
-            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas visuales de {highRes ? 200 : index.res_m} m, relieve exagerado ×{exaggeration} y la misma luz.
+            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas visuales de {detail ? 200 : index.res_m} m, relieve exagerado ×{exaggeration} y la misma luz.
             Arrastrá para girar (las dos giran juntas). {supplied && 'La malla se suaviza por interpolación: no agrega detalles medidos. Cambiar la exageración solo afecta la vista, no las métricas. '}A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
           </p>
         </>

@@ -11,7 +11,7 @@ type CesiumApi = {
   BoundingSphere: new (center: unknown, radius: number) => unknown
   HeadingPitchRange: new (heading: number, pitch: number, range: number) => unknown
   Cartographic: { fromCartesian: (p: unknown) => { longitude: number; latitude: number } }
-  ScreenSpaceEventType: { LEFT_DOUBLE_CLICK: unknown }
+  ScreenSpaceEventType: { LEFT_DOUBLE_CLICK: unknown; LEFT_CLICK: unknown }
   ScreenSpaceEventHandler: new (canvas: unknown) => { setInputAction: (fn: (e: { position: unknown }) => void, event: unknown) => void; destroy: () => void }
   Viewer: new (node: HTMLElement, options: Record<string, unknown>) => {
     scene: { primitives: { add: (tileset: unknown) => void }; canvas: HTMLCanvasElement; pickPosition: (p: unknown) => unknown; pickPositionSupported: boolean }
@@ -40,7 +40,9 @@ function loadCesium(): Promise<CesiumApi> {
   })
 }
 
-export default function MoonView({ mars = false }: { mars?: boolean }) {
+export default function MoonView({ onPick, mars = false }: { onPick?: (lat: number, lon: number) => void; mars?: boolean }) {
+  const pickRef = useRef(onPick)
+  useEffect(() => { pickRef.current = onPick })
   const target = useRef<HTMLDivElement>(null)
   const resetCamera = useRef<() => void>(() => {})
   const [token, setToken] = useState(() => { try { return localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN || '' } catch { return import.meta.env.VITE_CESIUM_ION_TOKEN || '' } })
@@ -101,6 +103,16 @@ export default function MoonView({ mars = false }: { mars?: boolean }) {
       viewer.screenSpaceEventHandler.removeInputAction(C.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
       handler = new C.ScreenSpaceEventHandler(canvas)
       handler.setInputAction((event) => { flyOver(event.position, 45000, 2.8) }, C.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
+      // Clic simple: punto de la superficie -> panel de análisis de TerraLunar
+      handler.setInputAction((event) => {
+        if (!viewer || !pickRef.current) return
+        let hit: unknown
+        if (viewer.scene.pickPositionSupported) { try { hit = viewer.scene.pickPosition(event.position) } catch { /* profundidad no lista */ } }
+        hit ||= viewer.camera.pickEllipsoid(event.position, C.Ellipsoid.MOON)
+        if (!hit) return
+        const c = C.Cartographic.fromCartesian(hit)
+        pickRef.current((c.latitude * 180) / Math.PI, (c.longitude * 180) / Math.PI)
+      }, C.ScreenSpaceEventType.LEFT_CLICK)
       // A single damped animation consumes wheel input, without restarting camera flights.
       // Anchor at the view center so zoom never snaps the cursor location to the center.
       let zoomAnchor: unknown
@@ -186,7 +198,7 @@ export default function MoonView({ mars = false }: { mars?: boolean }) {
     </div></div>}
     {status && <div role="status" className="absolute left-4 top-28 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status} {status.startsWith('No se pudo') && <button className="ml-2 font-medium underline" onClick={() => { try { localStorage.removeItem('terralunar.cesium-token') } catch { /* ignore */ }; setToken('') }}>Cambiar token</button>}</div>}
     <button type="button" onClick={() => resetCamera.current()} className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft">Ver planeta</button>
-    <div className="pointer-events-none absolute left-4 top-16 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">Acercá con la rueda para ver el relieve 3D · Doble clic para volar a un punto</div>
+    <div className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">{mars ? 'Rueda para acercar · doble clic para volar a un punto' : 'Rueda para acercar · doble clic para volar · clic en el polo sur para analizar'}</div>
     <div className="absolute bottom-5 left-4 rounded-full bg-canvas px-3 py-1 text-xs text-body shadow-float">{mars ? 'NASA MOLA / ESA HRSC · Viking · Cesium Mars' : 'NASA LRO / USGS · Cesium Moon'}</div>
   </div>
 }
