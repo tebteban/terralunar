@@ -57,7 +57,11 @@ navegador los lee y hace las cuentas en vivo.
 | `globeRotation.ts` | Rotación lenta y decorativa del globo en vista global (Tierra y Marte) |
 | `localData.ts` | Caché en memoria de archivos binarios locales, para no bajarlos dos veces |
 | `limits.ts` | Textos de los límites de la analogía para la Luna (`LIMITS`) y Marte (`MARS_LIMITS`) |
-| `SpaceBackdrop.tsx` | Fondo decorativo de estrellas |
+| `SpaceBackdrop.tsx` | Fondo decorativo de estrellas (`bodies={false}` lo deja sin planetas) |
+| `Landing.tsx` | Portada: titular, opciones Luna / Marte / Personalizado (teclas 1-2-3), mejores 5 análogos y método. Exporta `TopBar` |
+| `HalftoneMoon.tsx` | Luna en trama de puntos (canvas) con el brillo real de la textura LRO y los sitios del polo sur de `data/moon/index.json` |
+| `LimitsCard.tsx` | Tarjeta obligatoria "Límites de la analogía" (Luna o Marte), usada en la ficha y en los paneles |
+| `CustomSearch.tsx` | Búsqueda personalizada: variables por grupo, importancia Baja/Media/Alta, "lo que pide la Luna" con el trapecio difuso y vista previa del ranking en vivo |
 | `Workspace.tsx` | **Sin uso** (navegación al explorador). Pendiente decidir si se conecta o se borra |
 
 ### Servicios externos que usa el navegador
@@ -132,3 +136,6 @@ npm run build              # build de producción (chequea tipos)
 | 2026-11-14 | Se agrega three.js para el comparador 3D | D-008 |
 | 2026-11-14 | Se agrega `geotiff` y servicios Mars Trek y Hugging Face para Marte | D-009 |
 | 2026-11-14 | Globo lunar propio con three.js; Cesium pasa a opcional | D-010 |
+| 2026-11-14 | Fuentes Archivo (títulos) y JetBrains Mono (lecturas técnicas) por Google Fonts, junto a Inter | D-011 |
+| 2026-11-14 | Sistema de diseño aeroespacial (`docs/DESIGN.md`): Barlow Condensed + Barlow reemplazan a Inter, Archivo y JetBrains Mono | D-012 |
+| 2026-11-14 | Sistema "TerraLunar Science Console": vuelven Inter y JetBrains Mono; nuevo `LimitsCard.tsx` | D-014 |

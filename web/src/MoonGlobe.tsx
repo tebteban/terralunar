@@ -308,6 +308,7 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
       cv.removeEventListener('wheel', onWheel)
       cv.removeEventListener('contextmenu', noMenu)
       renderer.dispose()
+      renderer.forceContextLoss() // libera el contexto WebGL: Chrome solo mantiene ~16 activos
       el.innerHTML = ''
       api.current = null
       alive = false
@@ -317,11 +318,11 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
   useEffect(() => { api.current?.showPick(pick) }, [pick])
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-ink">
+    <div className="relative h-full w-full overflow-hidden bg-space">
       <SpaceBackdrop />
       <div ref={box} className="absolute inset-0 md:right-[470px]" role="region" aria-label="Globo 3D de la Luna. Arrastrá para moverte, rueda para acercar; clic en el polo sur para analizar." />
       <button type="button" onClick={() => api.current?.reset()}
-        className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft">Ver planeta</button>
+        className="chip-dark absolute left-4 top-4">Ver planeta</button>
     </div>
   )
 }

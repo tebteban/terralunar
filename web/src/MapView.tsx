@@ -20,8 +20,8 @@ const DEM = {
   maxzoom: 14,
   attribution: 'Relieve: <a href="https://registry.opendata.aws/terrain-tiles/">AWS Terrain Tiles</a> (Mapzen; incl. NASA SRTM)',
 }
-// Color por similitud S (0..1): gris → ámbar → crema
-const COLOR = ['interpolate', ['linear'], ['get', 'score'], 0.4, '#475569', 0.7, '#f59e0b', 0.9, '#fde68a'] as const
+// Escala de similitud de DESIGN.md (S 0..1): pizarra → ámbar → crema
+const COLOR = ['interpolate', ['linear'], ['get', 'score'], 0.4, '#1e293b', 0.7, '#d97706', 0.9, '#fef3c7'] as const
 
 function toGeoJSON(ranked: Ranked[], selectedId: string | null, kind: 'polygon' | 'point') {
   return {
@@ -123,7 +123,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
           'circle-opacity': ['case', ['get', 'selected'], 0, 1], // no tapar el relieve de la zona elegida
           'circle-stroke-opacity': ['case', ['get', 'selected'], 0, 1],
           'circle-radius': ['interpolate', ['linear'], ['get', 'score'], 0.3, 4, 0.9, 10],
-          'circle-stroke-color': ['case', ['get', 'selected'], '#ffffff', ['get', 'known'], '#38bdf8', '#0f172a'],
+          'circle-stroke-color': ['case', ['get', 'selected'], '#ffffff', ['get', 'known'], '#ffffff', '#afafaf'],
           'circle-stroke-width': ['case', ['get', 'selected'], 3, ['get', 'known'], 2, 1],
         },
       })
@@ -145,10 +145,10 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
 
   useEffect(focus, [selectedId]) // solo mover la cámara al cambiar la selección, no al mover sliders
 
-  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-slate-950">
+  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-space">
     <SpaceBackdrop />
     <div ref={container} className="relative h-full w-full" role="region" aria-label="Globo 3D de la Tierra y mapa de zonas análogas" />
-    <button type="button" className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft"
+    <button type="button" className="chip-dark absolute left-4 top-4"
       onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 0.5, pitch: 0, bearing: 0, duration: 1800 })}>
       Ver planeta
     </button>

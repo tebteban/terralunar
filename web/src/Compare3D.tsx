@@ -3,7 +3,8 @@ import * as THREE from 'three'
 import { fromUrl } from 'geotiff'
 import { offset } from './marsData.ts'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { MARS_SITES, earthPatches, marsSitePatch } from './marsData.ts'
+import { MARS_SITES, earthPatches, marsSitePatch, similarity } from './marsData.ts'
+import { moonSimilarity } from './moonRelief.ts'
 
 // Comparador Luna vs Tierra: dos maquetas del MISMO tamaño (20 x 20 km), misma resolución (80 m),
 // misma exageración vertical y misma luz. Girar una gira la otra.
@@ -87,7 +88,7 @@ function Terrain({ item, index, link, slot, exaggeration, meshHeights, meshN }: 
       scene.add(mesh)
       render()
     }).catch(e => { if (!disposed) setTerrainError(String(e)) })
-    return () => { scene.traverse(object => { if (object instanceof THREE.Mesh) { object.geometry.dispose(); const materials = Array.isArray(object.material) ? object.material : [object.material]; materials.forEach(m => m.dispose()) } }); disposed = true; ro.disconnect(); controls.dispose(); renderer.dispose(); el.innerHTML = '' }
+    return () => { scene.traverse(object => { if (object instanceof THREE.Mesh) { object.geometry.dispose(); const materials = Array.isArray(object.material) ? object.material : [object.material]; materials.forEach(m => m.dispose()) } }); disposed = true; ro.disconnect(); controls.dispose(); renderer.dispose(); renderer.forceContextLoss(); el.innerHTML = '' } // forceContextLoss: liberar el contexto WebGL (Chrome mantiene ~16)
   }, [item, index, link, slot, exaggeration, meshHeights, meshN])
   return <div className="relative h-full w-full"><div ref={box} className="h-full w-full" aria-label={`Relieve 3D de ${item.name}`} />{terrainError && <p role="alert" className="absolute top-2 left-2 text-white">{terrainError}</p>}</div>
 }
@@ -98,13 +99,13 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
     ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel total', 'desnivel_m', ' m'],
   ]
   return (
-    <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
+    <dl className="flex flex-col divide-y divide-white/10">
       {rows.map(([label, key, unit]) => (
-        <div key={key} className="contents">
-          <dt className="text-mute">{label}</dt>
-          <dd className="text-right font-medium tabular-nums">
-            {Number(item[key]).toFixed(1)}{unit}
-            {other && <span className="ml-1 font-normal text-mute">({other.body === 'marte' ? 'Marte' : 'Luna'} {Number(other[key]).toFixed(1)}{unit})</span>}
+        <div key={key} className="flex items-baseline justify-between gap-3 py-2">
+          <dt className="text-[13px] text-mute">{label}</dt>
+          <dd className="metric flex items-baseline gap-1.5 text-right text-lg font-semibold text-canvas">
+            {Number(item[key]).toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}{unit}
+            {other && <span className="text-xs font-normal text-mute">({other.body === 'marte' ? 'Marte' : 'Luna'}: {Number(other[key]).toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}{unit})</span>}
           </dd>
         </div>
       ))}
@@ -210,66 +211,151 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   }, [supplied, moon, earth])
 
 
+  const tag = (body: string) => body === 'marte'
+    ? 'border-mars/40 bg-mars/15 text-[#ffb59c]'
+    : body === 'luna' ? 'border-white/20 bg-canvas text-ink' : 'border-white/20 bg-pressed text-ink'
+  const toolbar = 'flex items-center gap-2 rounded-full border border-white/15 bg-obsidian px-4 py-2 text-sm'
+  const bodyName = (b: string) => b === 'luna' ? 'Luna' : b === 'marte' ? 'Marte' : 'Tierra'
+  // Parecido de relieve con la misma fórmula y tolerancias que el panel de origen (Luna o Marte)
+  const score = moon && earth ? (moon.body === 'marte' ? similarity(moon, earth) : moonSimilarity(moon, earth)) : null
+  const cell = index ? (detail ? 200 : index.res_m) : 0
+  const short = (src: string) => src.split(/[;(]/)[0].trim()
+
   return (
-    <div className="absolute inset-0 z-20 flex flex-col gap-4 bg-ink p-6 text-canvas" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
-      <header className="flex flex-wrap items-center gap-3">
-        <h2 className="text-2xl font-bold leading-8">Comparar relieve en 3D</h2>
-        {!supplied && <div className="flex gap-1 rounded-full bg-elevated p-1" aria-label="Cuerpo a comparar">
+    <div className="absolute inset-0 z-20 flex flex-col gap-4 overflow-y-auto bg-[#0a0a0c] p-4 text-canvas md:p-6" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
+      <header className="flex flex-wrap items-center gap-3 border-b border-white/10 pb-4">
+        <h2 className="mr-2 text-xl leading-7 font-bold tracking-tight">Comparar relieve en 3D</h2>
+        {!supplied && <div className="flex gap-1 rounded-full border border-white/15 bg-rail p-1" aria-label="Cuerpo a comparar">
           {(['luna', 'marte'] as const).map((b) => (
             <button key={b} type="button" aria-pressed={planet === b}
               onClick={() => { setPlanet(b); setMarsIndex(null); setError(null); setExaggeration(b === 'marte' ? 6 : EXAGGERATION) }}
-              className="rounded-full px-4 py-1.5 text-sm font-medium aria-pressed:bg-canvas aria-pressed:text-ink">{b === 'luna' ? 'Luna' : 'Marte'}</button>
+              className="flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs text-mute transition-colors hover:text-canvas aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink">
+              {b === 'marte' && <span className="size-2 rounded-full bg-mars" aria-hidden="true" />}{bodyName(b)}
+            </button>
           ))}
         </div>}
-        {!supplied && planet === 'marte' ? <label className="flex items-center gap-2 text-sm">
-          <span className="text-mute">Sitio en Marte</span>
-          <select value={marsSite} onChange={(e) => { setMarsSite(e.target.value); setMarsIndex(null); setError(null) }} className="rounded-lg bg-elevated px-4 py-2 text-base text-canvas">
-            {MARS_SITES.map((s) => <option key={s.name}>{s.name}</option>)}
+        {!supplied && planet === 'marte' ? <label className={toolbar}>
+          <span className="size-2 rounded-full bg-mars" aria-hidden="true" />
+          <span className="label-mono text-mute">Sitio:</span>
+          <select value={marsSite} onChange={(e) => { setMarsSite(e.target.value); setMarsIndex(null); setError(null) }} className="cursor-pointer bg-transparent text-sm text-canvas outline-none">
+            {MARS_SITES.map((s) => <option key={s.name} className="bg-obsidian">{s.name}</option>)}
           </select>
-        </label> : <label className="flex items-center gap-2 text-sm">
-          <span className="text-mute">Sitio planetario</span>
-          <select value={moon?.id ?? ''} onChange={(e) => setMoonId(e.target.value)}
-            className="rounded-lg bg-elevated px-4 py-2 text-base text-canvas">
-            {moons.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+        </label> : <label className={toolbar}>
+          <span className="label-mono text-mute">Sitio:</span>
+          <select value={moon?.id ?? ''} onChange={(e) => setMoonId(e.target.value)} className="cursor-pointer bg-transparent text-sm text-canvas outline-none">
+            {moons.map((m) => <option key={m.id} value={m.id} className="bg-obsidian">{m.name}</option>)}
           </select>
         </label>}
-        {(supplied || planet === 'marte') && <label className="flex items-center gap-2 text-sm text-mute">Exageración vertical ×{exaggeration}
-          <input aria-label="Exageración vertical" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
+        {(supplied || planet === 'marte') && <label className={toolbar}>
+          <span className="label-mono whitespace-nowrap text-mute">Exageración vertical: <span className="metric font-bold text-canvas">×{exaggeration}</span></span>
+          <input aria-label="Exageración vertical" className="w-28" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
         </label>}
-        <button type="button" onClick={onClose} className="ml-auto rounded-full bg-canvas px-5 py-2 text-base font-medium text-ink hover:bg-pressed">
-          Cerrar
-        </button>
+        <button type="button" onClick={onClose} className="btn-ghost ml-auto h-10">Cerrar ✕</button>
       </header>
 
+      {index && moon && earth && (
+        <div className="-mt-2 flex items-center justify-between gap-4 border-b border-white/10 pb-2 font-mono text-xs text-mute">
+          <span className="flex min-w-0 items-center gap-2">
+            <span className="shrink-0 rounded bg-white/10 px-2 py-0.5 font-bold text-canvas">MISMA ESCALA</span>
+            <span className="truncate uppercase">{short(moon.source)} ⟷ {short(earth.source)}</span>
+          </span>
+          <span className="hidden shrink-0 gap-5 md:flex">
+            <span>GRILLA: {index.size_km} × {index.size_km} km</span>
+            <span>CELDA: {cell} m</span>
+            <span className="text-canvas">RELIEVE ×{exaggeration}</span>
+          </span>
+        </div>
+      )}
+
       {error && <p className="text-canvas">No se pudieron cargar los recortes: {error}</p>}
-      {!supplied && planet === 'marte' && !marsIndex && !error && <p className="text-mute">Cargando la franja de MOLA de {marsSite} (~6 MB)…</p>}
+      {!supplied && planet === 'marte' && !marsIndex && !error && <p className="font-mono text-xs text-mute">Cargando la franja de MOLA de {marsSite} (~6 MB)…</p>}
       {index && !earth && <p className="text-mute">Esta zona todavía no tiene recorte. Correr pipeline/02_compare_patches.py.</p>}
 
       {index && moon && earth && (
         <>
-          <div className="grid min-h-0 flex-1 grid-rows-2 gap-3 md:grid-cols-2 md:grid-rows-1">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {[moon, earth].map((it, slot) => (
-              <section key={it.id + slot} className="flex min-h-0 flex-col overflow-hidden rounded-2xl bg-elevated">
-                <div className="flex items-baseline justify-between gap-2 px-4 py-3">
-                  <h3 className="truncate text-base font-bold"><span className="mr-2 rounded-full bg-ink px-2 py-0.5 text-xs font-medium">{it.body === 'luna' ? 'Luna' : it.body === 'marte' ? 'Marte' : 'Tierra'}</span>{it.name}</h3>
-                  <span className="shrink-0 text-xs text-mute">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
+              <section key={it.id + slot} className="flex flex-col rounded-2xl border border-white/15 bg-[#16161a] p-5 shadow-limits">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className={`shrink-0 rounded-full border px-3 py-1 font-mono text-xs font-bold uppercase ${tag(it.body)}`}>{bodyName(it.body)}</span>
+                    <span className="min-w-0">
+                      <h3 className="truncate text-lg leading-6 font-bold tracking-tight">{it.name}</h3>
+                      <span className="metric block text-xs text-mute">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
+                    </span>
+                  </div>
+                  <span className="hidden shrink-0 text-right font-mono text-[11px] leading-4 uppercase 2xl:block">
+                    <span className="block tracking-widest text-white/30">{slot === 0 ? 'Objetivo' : 'Análogo terrestre'}</span>
+                    <span className="block text-white/50">{slot === 0 ? `${bodyName(it.body)} · ${short(it.source)}` : 'misma luz y escala'}</span>
+                  </span>
                 </div>
-                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={detail ? (slot === 0 ? detail.mars : detail.earth) : undefined} meshN={detail ? 100 : undefined} /></div>
-                <div className="px-4 py-3">
-                  <Stats item={it} other={it.body === 'tierra' ? moon : undefined} />
-                  {!!it.agua && <p className="mt-2 text-xs text-canvas">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
-                  <p className="mt-2 text-xs text-mute">
-                    Fuente: {it.source}{it.ref && <> · Ubicación: <a className="underline" href={it.url} target="_blank" rel="noreferrer">{it.ref}</a></>}
-                  </p>
+
+                {/* Visor 3D de alto fijo, como en la maqueta: no depende del espacio que sobre */}
+                <div className="relative h-72 w-full overflow-hidden rounded-xl border border-white/10 bg-ink sm:h-96">
+                  <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
+                    <Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={detail ? (slot === 0 ? detail.mars : detail.earth) : undefined} meshN={detail ? 100 : undefined} />
+                  </div>
+                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 font-mono text-[11px] text-white/45">
+                    <div className="flex justify-between">
+                      <span>{Math.abs(it.lat).toFixed(2)}° {it.lat < 0 ? 'S' : 'N'}</span>
+                      <span>{Math.abs(it.lon).toFixed(2)}° {it.lon < 0 ? 'O' : 'E'}</span>
+                    </div>
+                    <svg className="mx-auto size-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 48 48" aria-hidden="true">
+                      <circle cx="24" cy="24" r="16" strokeDasharray="2 2" strokeWidth="0.75" />
+                      <line strokeWidth="0.75" x1="24" x2="24" y1="4" y2="44" /><line strokeWidth="0.75" x1="4" x2="44" y1="24" y2="24" />
+                    </svg>
+                    <div className="flex items-end justify-between gap-2">
+                      <span className="flex items-center gap-1.5 rounded bg-black/70 px-2 py-1 text-white/80 uppercase">
+                        <span className={`size-1.5 rounded-full ${it.body === 'marte' ? 'bg-mars' : it.body === 'luna' ? 'bg-canvas' : 'bg-pressed'}`} />
+                        {it.body === 'tierra' ? 'Relieve terrestre' : `Relieve de ${bodyName(it.body)}`}
+                      </span>
+                      <span className="uppercase">{index.size_km} × {index.size_km} km</span>
+                    </div>
+                  </div>
                 </div>
+
+                <div className="mt-4"><Stats item={it} other={it.body === 'tierra' ? moon : undefined} /></div>
+                {!!it.agua && <p className="mt-2 text-xs text-canvas">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
+                <p className="mt-3 border-t border-white/10 pt-3 font-mono text-[11px] leading-4 text-mute uppercase">
+                  Fuente: {it.source}{it.ref && <> · Ubicación: <a className="underline" href={it.url} target="_blank" rel="noreferrer">{it.ref}</a></>}
+                </p>
               </section>
             ))}
           </div>
-          {detailStatus && moon?.body === 'marte' && <p role="status" className="text-sm text-mute">{detailStatus}</p>}
-          <p className="text-sm text-mute">
-            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas visuales de {detail ? 200 : index.res_m} m, relieve exagerado ×{exaggeration} y la misma luz.
-            Arrastrá para girar (las dos giran juntas). {supplied && 'La malla se suaviza por interpolación: no agrega detalles medidos. Cambiar la exageración solo afecta la vista, no las métricas. '}A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
+
+          <p className="mx-auto flex max-w-full items-center gap-3 rounded-full border border-white/20 bg-black/90 px-5 py-2.5 text-center text-sm shadow-limits">
+            <span aria-hidden="true">⟲</span>
+            <span>Ambas maquetas: <strong className="metric">{index.size_km} × {index.size_km} km</strong>, misma escala, misma luz. <span className="text-mute">Arrastrá para girar: las dos giran juntas.</span></span>
           </p>
+          {detailStatus && moon?.body === 'marte' && <p role="status" className="text-center font-mono text-xs text-mute">{detailStatus}</p>}
+
+          <footer className="flex flex-col items-stretch gap-4 border-t border-white/10 pt-4 md:flex-row">
+            {score !== null && (
+              <div className="flex items-center gap-4 rounded-2xl border border-white/15 bg-[#16161a] px-5 py-4 md:w-80 md:shrink-0">
+                <div className="relative grid size-14 shrink-0 place-items-center">
+                  <svg className="absolute inset-0 size-14 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
+                    <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" strokeWidth="3" className="text-white/10" />
+                    <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray={`${Math.round(score * 100)}, 100`} className="text-canvas" />
+                  </svg>
+                  <span className="metric text-sm font-bold">{Math.round(score * 100)}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="label-mono text-mute">Índice de relieve</span>
+                  <span className="text-sm font-bold">Parecido de relieve: <span className="metric">{Math.round(score * 100)}/100</span></span>
+                  <span className="font-mono text-[11px] text-white/50">Solo pendiente, rugosidad y desnivel · tolerancias provisorias</span>
+                </div>
+              </div>
+            )}
+            <div className="flex flex-1 flex-col justify-center gap-2 rounded-2xl border border-white/15 bg-[#121214] px-5 py-4 shadow-limits">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded border border-white/20 bg-elevated px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-pressed uppercase">Régimen no análogo</span>
+                <h3 className="text-sm font-bold tracking-tight uppercase">Límites de la comparación</h3>
+              </div>
+              <p className="text-[13px] leading-[18px] text-mute">
+                {supplied && 'La malla se suaviza por interpolación: no agrega detalles medidos. Cambiar la exageración solo afecta la vista, no las métricas. '}A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
+              </p>
+            </div>
+          </footer>
         </>
       )}
     </div>

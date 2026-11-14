@@ -1,27 +1,58 @@
 @import "tailwindcss";
 
-/* Tokens de docs/DESIGN.md: dúo blanco/negro, sin color de acento (el color queda solo para los datos). */
+/* Tokens de docs/DESIGN.md (TerraLunar Science Console, D-014): cromo monocromo, color solo para datos.
+   Inter para texto (títulos en oración), JetBrains Mono con cifras tabulares para números y fuentes. */
 @theme {
   --font-sans: "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
   --color-ink: #000000;
-  --color-body: #5e5e5e;
-  --color-mute: #afafaf;
-  --color-hairline: #4b4b4b;
+  --color-body: #5e5e5e;          /* texto secundario sobre blanco (AA) */
+  --color-mute: #afafaf;          /* texto secundario sobre negro / bordes inactivos */
+  --color-hairline: #282828;      /* borde sobre superficies oscuras */
   --color-canvas: #ffffff;
-  --color-canvas-soft: #efefef;
-  --color-canvas-softer: #f3f3f3;
-  --color-pressed: #e2e2e2;
-  --color-elevated: #282828;
+  --color-canvas-soft: #efefef;   /* hover y sustrato claro */
+  --color-canvas-softer: #f5f3f3;
+  --color-pressed: #e2e2e2;       /* borde de tarjetas claras, estado presionado */
+  --color-elevated: #282828;      /* superficie oscura elevada */
+  --color-rail: #111111;          /* barra lateral */
+  --color-night-soft: #111111;
+  --color-obsidian: #18181b;      /* tarjeta "Límites de la analogía" */
+  --color-space: #050508;         /* lienzo del globo */
+  --color-mars: #c85a32;          /* solo para marcar Marte */
+  --color-data: #d97706;          /* escala de similitud: medio */
+  --color-sim-low: #1e293b;
+  --color-sim-high: #fef3c7;
   --shadow-card: 0 4px 16px 0 rgb(0 0 0 / 0.16);
-  --shadow-float: 0 2px 8px 0 rgb(0 0 0 / 0.16);
+  --shadow-float: 0 2px 8px 0 rgb(0 0 0 / 0.24);
+  --shadow-limits: 0 6px 20px 0 rgb(0 0 0 / 0.32);
 }
 
 html, body, #root { height: 100%; }
-body { @apply bg-ink text-canvas antialiased; font-feature-settings: "ss01"; }
+body { @apply bg-space text-canvas antialiased; }
+
+/* Tipografía del sistema */
+@utility display { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+@utility label-mono { font-family: var(--font-mono); font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.04em; text-transform: uppercase; }
+@utility micro-cap { font-family: var(--font-mono); font-size: 12px; font-weight: 500; line-height: 16px; letter-spacing: 0.04em; text-transform: uppercase; }
+@utility metric { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+@utility button-cap { font-size: 14px; font-weight: 600; line-height: 20px; }
+/* En la capa de componentes: así las utilidades (h-8, px-4, text-xs…) pueden ajustar cada uso */
+@layer components {
+/* Botones píldora: primario negro (sobre blanco), claro (sobre negro), secundario con borde */
+.btn-primary { @apply button-cap inline-flex h-10 items-center justify-center gap-2 rounded-full bg-ink px-5 text-canvas transition-colors hover:bg-elevated active:bg-pressed active:text-ink disabled:pointer-events-none disabled:opacity-30; }
+.btn-ghost { @apply button-cap inline-flex h-11 items-center justify-center gap-2 rounded-full bg-canvas px-5 text-ink transition-colors hover:bg-pressed disabled:pointer-events-none disabled:opacity-30; }
+.btn-secondary { @apply button-cap inline-flex h-10 items-center justify-center gap-2 rounded-full border border-pressed bg-canvas px-5 text-ink transition-colors hover:bg-canvas-soft; }
+/* Control flotante sobre el lienzo oscuro (Ver planeta, Vista cenital, avisos) */
+.chip-dark { @apply inline-flex items-center gap-2 rounded-full border border-hairline bg-rail px-4 py-2 text-sm font-medium text-canvas shadow-float transition-colors hover:bg-elevated; }
+/* Tarjeta obligatoria "Límites de la analogía" */
+.limits-card { @apply flex flex-col gap-3 rounded-2xl border border-hairline bg-obsidian p-5 text-canvas shadow-limits; }
+}
 input[type="range"] { accent-color: #fff; }
+.bg-canvas input[type="range"], .accent-ink { accent-color: #000; }
 
 /* Decorative space stays behind WebGL: the globe occludes it naturally. */
-.space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #020617; }
+.space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #050508; }
 .milky-way { position: absolute; inset: -50%; transform: rotate(-32deg); background: radial-gradient(ellipse at 50% 50%, #c0c9f018 0%, #8c79b41a 10%, #4c598318 18%, transparent 33%); filter: blur(16px); }
 .space-stars { position: absolute; inset: 0; }
 .space-stars i { position: absolute; border-radius: 50%; background: #dce8ff; box-shadow: 0 0 4px #a9c9ff70; animation: star-breathe 7s ease-in-out infinite alternate; animation-play-state: var(--space-motion, running); }
@@ -33,6 +64,28 @@ input[type="range"] { accent-color: #fff; }
 .space-saturn { width: 44px; height: 44px; right: 11%; bottom: 19%; animation-delay: -5s; }
 .saturn-sphere { position: absolute; inset: 0; background: linear-gradient(165deg, #d1c4a0, #a09071 50%, #413b35); }
 .saturn-ring { position: absolute; width: 82px; height: 27px; left: -19px; top: 9px; border: 6px solid #b5a58280; border-radius: 50%; transform: rotate(-30deg); box-shadow: 0 0 0 2px #c5b79b30; }
+/* Portada y búsqueda personalizada: entrada escalonada. */
+.landing-rise { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+.landing-fade { animation: fade 1.4s ease-out .3s both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes fade { from { opacity: 0; transform: scale(.97); } }
+
+.pick-icon { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; box-shadow: inset -6px -3px 8px #0009; }
+.pick-moon { background: radial-gradient(circle at 34% 38%, #73777c 0 9%, transparent 11%), radial-gradient(circle at 30% 25%, #e2e4e7, #737b86 65%, #242a35); }
+.pick-mars { background: radial-gradient(ellipse at 33% 60%, #733b2a 0 15%, transparent 22%), radial-gradient(circle at 30% 25%, #d9976c, #a3583c 55%, #281b1a); }
+.pick-custom { box-shadow: none; background: #000; mask: radial-gradient(circle, transparent 0 5px, #000 6px 9px, transparent 10px 13px, #000 14px 15px, transparent 16px); }
+
+/* Título de la portada: cada letra sube y se enfoca, y el conjunto se cierra de espaciado */
+.title-in { display: inline-flex; animation: title-track 1.6s cubic-bezier(.2,.7,.2,1) both; letter-spacing: 0.06em; }
+.letter-in { display: inline-block; animation: letter-in .9s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes letter-in { from { opacity: 0; transform: translateY(0.35em); filter: blur(10px); } }
+@keyframes title-track { from { letter-spacing: 0.32em; } }
+/* Luna de fondo: aparece lento y queda tenue */
+.hero-moon { opacity: .42; animation: moon-rise 2.4s cubic-bezier(.2,.7,.2,1) .2s both; }
+@keyframes moon-rise { from { opacity: 0; translate: 0 6%; } }
+
+@media (prefers-reduced-motion: reduce) { .landing-rise, .landing-fade, .title-in, .letter-in, .hero-moon { animation: none !important; } }
+
 @keyframes star-breathe { to { opacity: .2; } }
 @keyframes planet-drift { to { transform: translate3d(5px, -9px, 0); } }
 @media (prefers-reduced-motion: reduce) { .space-backdrop * { animation: none !important; } }

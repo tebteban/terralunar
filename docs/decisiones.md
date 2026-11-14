@@ -9,6 +9,96 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-015 — Liberar los contextos WebGL al cerrar escenas 3D
+- **Fecha:** 2026-11-14 · **Estado:** vigente (arreglo).
+- **Problema:** Chrome mantiene unos 16 contextos WebGL activos; al pasarse apaga los más viejos y esas
+  vistas (mapa, globo lunar, maquetas) quedan en negro. El comparador creaba 2 contextos nuevos cada vez
+  que se abría y cada vez que se movía la exageración, y nunca los liberaba (`renderer.dispose()` solo
+  libera memoria, no el contexto).
+- **Cómo:** `renderer.forceContextLoss()` después de `dispose()` en `Compare3D.tsx` y `MoonGlobe.tsx`.
+- **De paso:** los paneles con scroll (`ZoneCard`, `MoonMap`, `MarsView`) ya no achican a sus hijos
+  (`[&>*]:shrink-0`; el botón "Comparar relieve 3D" quedaba aplastado) y las clases de botón pasaron a
+  `@layer components` para que los tamaños de cada uso (h-8, text-xs) se respeten.
+- **Comparador rehecho según la maqueta del equipo:** cada visor 3D tiene alto fijo (288–384 px) y la
+  pantalla se desplaza; antes el visor ocupaba "lo que sobraba" y en ventanas chicas quedaba con alto 0
+  (no se veía nada). Suma retícula y coordenadas sobre el visor, franja "misma escala" con grilla y
+  celda reales, y un índice "Parecido de relieve /100" con la MISMA fórmula y tolerancias que el panel de
+  origen (`moonRelief.ts` para la Luna, `marsData.similarity` para Marte).
+- **Ojo:** el disco C: estaba al 100 % de uso; sin espacio, el navegador y Vite pueden fallar al
+  cargar imágenes. Liberar espacio antes de la demo.
+
+## D-014 — Sistema de diseño "TerraLunar Science Console" en toda la app
+- **Fecha:** 2026-11-14 · **Estado:** vigente (propuesto por el equipo con maquetas). Reemplaza el
+  sistema aeroespacial de D-012; mantiene la estructura de la portada de D-013.
+- **Por qué:** el equipo armó un sistema propio pensado para jurados y científicos: cromo monocromo,
+  números en monoespaciada para leer datos rápido, tarjetas blancas sobre el lienzo oscuro y la
+  tarjeta "Límites de la analogía" como componente obligatorio y bien visible (Validez, Presentación).
+- **Cómo:** `docs/DESIGN.md` es el sistema del equipo con una sección final de adaptación. Tokens en
+  `web/src/index.css` (Inter + JetBrains Mono, `space` `#050508`, `rail` `#111111`, `obsidian`, `mars`,
+  escala de similitud pizarra → ámbar → crema, sombras de tarjeta) y clases `btn-primary`,
+  `btn-secondary`, `btn-ghost`, `chip-dark`, `limits-card`. Pantallas: banner "Datos de prueba" con las
+  fuentes reales (`App.tsx`), barra lateral `#111111` con ranking en tarjetas, selector Tierra/Luna/Marte
+  con punto terracota en Marte, ficha (`ZoneCard.tsx`) y paneles de Luna (`MoonMap.tsx`) y Marte
+  (`MarsView.tsx`) como tarjetas blancas con métricas en monoespaciada, comparador (`Compare3D.tsx`)
+  con paneles oscuros y nuevo `LimitsCard.tsx` compartido. El mapa usa la escala de color del sistema.
+  El fondo de los mapas ya no tiene planetas decorativos.
+- **Lo que no se tomó de las maquetas:** valores inventados ("DEM 0,5 m", "Hurst", "FID", porcentajes),
+  "TELEMETRY ONLINE", ícono de usuario, menú con secciones que no existen, la insignia con el nombre de
+  la agencia (regla del desafío) e imágenes generadas. Se cambió también un detalle propio: la etiqueta
+  "Sitio Artemis III" en el panel lunar no se usa porque Shackleton está en la lista y no es candidato.
+
+## D-013 — Portada mínima: nombre al centro y tres opciones en fila
+- **Fecha:** 2026-11-14 · **Estado:** vigente (pedido del equipo). Actualiza la portada de D-012.
+- **Por qué:** que la página sea intuitiva es un requisito. La portada en bandas tenía demasiado
+  contenido; el usuario tiene que entender con poco que puede elegir Luna, Marte o Personalizado.
+- **Cómo:** `web/src/Landing.tsx` muestra solo el nombre TERRALUNAR en el centro (cada letra entra
+  subiendo y enfocándose mientras el espaciado se cierra), una frase y "¿Qué querés explorar?" con tres
+  tarjetas en fila: ícono, nombre, una línea de explicación y "Elegir". En celular las tarjetas se
+  apilan. La Luna en puntos (LRO) asoma desde abajo, tenue (42 %), como horizonte y sin rótulos
+  (`HalftoneMoon annotate={false}`). Teclas 1, 2 y 3 siguen funcionando.
+- **Se sacó de la portada:** el ranking de los 5 mejores y la franja del método. El ranking está a un
+  clic (Luna) y la vista previa en Personalizado; los límites de la analogía siguen en cada ficha.
+
+## D-012 — Nuevo sistema de diseño: estilo aeroespacial (reemplaza al inspirado en Uber)
+- **Fecha:** 2026-11-14 · **Estado:** vigente (elegido por el equipo). Actualiza el diseño de D-011.
+- **Por qué:** la portada se veía básica. Se probó la librería de sistemas de diseño de Claude Code
+  (`design-md`, VoltAgent/awesome-design-md, licencia MIT) y se eligió el estilo aeroespacial entre
+  tres propuestas (aeroespacial, xAI, IBM Carbon): es el que mejor encaja con el tema y con la Luna en
+  puntos. Es una interpretación de estilo, sin logos, nombres ni textos de esa empresa.
+- **Cómo:** `docs/DESIGN.md` se reemplazó por ese sistema, con una sección final "Adaptación para
+  TerraLunar". Los tokens están en `web/src/index.css`: letra Barlow Condensed (títulos en mayúsculas)
+  y Barlow (texto), utilidades `display`, `micro-cap`, `button-cap` y `.btn-ghost` (píldora con
+  contorno). Sin sombras (los tokens de sombra ahora dibujan un borde de 1px) y sin acentos. La portada
+  pasó a bandas: la Luna grande saliéndose por la derecha con el titular encima, el ranking de rover y
+  el método. Personalizado y el panel lateral de Explorar usan filas con líneas finas.
+- **Excepción:** el ámbar del mapa se mantiene porque codifica el puntaje (es dato, no decoración).
+- **Pendiente:** los paneles sobre el mapa (ficha, Luna, Marte, comparador) heredan letra y bordes,
+  pero no se rediseñaron uno por uno.
+- **Descartado:** Inter + Archivo + JetBrains Mono de la versión anterior (el sistema no usa letra
+  monoespaciada) y las tarjetas blancas con sombra.
+
+## D-011 — Tres pantallas: Inicio → Personalizado → Explorar
+- **Fecha:** 2026-11-14 · **Estado:** vigente (pedido del equipo)
+- **Por qué:** la app abría directo en el mapa con todos los controles juntos. Una portada que
+  presenta TerraLunar y pregunta "¿para qué destino buscás?" ordena la primera impresión (Presentación)
+  y deja elegir una búsqueda simple con pocas variables, más fácil de explicar al jurado.
+- **Cómo:** `web/src/Landing.tsx` es la portada: titular, opciones Luna / Marte / Personalizado (también
+  con las teclas 1, 2 y 3) y los 5 mejores análogos para rover. La pieza central es `HalftoneMoon.tsx`:
+  la Luna dibujada en puntos con el brillo **real** de la textura LRO, vista desde 62° S para que se vea
+  el polo sur con sus sitios. Se eligió en vez de planetas dibujados con CSS porque usa datos NASA de
+  verdad y cuenta la idea de la app en una imagen. `web/src/CustomSearch.tsx` arma la búsqueda: se
+  eligen variables y una importancia Baja/Media/Alta = peso 1/2/3 (las no elegidas pesan 0); cada
+  variable muestra "lo que pide la Luna" (la meseta del trapecio difuso) y a la derecha se ve el
+  ranking en vivo. Títulos en Archivo ancha y lecturas técnicas en JetBrains Mono; el resto sigue
+  `docs/DESIGN.md` (blanco y negro, botones píldora) y el ámbar de las zonas del mapa. `App.tsx` maneja la pantalla actual y la
+  guarda en la URL (`#personalizado`, `#explorar`, `#marte`) para que funcione el botón "atrás".
+  En Explorar, con búsqueda personalizada el panel muestra solo esas variables y un enlace "Editar";
+  elegir un preset vuelve a las 7 variables. La barra Tierra/Luna/Marte suma "← Inicio".
+- **Límites:** Personalizado solo tiene perfil de Luna; Marte no tiene variables calibradas y se
+  muestra como no disponible. La portada no usa datos, así que se ve aunque los JSON tarden.
+- **Descartado:** un límite fijo de 3 variables (el "3" queda como sugerencia, no como regla) y una
+  librería de rutas (con 3 pantallas alcanza con el `#` de la URL).
+
 ## D-010 — Luna: globo 3D propio, Cesium solo si hay token
 - **Fecha:** 2026-11-14 · **Estado:** vigente (equipo, commits `2c2ee93` y `5d04948`). Actualiza D-002.
 - **Por qué:** sin token de Cesium la vista Luna era un callejón sin salida para el jurado. Además

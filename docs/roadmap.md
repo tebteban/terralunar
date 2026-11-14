@@ -16,8 +16,17 @@ puntaje de 0 a 1 por variable) y `profiles.json` (qué pide el sitio lunar y los
 
 > Hoy `zones.json` es **falso (mock)**: 20 zonas con puntajes inventados. La app lo avisa abajo del panel.
 
-### Paso 2 — Elegir el destino
-En **Destino** está "Luna — polo sur (candidatos Artemis III)". Marte aparece como "próximamente".
+### Paso 2 — Portada: elegir qué buscar
+La app abre en una portada mínima: el nombre TERRALUNAR en el centro entrando con movimiento, una
+frase, y tres tarjetas en fila para elegir (también con las teclas 1, 2 y 3). De fondo asoma la Luna
+dibujada en puntos con el brillo real LRO:
+- **Luna** → va directo al mapa con el ranking del polo sur lunar.
+- **Marte** → va directo a la vista exploratoria de Marte.
+- **Personalizado** → pantalla intermedia: se eligen las variables (por ejemplo, solo 3) y para cada
+  una una importancia Baja / Media / Alta. Cada variable muestra qué valor pide la Luna, y a la
+  derecha se ve en vivo el peso de cada una y los 5 mejores lugares. "Ver en el mapa" lleva al ranking.
+Desde el mapa, **← Inicio** (en la barra Tierra/Luna/Marte) vuelve a la portada. El botón "atrás"
+del navegador también funciona.
 
 ### Paso 3 — Elegir el tipo de prueba
 Tres botones: **Movilidad de rover**, **Excavación hielo/regolito**, **Cimientos de hábitat**.
@@ -105,13 +114,16 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 - ⬜ Versión en inglés (selector ES/EN). (Presentación, jurado global)
 - ⬜ Celular: pestañas Controles / Mapa / Ranking y ficha como panel inferior. (Presentación)
 - ⬜ Aviso de datos mock más visible; aviso si el mapa base no carga.
+- ✅ Portada + búsqueda personalizada (pantallas Inicio → Personalizado → Explorar) (D-011) (Presentación)
+- ⬜ Personalizado para Marte: necesita un perfil de variables de Marte en `profiles.json`.
 - ✅ Diseño blanco y negro según `docs/DESIGN.md` (lo hizo el equipo)
 - ✅ Comparador 3D Luna vs Tierra (D-008)
 - ✅ Vista "Polo sur lunar": elegir un lugar en la Luna y ver las zonas terrestres parecidas (lo hizo el equipo)
 - ✅ Globo lunar 3D con relieve real del polo sur; Cesium opcional con respaldo automático (D-010)
 - ✅ Marte exploratorio: relieve MOLA, imágenes Viking/THEMIS, comparador y límites de la analogía (D-009)
 - ✅ Rotación lenta del globo (Tierra y Marte) en vista global
-- ⬜ Revisar el fondo decorativo (Júpiter/Saturno junto a la Tierra puede restar en Validez).
+- ✅ Fondo decorativo sin Júpiter/Saturno (D-014)
+- ✅ Sistema de diseño "TerraLunar Science Console" en todas las pantallas (D-014) (Presentación)
 - ⬜ Limpieza: `Workspace.tsx` sin uso, `web/README.md` es la plantilla de Vite, bundle de 1,6 MB.
 
 ### Orden de recorte si falta tiempo (de `CLAUDE.md`)
