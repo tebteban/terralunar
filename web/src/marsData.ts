@@ -8,14 +8,19 @@ let loading: Promise<Int16Array> | undefined
 export function loadMars() {
   return loading ??= (async () => {
     const values = new Int16Array(11520 * 5760)
-    for (let band = 0; band < 16; band++) {
+    let nextBand = 0
+    await Promise.all(Array.from({ length: 4 }, async () => {
+      while (nextBand < 16) {
+      const band = nextBand++
       const response = await fetch(`/mars/mola32-${band}.dat`)
       if (!response.ok || !response.body) throw new Error('No se pudo cargar MOLA')
       const buffer = await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer()
       if (buffer.byteLength !== 11520 * 360 * 2) throw new Error('Grilla MOLA incompleta')
       const bytes = new DataView(buffer)
       for (let i = 0; i < 11520 * 360; i++) values[band * 11520 * 360 + i] = bytes.getInt16(i * 2, false)
-    }
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+      }
+    }))
     return values
   })().catch(e => { loading = undefined; throw e })
 }

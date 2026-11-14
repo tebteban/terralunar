@@ -1,3 +1,4 @@
+import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useState } from 'react'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
 import { LIMITS } from './limits.ts'
@@ -42,15 +43,20 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
   })
 
   useEffect(() => {
+    let alive = true
+    fetch('/moon/index.json').then(r => {
+      if (!r.ok) throw new Error('No se pudo cargar el índice lunar')
+      return r.json()
+    }).then(i => { if (alive) setIndex(i) }).catch(e => { if (alive) setError(String(e)) })
     Promise.all([
-      fetch('/moon/index.json').then((r) => r.json()),
-      fetch('/moon/metrics.bin').then((r) => r.arrayBuffer()),
-      fetch('/compare/index.json').then((r) => r.json()),
-    ]).then(([i, g, c]) => {
-      setIndex(i)
+      localBuffer('/moon/metrics.bin'),
+      fetch('/compare/index.json').then(r => { if (!r.ok) throw new Error('Falta el catálogo terrestre'); return r.json() }),
+    ]).then(([g, c]) => {
+      if (!alive) return
       setGrid(new Uint16Array(g))
       setEarth(c.items.filter((it: EarthItem) => it.body === 'tierra'))
-    }).catch((e) => setError(String(e)))
+    }).catch(e => { if (alive) setError(String(e)) })
+    return () => { alive = false }
   }, [])
 
   // píxel LOLA -> métricas de la ventana de 20 km más cercana y coordenadas lunares
@@ -79,7 +85,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
   const openCompare = async (e: EarthItem) => {
     if (!pick || !index) return
     const N = index.globe.cap_n, K = index.globe.cap_block, C = 25 // 25 celdas de 800 m = 20 km
-    const dem = new Int16Array(await (await fetch(`/moon/${index.globe.cap_dem}`)).arrayBuffer())
+    const dem = new Int16Array(await localBuffer(`/moon/${index.globe.cap_dem}`))
     const i0 = Math.round((pick.line + 0.5) / K - 0.5) - 12, j0 = Math.round((pick.sample + 0.5) / K - 0.5) - 12
     const moonH = new Float32Array(C * C)
     for (let i = 0; i < C; i++) for (let j = 0; j < C; j++) {
@@ -104,7 +110,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
 
   return (
     <div className="relative h-full w-full bg-ink">
-      {index && hiRes && <MoonView onPick={(lat, lon) => {
+      {index && hiRes && <MoonView onUnavailable={() => setHiRes(false)} onPick={(lat, lon) => {
         if (lat > -80) return outside(lat)
         const p = latLonToPx(index, lat, lon)
         setNotice(null); setPick(pickAt(p.line, p.sample))
@@ -113,7 +119,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
         onPick={(line, sample) => { setNotice(null); setPick(pickAt(line, sample)) }}
         onOutside={outside} />}
       {!hiRes && <p className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">
-        Arrastrá para moverte · rueda para acercar (se inclina) · clic derecho para girar · clic en el polo sur
+        Luna 3D · datos locales LRO/LOLA · arrastrá para girar · rueda para acercar · clic en el polo sur
       </p>}
       {notice && <p className="absolute left-4 top-40 max-w-sm rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{notice}</p>}
       {compare && compareId && <Compare3D zoneId={compareId} supplied={compare} onClose={() => { setCompare(null); setCompareId(null) }} />}
@@ -134,9 +140,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
               ))}
             </div>
             <p className="text-xs text-body">Son los accidentes que dan nombre a las regiones candidatas de Artemis III (centros según la IAU).</p>
-            <button type="button" onClick={() => setHiRes(!hiRes)} className="self-start text-sm font-medium underline">
-              {hiRes ? 'Usar el globo liviano (sin token)' : 'Ver con relieve 3D de alta resolución (Cesium, requiere token)'}
-            </button>
+
           </>
         ) : (
           <>

@@ -33,3 +33,11 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Cámara del globo lunar estilo mapa (igual que la de Eze): zoom al centro, inclinación 0°–60° entre 800 y 45 km, arrastre que desplaza, clic derecho gira, botón Ver planeta | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Relieve 3D real del polo sur en el globo lunar (malla LOLA a 800 m, cámara y marcas sobre el terreno) | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Unificación Tierra/Luna/Marte: inclinación automática al hacer zoom en la Tierra, panel de Marte con el formato de la Luna y límites de la analogía de Marte (`web/src/limits.ts`), comparador 3D Luna o Marte desde la ficha terrestre (franjas MOLA bajo demanda en `web/src/marsData.ts`) y desde el panel lunar (LOLA a 800 m) | — |
+
+| 2026-11-14 | OpenAI Codex | Comparador marciano con recortes visuales MOLA/HRSC a 200 m, lectura parcial COG y remuestreo terrestre; métricas originales conservadas | — |
+
+| 2026-11-14 | OpenAI Codex | Selector marciano limitado a Viking y THEMIS, cambio de visibilidad sin fundido entre teselas y selección conservada durante la carga | — |
+| 2026-11-14 | OpenAI Codex | Carga progresiva de Marte: imágenes antes de MOLA, cuatro descargas simultáneas y selección protegida contra respuestas obsoletas. Luna: visor independiente de métricas y reutilización en memoria de binarios. Build, lint y seis pruebas correctos; tiempos visuales pendientes de medición. |
+| 2026-11-14 | OpenAI Codex | Vista global local Viking/THEMIS bajo teselas remotas, detalle desde zoom 2, caché compartida limitada a 96 imágenes y liberación de bitmaps ante errores. Descargas originales NASA registradas en data/mars/preview/sources.json. Build, lint y seis pruebas correctos. |
+| 2026-11-14 | OpenAI Codex | Rotación lenta compartida de Tierra y Marte en vista global, con arranque suave, pausa durante interacción y vuelos, reanudación tras seis segundos, desactivación al acercarse y respeto de movimiento reducido. Build y lint correctos. |
+| 2026-11-14 | OpenAI Codex | Eliminado selector y formulario de token lunar. Cesium usa credencial existente; si falta, falla o excede 25 s de inicialización, alternativa local LRO/LOLA automática, identificada en pantalla. No se elimina la autenticación requerida por Cesium ion. |

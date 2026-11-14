@@ -18,6 +18,12 @@ Comprobaciones: build y lint; pruebas de plano inclinado, terreno plano, periodi
 
 ## Imágenes Mars Trek
 
-El selector ofrece Viking MDIM 2.1 en color (232 m nominales), THEMIS IR diurno (100 m nominales) y solo relieve MOLA. Las teselas públicas WMTS de NASA están en equirectangular, 2×1 al nivel 0; el protocolo local las reproyecta a Web Mercator para MapLibre por filas, sin token. La capa de imagen es visual: las métricas conservan MOLA 32 px/grado y no se vuelven más precisas al elegir THEMIS. El detalle depende del producto y la cobertura; la carga requiere conexión y disponibilidad de NASA. La proyección Mercator no incluye los polos extremos.
+El selector ofrece Viking MDIM 2.1 en color (232 m nominales), THEMIS IR diurno (100 m nominales) . Las teselas públicas WMTS de NASA están en equirectangular, 2×1 al nivel 0; el protocolo local las reproyecta a Web Mercator para MapLibre por filas, sin token. La capa de imagen es visual: las métricas conservan MOLA 32 px/grado y no se vuelven más precisas al elegir THEMIS. El detalle depende del producto y la cobertura; la carga requiere conexión y disponibilidad de NASA. La proyección Mercator no incluye los polos extremos.
 
 Capacidades: https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml y https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/WMTSCapabilities.xml
+
+## Comparador visual detallado
+
+El comparador descarga por rangos un recorte del modelo global MOLA/HRSC de USGS a 200 m, desde una copia COG comunitaria en Hugging Face. La Tierra se promedia desde 80 m a 200 m. Las métricas y el ranking se mantienen en la grilla regional de 2 km; la maqueta detallada es únicamente visual. Si falla la descarga o se elige una región cercana al polo o al corte de longitud, se muestra la grilla regional y un aviso. La copia externa requiere conexión y su disponibilidad es independiente de NASA. Fuente original: https://astrogeology.usgs.gov/search/map/mars_mgs_mola_mex_hrsc_blended_dem_global_200m. Copia: https://huggingface.co/datasets/Biscut4Biscuit/mola-hrsc-baseline-cog.
+
+Carga visual: las cuatro teselas originales de nivel 0 de Viking y THEMIS se incluyen en data/mars/preview (procedencia en sources.json). Se reproyectan con el mismo método que el detalle y permanecen debajo de él. Desde zoom 2 se carga detalle de NASA Mars Trek. La base es de baja resolución y exclusivamente visual: no cambia MOLA ni las métricas. Caché de imágenes en memoria limitada a 96 entradas; se pierde al recargar la página.

@@ -40,17 +40,22 @@ function loadCesium(): Promise<CesiumApi> {
   })
 }
 
-export default function MoonView({ onPick, mars = false }: { onPick?: (lat: number, lon: number) => void; mars?: boolean }) {
+export default function MoonView({ onPick, onUnavailable, mars = false }: { onPick?: (lat: number, lon: number) => void; onUnavailable?: () => void; mars?: boolean }) {
+  const unavailableRef = useRef(onUnavailable)
+  useEffect(() => { unavailableRef.current = onUnavailable })
   const pickRef = useRef(onPick)
   useEffect(() => { pickRef.current = onPick })
   const target = useRef<HTMLDivElement>(null)
   const resetCamera = useRef<() => void>(() => {})
-  const [token, setToken] = useState(() => { try { return localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN || '' } catch { return import.meta.env.VITE_CESIUM_ION_TOKEN || '' } })
-  const [draft, setDraft] = useState(token)
+  const [token] = useState(() => { try { return localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN || '' } catch { return import.meta.env.VITE_CESIUM_ION_TOKEN || '' } })
   const [status, setStatus] = useState('')
   useEffect(() => {
-    if (!token || !target.current) return
+    if (!token) { unavailableRef.current?.(); return }
+    if (!target.current) return
     let cancelled = false
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) { setStatus('Abriendo superficie lunar local…'); unavailableRef.current?.() }
+    }, 25000)
     let viewer: InstanceType<CesiumApi['Viewer']> | undefined
     let handler: InstanceType<CesiumApi['ScreenSpaceEventHandler']> | undefined
     let zoomFrame = 0
@@ -183,20 +188,14 @@ export default function MoonView({ onPick, mars = false }: { onPick?: (lat: numb
         window.removeEventListener('blur', interrupt)
       }
       resetCamera.current()
+      clearTimeout(timeout)
       setStatus('')
-    }).catch(() => { if (!cancelled) setStatus(`No se pudo cargar. Verificá la conexión y agregá Cesium ${mars ? 'Mars' : 'Moon'} a tu cuenta y a los permisos del token.`) })
-    return () => { cancelled = true; resetCamera.current = () => {}; cancelAnimationFrame(zoomFrame); removeWheel(); handler?.destroy(); if (viewer && !viewer.isDestroyed()) viewer.destroy() }
+    }).catch(() => { clearTimeout(timeout); if (!cancelled) { setStatus('Abriendo superficie lunar local…'); unavailableRef.current?.() } })
+    return () => { cancelled = true; clearTimeout(timeout); resetCamera.current = () => {}; cancelAnimationFrame(zoomFrame); removeWheel(); handler?.destroy(); if (viewer && !viewer.isDestroyed()) viewer.destroy() }
   }, [token, mars])
   return <div className="relative h-full w-full bg-slate-950">
     <div ref={target} className="h-full w-full" aria-label="Visor planetario tridimensional" />
-    {!token && <div className="absolute inset-0 flex items-center justify-center p-6"><div className="max-w-lg rounded-2xl bg-canvas p-6 text-ink shadow-card">
-      <h2 className="mb-2 text-2xl font-bold leading-8">Activar {mars ? 'Marte' : 'la Luna'} en 3D</h2>
-      <p className="mb-4 text-base text-body">Este visor usa imágenes y elevación planetarias. Para cargarlo, agregá Cesium {mars ? 'Mars' : 'Moon'} a tu cuenta de Cesium ion y pegá un token de acceso.</p>
-      <a className="text-sm font-medium text-ink underline" href="https://ion.cesium.com/" target="_blank" rel="noreferrer">Abrir Cesium ion ↗</a>
-      <form className="mt-4 flex gap-2" onSubmit={e => { e.preventDefault(); const value = draft.trim(); try { localStorage.setItem('terralunar.cesium-token', value) } catch { /* session still works */ }; setToken(value) }}><input aria-label="Token de Cesium ion" type="password" value={draft} onChange={e => setDraft(e.target.value)} className="min-w-0 flex-1 rounded-lg bg-canvas-soft px-4 py-3 text-base" placeholder="Token de acceso" /><button className="rounded-full bg-ink px-5 py-3 text-base font-medium text-canvas">Cargar</button></form>
-      <p className="mt-3 text-xs text-body">El token se guarda en este navegador y se envía a Cesium para acceder al servicio.</p>
-    </div></div>}
-    {status && <div role="status" className="absolute left-4 top-28 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status} {status.startsWith('No se pudo') && <button className="ml-2 font-medium underline" onClick={() => { try { localStorage.removeItem('terralunar.cesium-token') } catch { /* ignore */ }; setToken('') }}>Cambiar token</button>}</div>}
+    {status && <div role="status" className="absolute left-4 top-40 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status}</div>}
     <button type="button" onClick={() => resetCamera.current()} className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft">Ver planeta</button>
     <div className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">{mars ? 'Rueda para acercar · doble clic para volar a un punto' : 'Rueda para acercar · doble clic para volar · clic en el polo sur para analizar'}</div>
     <div className="absolute bottom-5 left-4 rounded-full bg-canvas px-3 py-1 text-xs text-body shadow-float">{mars ? 'NASA MOLA / ESA HRSC · Viking · Cesium Mars' : 'NASA LRO / USGS · Cesium Moon'}</div>

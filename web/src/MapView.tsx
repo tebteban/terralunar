@@ -1,3 +1,4 @@
+import { startGlobeRotation } from './globeRotation.ts'
 import { LngLatBounds, Map as MapLibre, NavigationControl, setWorkerUrl, type GeoJSONSource } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useLayoutEffect, useRef } from 'react'
@@ -80,8 +81,10 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
         m.once('moveend', () => { autoPitch = false })
       }
     })
+    let stopRotation: (() => void) | undefined
     m.on('load', () => {
       m.setProjection({ type: 'globe' })
+      stopRotation = startGlobeRotation(m)
       m.setSky({ 'sky-color': 'rgba(2,6,23,0)', 'horizon-color': '#93c5fd', 'fog-color': '#020617', 'atmosphere-blend': 0.85 })
       // Imágenes por teselas: el detalle aumenta con el zoom, sin una textura gigante.
       // A escala local reaparece el mapa original, con sus capas y relieve.
@@ -135,7 +138,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
         m.on('mouseleave', layer, () => (m.getCanvas().style.cursor = ''))
       }
     })
-    return () => m.remove()
+    return () => { stopRotation?.(); m.remove() }
   }, [])
 
   useEffect(sync, [ranked, selectedId])

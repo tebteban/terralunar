@@ -1,3 +1,4 @@
+import { startGlobeRotation } from './globeRotation.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapLibre, NavigationControl, Marker, addProtocol, removeProtocol, type GeoJSONSource } from 'maplibre-gl'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
@@ -8,6 +9,20 @@ import { MARS_SITES, elevation, earthPatches, loadMars, marsPatch, offset, simil
 const SITES = MARS_SITES
 const labels = [['pendiente_mediana','Pendiente mediana','°'],['pendiente_p90','Pendiente p90','°'],['rugosidad_m','Rugosidad a 6 km','m'],['desnivel_m','Desnivel','m']] as const
 const SOURCE = '<a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html">NASA MGS MOLA · topografía sombreada</a>'
+// Bounded shared cache: adjacent output tiles often request the same NASA tile.
+const imageRequests = new Map<string, Promise<Blob>>()
+function imageBlob(url: string) {
+  let request = imageRequests.get(url)
+  if (!request) {
+    request = fetch(url, { signal: AbortSignal.timeout(30000) }).then(r => {
+      if (!r.ok) throw new Error(`NASA Mars Trek: ${r.status}`)
+      return r.blob()
+    }).catch(error => { imageRequests.delete(url); throw error })
+    if (imageRequests.size >= 96) imageRequests.delete(imageRequests.keys().next().value!)
+    imageRequests.set(url, request)
+  }
+  return request
+}
 let protocolCount = 0
 export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void}) {
   const container=useRef<HTMLDivElement>(null), scene=useRef<HTMLDivElement>(null), map=useRef<MapLibre|null>(null)
@@ -16,20 +31,26 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
   const [pick,setPick]=useState<Patch|null>(null),[earth,setEarth]=useState<Patch[]>([])
   const [compare,setCompare]=useState<string|null>(null),[flat,setFlat]=useState(false)
   const [coordinates,setCoordinates]=useState({lon:'77.58',lat:'18.44'})
-  const [imagery,setImagery]=useState<'viking'|'themis'|'relieve'>('viking')
+  const [imagery,setImagery]=useState<'viking'|'themis'>('viking')
+  const imageryRef=useRef<'viking'|'themis'>('viking')
   const [exaggeration,setExaggeration]=useState(1.5)
   const flatRef=useRef(false),exagRef=useRef(1.5)
   useEffect(()=>{
     let disposed=false
     let m: MapLibre|undefined
+    let stopRotation: (() => void) | undefined
     const protocol=`marsdem${++protocolCount}`
     let installed=false
     const imageryProtocol=`marstrek${++protocolCount}`
     let imageryInstalled=false
-    loadMars().then(grid=>{
+    const gridReady = loadMars()
+    gridReady.catch(e=>{if(!disposed){setError(String(e));setStatus('')}})
+    Promise.resolve().then(()=>{
       if(disposed || !container.current) return
       // MapLibre assumes Earth's radius: compensate ONLY the rendered height, never the measurements.
       addProtocol(protocol,async ({url},abort)=>{
+        const grid = await gridReady
+        if(abort.signal.aborted) throw new DOMException('Aborted','AbortError')
         const parts=url.split('/'), z=Number(parts[3]),x=Number(parts[4]),y=Number(parts[5])
         const tileSize=256, scale=2**z
         const canvas=document.createElement('canvas'); canvas.width=canvas.height=tileSize
@@ -61,13 +82,17 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         const minCol=Math.floor(startX/256),maxCol=Math.min(columns-1,Math.floor((endX-1e-8)/256))
         const minRow=Math.max(0,Math.floor((90-latAt(0))/180*rows)), maxRow=Math.min(rows-1,Math.floor((90-latAt(256))/180*rows))
         const images=new Map<string,ImageBitmap>()
-        await Promise.all(Array.from({length:maxRow-minRow+1},(_,j)=>Array.from({length:maxCol-minCol+1},async(_,i)=>{
+        try {
+        const results = await Promise.allSettled(Array.from({length:maxRow-minRow+1},(_,j)=>Array.from({length:maxCol-minCol+1},async(_,i)=>{
           const r=minRow+j,c=minCol+i
-          const source=`https://trek.nasa.gov/tiles/Mars/EQ/${names[layer]}/1.0.0/default/default028mm/${level}/${r}/${c}.${extensions[layer]}`
-          const response=await fetch(source,{signal:abort.signal})
-          if(!response.ok) throw new Error(`NASA Mars Trek: ${response.status}`)
-          images.set(`${r}/${c}`,await createImageBitmap(await response.blob()))
+          const source=level===0 ? `/mars/preview/${layer}-${c}.${extensions[layer]}` : `https://trek.nasa.gov/tiles/Mars/EQ/${names[layer]}/1.0.0/default/default028mm/${level}/${r}/${c}.${extensions[layer]}`
+          const blob = await imageBlob(source)
+          if(abort.signal.aborted) throw new DOMException('Aborted','AbortError')
+          images.set(`${r}/${c}`,await createImageBitmap(blob))
         })).flat())
+        const failure = results.find(result => result.status === 'rejected')
+        if (failure?.status === 'rejected') throw failure.reason
+        if(abort.signal.aborted) throw new DOMException('Aborted','AbortError')
         const canvas=document.createElement('canvas');canvas.width=canvas.height=256
         const ctx=canvas.getContext('2d')!
         for(let py=0;py<256;py++) {
@@ -78,18 +103,25 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
             if(image&&right>left)ctx.drawImage(image,left-c*256,sy,right-left,1,(left-startX)/(endX-startX)*256,py,(right-left)/(endX-startX)*256,1)
           }
         }
-        images.forEach(image=>image.close())
         const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('No se pudo reproyectar Mars Trek')),'image/png'))
         return {data:await blob.arrayBuffer()}
+        } finally { images.forEach(image=>image.close()) }
       })
       imageryInstalled=true
       m=new MapLibre({container:container.current,center:[0,10],zoom:.5,maxZoom:10,canvasContextAttributes:{antialias:true},style:{version:8,sources:{},layers:[{id:'base',type:'background',paint:{'background-color':'#9d6046'}}]}})
       map.current=m
       m.addControl(new NavigationControl(),'bottom-right')
-      m.on('error',()=>{if(!disposed)setError('No se pudo dibujar una capa del mapa. Recargá para reintentar.')})
-      const pickAt=(lon:number,lat:number)=>{
+      m.on('error',(event)=>{if(!disposed && !(event.error instanceof DOMException && event.error.name === 'AbortError'))setError('No se pudo cargar una capa del mapa. Revisá tu conexión y volvé a intentar.')})
+      let pickRequest = 0
+      const pickAt=async(lon:number,lat:number)=>{
         if(!Number.isFinite(lon)||!Number.isFinite(lat)||Math.abs(lat)>90) {setError('Ingresá una latitud entre −90 y 90°.');return}
         const wrapped=((lon+180)%360+360)%360-180
+        const request = ++pickRequest
+        setStatus('Preparando relieve y análisis MOLA…')
+        let grid: Int16Array
+        try { grid = await gridReady } catch { return }
+        if(disposed || request !== pickRequest)return
+        setStatus('')
         setError(''); setPick(marsPatch(grid,wrapped,lat));setCoordinates({lon:wrapped.toFixed(3),lat:lat.toFixed(3)})
         if(!m?.getSource('selection'))return
         const corners=[offset(wrapped,lat,-10000,10000),offset(wrapped,lat,10000,10000),offset(wrapped,lat,10000,-10000),offset(wrapped,lat,-10000,-10000)]
@@ -102,12 +134,19 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       m.on('load',()=>{
         if(!m)return
         m.setProjection({type:'globe'})
+        stopRotation = startGlobeRotation(m)
         for(const id of ['terrain','shade'])m.addSource(id,{type:'raster-dem',tiles:[`${protocol}://tiles/{z}/{x}/{y}`],tileSize:256,maxzoom:6,encoding:'custom',redFactor:6553.6,greenFactor:25.6,blueFactor:.1,baseShift:30000,attribution:SOURCE})
+        // Always retain a local whole-planet image underneath streaming detail.
+        for(const id of ['viking','themis']) {
+          const preview = `${id}-preview`
+          m.addSource(preview,{type:'raster',tiles:[`${imageryProtocol}://${id}/{z}/{x}/{y}`],tileSize:256,maxzoom:0,attribution:'NASA Mars Trek · Viking / THEMIS'})
+          m.addLayer({id:preview,source:preview,type:'raster',layout:{visibility:id===imageryRef.current?'visible':'none'},paint:{'raster-fade-duration':0}})
+        }
         for(const id of ['viking','themis']) {
           m.addSource(id,{type:'raster',tiles:[`${imageryProtocol}://${id}/{z}/{x}/{y}`],tileSize:256,maxzoom:id==='viking'?8:9,attribution:'Imágenes: <a href="https://trek.nasa.gov/mars/">NASA Mars Trek</a> · Viking / THEMIS'})
-          m.addLayer({id,source:id,type:'raster',layout:{visibility:id==='viking'?'visible':'none'}})
+          m.addLayer({id,source:id,type:'raster',minzoom:2,layout:{visibility:id===imageryRef.current?'visible':'none'},paint:{'raster-fade-duration':250}})
         }
-        m.addLayer({id:'shade',type:'hillshade',source:'shade',paint:{'hillshade-shadow-color':'#2b1715','hillshade-highlight-color':'#edbb8b','hillshade-accent-color':'#6a3224','hillshade-exaggeration':.35}})
+        m.addLayer({id:'shade',type:'hillshade',source:'shade',paint:{'hillshade-shadow-color':'#2b1715','hillshade-highlight-color':'#edbb8b','hillshade-accent-color':'#6a3224','hillshade-exaggeration':.35},minzoom:4})
         // Keep the globe at planetary scale; activate the terrain mesh only for the approach.
         m.addSource('selection',{type:'geojson',data:{type:'FeatureCollection',features:[]}})
         m.addLayer({id:'selection-fill',type:'fill',source:'selection',paint:{'fill-color':'#ffcf70','fill-opacity':.12}})
@@ -117,7 +156,8 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
           el.onclick=e=>{e.stopPropagation();pickAt(s.lon,s.lat)}
           new Marker({element:el}).setLngLat([s.lon,s.lat]).addTo(m)
         }
-        setStatus('')
+        setStatus('Cargando relieve MOLA; ya podés explorar el mapa…')
+        gridReady.then(()=>{if(!disposed)setStatus('')},()=>{})
       })
       m.on('click',e=>pickAt(e.lngLat.lng,e.lngLat.lat))
       let autoPitch=false
@@ -135,7 +175,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       })
     }).catch(e=>{if(!disposed){setError(String(e));setStatus('')}})
     earthPatches().then(e=>{if(!disposed)setEarth(e)}).catch(e=>{if(!disposed)setError(String(e))})
-    return()=>{disposed=true;choose.current=()=>{};m?.remove();map.current=null;if(installed)removeProtocol(protocol);if(imageryInstalled)removeProtocol(imageryProtocol)}
+    return()=>{disposed=true;stopRotation?.();choose.current=()=>{};m?.remove();map.current=null;if(installed)removeProtocol(protocol);if(imageryInstalled)removeProtocol(imageryProtocol)}
   },[])
   const matches=useMemo(()=>pick?earth.map(e=>({e,score:similarity(pick,e)})).sort((a,b)=>b.score-a.score):[],[pick,earth])
   const supplied=useMemo<CompareIndex|undefined>(()=>pick?{size_km:20,res_m:2000,n:10,items:[pick,...earth]}:undefined,[pick,earth])
@@ -157,8 +197,8 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         <button className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-canvas hover:bg-elevated">Ir</button>
       </form>
       <label className="block text-sm font-medium">Capa de superficie
-        <select value={imagery} className="mt-2 w-full rounded-lg bg-canvas-soft px-4 py-2 text-sm" onChange={e=>{const v=e.target.value as typeof imagery;setImagery(v);for(const id of ['viking','themis'])if(map.current?.getLayer(id))map.current.setLayoutProperty(id,'visibility',v===id?'visible':'none')}}>
-          <option value="viking">Viking · mosaico en color</option><option value="themis">THEMIS · infrarrojo diurno</option><option value="relieve">Solo relieve MOLA</option>
+        <select value={imagery} className="mt-2 w-full rounded-lg bg-canvas-soft px-4 py-2 text-sm" onChange={e=>{const v=e.target.value as typeof imagery;imageryRef.current=v;setImagery(v);setError('');const m=map.current;if(m?.getLayer('viking')&&m.getLayer('themis')){m.setLayoutProperty(v==='viking'?'themis':'viking','visibility','none');m.setLayoutProperty(v,'visibility','visible');for(const id of ['viking','themis'])m.setLayoutProperty(`${id}-preview`,'visibility',id===v?'visible':'none')}}}>
+          <option value="viking">Viking · mosaico en color</option><option value="themis">THEMIS · infrarrojo diurno</option>
         </select>
       </label>
       <label className="block text-sm font-medium">Exageración visual ×{exaggeration}<input className="mt-2 w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/></label>

@@ -1,3 +1,4 @@
+import { localBuffer } from './localData.ts'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js'
@@ -258,7 +259,7 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
     cv.addEventListener('contextmenu', noMenu)
 
     let alive = true
-    fetch(`/moon/${index.globe.cap_dem}`).then((r) => r.arrayBuffer()).then((b) => {
+    localBuffer(`/moon/${index.globe.cap_dem}`).then((b) => {
       if (!alive) return
       dem = new Int16Array(b)
       buildCap()
