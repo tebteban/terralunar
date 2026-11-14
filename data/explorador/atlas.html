@@ -1,0 +1,11 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TerraLunar | Atlas global</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101820;color:#f2f6f8;font:15px system-ui}header{display:flex;align-items:center;gap:18px;padding:16px 24px;border-bottom:1px solid #374551}header strong{font-size:25px;color:#ffc26a}header span,small,p{color:#afbeca}main{display:grid;grid-template-columns:1fr 340px;min-height:83vh}section{position:relative;background:radial-gradient(ellipse at center,#1b303d,#090e14 72%)}aside{padding:20px;background:#19242e}button,select{background:#263744;color:#fff;border:1px solid #667985;border-radius:6px;padding:9px;cursor:pointer}button:hover{border-color:#ffc26a}canvas{width:100%;height:76vh;display:block;touch-action:none;cursor:grab}.bar{display:flex;gap:7px;flex-wrap:wrap;padding:12px}#results button{display:block;text-align:left;width:100%;margin:6px 0}b,a{color:#ffc26a}a{display:inline-block;margin-top:8px}h2{font-size:19px}@media(max-width:720px){main{display:block}canvas{height:58vh}}
+</style>
+<header><strong>◉ TerraLunar</strong><span>Atlas de análogos terrestres</span></header>
+<main><section><div class="bar"><button id="marte">Marte</button><button id="luna">Luna</button><button id="tierra">Tierra</button><button id="norte">Centrar</button></div><canvas id="globo" aria-label="Globo con relieve. Arrastrá para girar y hacé clic para elegir un punto."></canvas></section>
+<aside><h2>Búsqueda de terreno</h2><p>Arrastrá para girar el globo. Hacé clic en Marte o la Luna para buscar un análogo en tierra firme.</p>
+<label>Escala del entorno <select id="escala"><option value="30">30 km</option><option value="60">60 km</option><option value="120">120 km</option></select></label>
+<p id="objetivo"></p><div id="estado" role="status"></div><div id="results"></div><p id="detalle"></p><small>Comparación regional por relieve y pendiente. Cobertura terrestre aproximada mediante una máscara de elevación y muestreo global. Sin datos de suelo ni obstáculos a escala de rover.</small></aside></main>
+<script src="global-terreno.js"></script><script src="atlas.js"></script>

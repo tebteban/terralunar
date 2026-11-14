@@ -1,6 +1,7 @@
 import { LngLatBounds, Map as MapLibre, NavigationControl, setWorkerUrl, type GeoJSONSource } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useLayoutEffect, useRef } from 'react'
+import SpaceBackdrop from './SpaceBackdrop.tsx'
 import type { Ranked } from './score.ts'
 
 // MapLibre v6 busca su worker al lado de su propio archivo; Vite lo mueve, así que le damos la URL
@@ -41,6 +42,7 @@ interface Props {
 
 export default function MapView({ ranked, selectedId, onSelect }: Props) {
   const container = useRef<HTMLDivElement>(null)
+  const scene = useRef<HTMLDivElement>(null)
   const map = useRef<MapLibre | null>(null)
   // refs para que los handlers del mapa (creados una sola vez) vean siempre los props actuales
   const latest = useRef({ ranked, selectedId, onSelect })
@@ -56,10 +58,30 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
   }
 
   useEffect(() => {
-    const m = new MapLibre({ container: container.current!, style: STYLE, center: [-30, 15], zoom: 1.4 })
+    const m = new MapLibre({ container: container.current!, style: STYLE, center: [-30, 15], zoom: 0.5, minZoom: -0.5,
+      canvasContextAttributes: { antialias: true } })
     map.current = m
     m.addControl(new NavigationControl(), 'bottom-right')
+    const updateSpace = () => {
+      const opacity = Math.max(0, Math.min(1, (3 - m.getZoom()) / 1.6))
+      scene.current?.style.setProperty('--space-opacity', String(opacity))
+      scene.current?.style.setProperty('--space-motion', opacity === 0 ? 'paused' : 'running')
+    }
+    m.on('zoom', updateSpace)
+    updateSpace()
     m.on('load', () => {
+      m.setProjection({ type: 'globe' })
+      m.setSky({ 'sky-color': 'rgba(2,6,23,0)', 'horizon-color': '#93c5fd', 'fog-color': '#020617', 'atmosphere-blend': 0.85 })
+      // Imágenes por teselas: el detalle aumenta con el zoom, sin una textura gigante.
+      // A escala local reaparece el mapa original, con sus capas y relieve.
+      m.addSource('earth-imagery', {
+        type: 'raster', tileSize: 256, maxzoom: 8,
+        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+        attribution: 'Imagery © Esri, Maxar, Earthstar Geographics and the GIS User Community',
+      })
+      m.addLayer({ id: 'earth-imagery', type: 'raster', source: 'earth-imagery', maxzoom: 8,
+        paint: { 'raster-opacity': ['interpolate', ['linear'], ['zoom'], 5, 1, 8, 0], 'raster-fade-duration': 300 },
+      })
       const empty = { type: 'FeatureCollection' as const, features: [] }
       m.addSource('zones', { type: 'geojson', data: empty })
       m.addSource('centroids', { type: 'geojson', data: empty })
@@ -109,10 +131,17 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
 
   useEffect(focus, [selectedId]) // solo mover la cámara al cambiar la selección, no al mover sliders
 
-  return <div ref={container} className="h-full w-full" role="region" aria-label="Mapa de zonas análogas" />
+  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-slate-950">
+    <SpaceBackdrop />
+    <div ref={container} className="relative h-full w-full" role="region" aria-label="Globo 3D de la Tierra y mapa de zonas análogas" />
+    <button type="button" className="absolute left-3 top-3 rounded-lg border border-slate-600 bg-slate-950/90 px-3 py-2 text-sm text-slate-100 shadow-lg hover:bg-slate-800"
+      onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 0.5, pitch: 0, bearing: 0, duration: 1800 })}>
+      Ver planeta
+    </button>
+  </div>
 
   // Al elegir zona: relieve 3D y cámara inclinada sobre ella (dejando lugar a la ficha a la derecha).
-  // Al cerrar la ficha: mapa plano otra vez. Se llama también en 'load' por si se eligió antes de cargar.
+  // Al cerrar la ficha: cámara cenital, conservando el globo. Se llama también en 'load' por si se eligió antes de cargar.
   function focus() {
     const m = map.current
     if (!m?.getSource('dem-terrain')) return // el mapa todavía no terminó 'load'

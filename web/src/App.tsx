@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import MapView from './MapView.tsx'
+import MoonView from './MoonView.tsx'
 import ZoneCard from './ZoneCard.tsx'
 import { presetWeights, rank, type Preset, type Profile, type Weights, type Zone } from './score.ts'
 
@@ -21,6 +22,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [preset, setPreset] = useState<Preset>('movilidad')
   const [weights, setWeights] = useState<Weights>({})
+  const [body, setBody] = useState<'tierra' | 'luna'>('tierra')
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -106,7 +108,7 @@ export default function App() {
               <li key={zone.id}>
                 <button
                   type="button"
-                  onClick={() => setSelectedId(zone.id)}
+                  onClick={() => { setBody('tierra'); setSelectedId(zone.id) }}
                   className={`flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
                     zone.id === selectedId ? 'bg-slate-800' : 'hover:bg-slate-900'
                   }`}
@@ -130,8 +132,12 @@ export default function App() {
       </aside>
 
       <main className="relative min-h-[60vh] flex-1">
-        <MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} />
-        {selectedIndex >= 0 && (
+        <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
+        {body === 'luna' && <MoonView />}
+        <div className="absolute right-4 top-4 z-10 flex gap-1 rounded-lg border border-slate-600 bg-slate-950/95 p-1" aria-label="Cuerpo visualizado">
+          {(['tierra', 'luna'] as const).map(b => <button key={b} type="button" aria-pressed={body === b} onClick={() => setBody(b)} className="rounded px-3 py-2 text-sm text-slate-300 aria-pressed:bg-amber-400/20 aria-pressed:text-amber-200">{b === 'tierra' ? '🌍 Tierra' : '🌕 Luna'}</button>)}
+        </div>
+        {body === 'tierra' && selectedIndex >= 0 && (
           <ZoneCard
             ranked={ranked[selectedIndex]}
             position={selectedIndex + 1}

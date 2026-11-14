@@ -13,3 +13,12 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | `docs/analogos-referencia.md`: borrador de 14 análogos de ensayo con fuentes (búsqueda web), pendiente de revisión de Civil | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Botón "Abrir en Worldview" en la ficha (`web/src/ZoneCard.tsx`) | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Vista 3D del terreno al abrir una ficha (MapLibre terrain + sombreado) en `web/src/MapView.tsx` | — |
+| 2026-11-14 | OpenAI Codex | Integración del atlas global como vista independiente y navegación entre perfiles de misión y exploración por punto | — |
+
+| 2026-11-14 | OpenAI Codex | Retiro de la navegación al explorador; globo terrestre MapLibre con imágenes por teselas, transición al mapa original y botón Ver planeta | — |
+
+| 2026-11-14 | OpenAI Codex | Fondo espacial decorativo en CSS: estrellas, banda galáctica y cuerpos estilizados; desvanecimiento con zoom y movimiento reducido | — |
+
+| 2026-11-14 | OpenAI Codex | Visor lunar opcional Cesium Moon con selector Tierra/Luna y token de sesión | — |
+
+| 2026-11-14 | OpenAI Codex | Vuelo lunar inclinado al hacer doble clic y persistencia local del token de Cesium | — |
