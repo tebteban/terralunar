@@ -15,3 +15,9 @@ El catálogo terrestre es limitado, no una búsqueda exhaustiva del planeta. El 
 Luna y el ranking mock original permanecen disponibles; se oculta ese panel en Marte para no mezclar puntajes. Las pestañas Marte/Tierra no convierten el ranking original en uno marciano. La comparación de Marte se abre desde su propio panel.
 
 Comprobaciones: build y lint; pruebas de plano inclinado, terreno plano, periodicidad longitudinal y offsets polares. Pendiente: calibración científica con análogos reservados y fuentes de mayor resolución para movilidad local.
+
+## Imágenes Mars Trek
+
+El selector ofrece Viking MDIM 2.1 en color (232 m nominales), THEMIS IR diurno (100 m nominales) y solo relieve MOLA. Las teselas públicas WMTS de NASA están en equirectangular, 2×1 al nivel 0; el protocolo local las reproyecta a Web Mercator para MapLibre por filas, sin token. La capa de imagen es visual: las métricas conservan MOLA 32 px/grado y no se vuelven más precisas al elegir THEMIS. El detalle depende del producto y la cobertura; la carga requiere conexión y disponibilidad de NASA. La proyección Mercator no incluye los polos extremos.
+
+Capacidades: https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml y https://trek.nasa.gov/tiles/Mars/EQ/Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12_clon0_ly/1.0.0/WMTSCapabilities.xml

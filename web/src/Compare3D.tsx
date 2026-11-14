@@ -22,7 +22,7 @@ async function loadHeights(file: string) {
 type Shared = { cams: THREE.PerspectiveCamera[]; controls: OrbitControls[]; syncing: boolean }
 type Link = { register: (slot: number, cam: THREE.PerspectiveCamera, ctl: OrbitControls) => void; follow: (slot: number) => void }
 
-function Terrain({ item, index, link, slot }: { item: Item; index: CompareIndex; link: Link; slot: number }) {
+function Terrain({ item, index, link, slot, exaggeration }: { item: Item; index: CompareIndex; link: Link; slot: number; exaggeration: number }) {
   const box = useRef<HTMLDivElement>(null)
   const [terrainError, setTerrainError] = useState('')
   useEffect(() => {
@@ -34,9 +34,10 @@ function Terrain({ item, index, link, slot }: { item: Item; index: CompareIndex;
     el.appendChild(renderer.domElement)
     const scene = new THREE.Scene()
     scene.background = new THREE.Color('#000000')
-    scene.add(new THREE.AmbientLight('#ffffff', 0.35))
+    scene.add(new THREE.AmbientLight('#ffffff', 0.55))
+    scene.add(new THREE.HemisphereLight('#dbeafe', '#5b4538', 0.65))
     const sun = new THREE.DirectionalLight('#ffffff', 2.2)
-    sun.position.set(-size, size * 0.45, size * 0.3) // sol bajo, igual en los dos paneles
+    sun.position.set(-size, size * 0.3, size * 0.3) // sol bajo, igual en los dos paneles
     scene.add(sun)
     const camera = new THREE.PerspectiveCamera(45, 1, 10, size * 10)
     camera.position.set(0, size * 1.1, size * 1.4)
@@ -61,21 +62,29 @@ function Terrain({ item, index, link, slot }: { item: Item; index: CompareIndex;
     ;(item.heights ? Promise.resolve(item.heights) : loadHeights(item.file)).then((h) => {
       if (disposed) return
       if (h.length !== index.n * index.n) throw new Error('Tamaño de recorte inválido')
-      const geo = new THREE.PlaneGeometry(size, size, index.n - 1, index.n - 1)
+      // Smooth rendering only: bilinear interpolation cannot add observed terrain detail.
+      const n = index.n < 32 ? 100 : index.n
+      const geo = new THREE.PlaneGeometry(size, size, n - 1, n - 1)
       geo.rotateX(-Math.PI / 2)
       const pos = geo.attributes.position
       // centrada en su altura media: la cámara (compartida) orbita alrededor del centro de cada maqueta
       let sum = 0
       for (const value of h) sum += value
       const mean = sum / h.length
-      for (let i = 0; i < pos.count; i++) pos.setY(i, (h[i] - mean) * EXAGGERATION)
+      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+        const gx = x / (n - 1) * (index.n - 1), gy = y / (n - 1) * (index.n - 1)
+        const x0 = Math.floor(gx), y0 = Math.floor(gy), x1 = Math.min(index.n - 1, x0 + 1), y1 = Math.min(index.n - 1, y0 + 1)
+        const fx = gx - x0, fy = gy - y0
+        const value = h[y0 * index.n + x0] * (1-fx) * (1-fy) + h[y0 * index.n + x1] * fx * (1-fy) + h[y1 * index.n + x0] * (1-fx) * fy + h[y1 * index.n + x1] * fx * fy
+        pos.setY(y * n + x, (value - mean) * exaggeration)
+      }
       geo.computeVertexNormals()
-      const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: '#b9bcc2', roughness: 1 }))
+      const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: item.body === 'marte' ? '#c29276' : '#adb5bd', roughness: 1, side: THREE.DoubleSide }))
       scene.add(mesh)
       render()
     }).catch(e => { if (!disposed) setTerrainError(String(e)) })
     return () => { scene.traverse(object => { if (object instanceof THREE.Mesh) { object.geometry.dispose(); const materials = Array.isArray(object.material) ? object.material : [object.material]; materials.forEach(m => m.dispose()) } }); disposed = true; ro.disconnect(); controls.dispose(); renderer.dispose(); el.innerHTML = '' }
-  }, [item, index, link, slot])
+  }, [item, index, link, slot, exaggeration])
   return <div className="relative h-full w-full"><div ref={box} className="h-full w-full" aria-label={`Relieve 3D de ${item.name}`} />{terrainError && <p role="alert" className="absolute top-2 left-2 text-white">{terrainError}</p>}</div>
 }
 
@@ -102,6 +111,7 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
 export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: string; onClose: () => void; supplied?: CompareIndex }) {
   const [loadedIndex, setIndex] = useState<CompareIndex | null>(null)
   const index = supplied ?? loadedIndex
+  const [exaggeration, setExaggeration] = useState(supplied ? 6 : EXAGGERATION)
   const [error, setError] = useState<string | null>(null)
   const [moonId, setMoonId] = useState<string | null>(null)
   const shared = useRef<Shared>({ cams: [], controls: [], syncing: false })
@@ -143,6 +153,9 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
             {moons.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
           </select>
         </label>
+        {supplied && <label className="flex items-center gap-2 text-sm text-mute">Exageración vertical ×{exaggeration}
+          <input aria-label="Exageración vertical" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
+        </label>}
         <button type="button" onClick={onClose} className="ml-auto rounded-full bg-canvas px-5 py-2 text-base font-medium text-ink hover:bg-pressed">
           Cerrar
         </button>
@@ -160,7 +173,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                   <h3 className="truncate text-base font-bold"><span className="mr-2 rounded-full bg-ink px-2 py-0.5 text-xs font-medium">{it.body === 'luna' ? 'Luna' : it.body === 'marte' ? 'Marte' : 'Tierra'}</span>{it.name}</h3>
                   <span className="shrink-0 text-xs text-mute">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
                 </div>
-                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} /></div>
+                <div className="min-h-0 flex-1"><Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} /></div>
                 <div className="px-4 py-3">
                   <Stats item={it} other={it.body === 'tierra' ? moon : undefined} />
                   {!!it.agua && <p className="mt-2 text-xs text-canvas">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
@@ -172,8 +185,8 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
             ))}
           </div>
           <p className="text-sm text-mute">
-            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas de {index.res_m} m, relieve exagerado ×{EXAGGERATION} y la misma luz.
-            Arrastrá para girar (las dos giran juntas). A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
+            Ambas maquetas: {index.size_km} × {index.size_km} km, celdas de {index.res_m} m, relieve exagerado ×{exaggeration} y la misma luz.
+            Arrastrá para girar (las dos giran juntas). {supplied && 'La malla se suaviza por interpolación: no agrega detalles medidos. Cambiar la exageración solo afecta la vista, no las métricas. '}A esta escala no se ven rocas chicas ni el tipo de suelo; la gravedad, el vacío y la radiación tampoco se comparan.
           </p>
         </>
       )}
