@@ -79,6 +79,9 @@ En cambio NASADEM, Copernicus y ALOS salen de Planetary Computer **sin login** y
 - **Diviner — Polar Resource Products** ✅ — temperaturas del polo (máximas, mínimas, estabilidad del hielo). Archivo `dlre_prp_south.tab` (605 MB) en <https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/>. Hay también productos acumulados (`data_derived_pcp/`).
 - **Coordenadas de las 9 regiones Artemis III:** no hay un archivo oficial con los polígonos; hay que sacarlas del anuncio de NASA (oct. 2024) o de un paper. Pendiente en `datos-faltantes.md`.
 
+- **Nomenclátor IAU de la Luna (USGS)** ✅ — coordenadas oficiales de los accidentes que dan nombre a las regiones Artemis III (Mons Mouton 16070, Mons Malapert 16338, Haworth 14502, Nobile 4321, de Gerlache 1439, Slater 15325, Shackleton 5450, Cabeus B 8058): <https://planetarynames.wr.usgs.gov/>. Son **centros de accidentes**, no los polígonos de aterrizaje de NASA (NASA no publicó coordenadas de las regiones).
+- **Comparador 3D** (`pipeline/02_compare_patches.py` → `data/compare/`): recortes de 20 × 20 km a 80 m. Luna = `ldem_80s_80m_float` (LOLA); Tierra = AWS Terrain Tiles z12 (incluye NASA SRTM). Pendiente, pendiente p90, rugosidad (desvío residual tras quitar la media de 400 m) y desnivel, con el mismo código para ambos cuerpos.
+
 ## Marte (si entra)
 
 - **HiRISE DTM Jezero** `DTEEC_002387_1985_003798_1985_A01` ✅ — <https://www.uahirise.org/dtm/dtm.php?ID=DTEEC_002387_1985_003798_1985_A01>. Guía para abrirlo: <https://www.uahirise.org/dtm/howto.php>

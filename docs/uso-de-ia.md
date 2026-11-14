@@ -18,3 +18,4 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Fondo espacial decorativo en CSS: estrellas, banda galáctica y cuerpos estilizados; desvanecimiento con zoom y movimiento reducido | — |
 | 2026-11-14 | OpenAI Codex | Visor lunar opcional Cesium Moon con selector Tierra/Luna y token de sesión | — |
 | 2026-11-14 | OpenAI Codex | Vuelo lunar inclinado al hacer doble clic y persistencia local del token de Cesium | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Comparador 3D Luna vs Tierra: `pipeline/02_compare_patches.py` (recortes LOLA y tiles de elevación, métricas) y `web/src/Compare3D.tsx` (three.js) | — |

@@ -12,4 +12,6 @@ Cosas que la app necesita y todavía no existen. Se anotan acá en vez de invent
 - **Capa USGS de análogos:** no cubre la Antártida (llega hasta −34,7°): McMurdo y otros análogos polares hay que citarlos de otra fuente (paper o programa de análogos de NASA).
 - **Polígonos/coordenadas de las 9 regiones Artemis III:** no hay archivo oficial; sacarlas del anuncio de NASA o de un paper.
 - **NASADEM no cubre más allá de 56° S / 60° N:** McMurdo, Haughton, Svalbard, Axel Heiberg y Holuhraun (Islandia) necesitan Copernicus GLO-30 para pendiente.
+- **Comparador 3D, lado Tierra:** usa AWS Terrain Tiles; pasar a NASADEM (o Copernicus fuera de 56° S–60° N) para que el número sea 100 % NASA. Las zonas costeras tienen el mar aplanado a 0.
+- **Polígonos de aterrizaje Artemis III:** el comparador usa centros IAU de los accidentes (Mons Mouton, Mons Malapert) y un punto de un estudio (Nobile Rim 2). Si aparece la fuente oficial, reemplazar.
 - **Perfil Marte:** no existe (es lo primero que se recorta).

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import Compare3D from './Compare3D.tsx'
 import MapView from './MapView.tsx'
 import MoonView from './MoonView.tsx'
 import ZoneCard from './ZoneCard.tsx'
@@ -24,6 +25,7 @@ export default function App() {
   const [weights, setWeights] = useState<Weights>({})
   const [body, setBody] = useState<'tierra' | 'luna'>('tierra')
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [comparing, setComparing] = useState(false)
 
   useEffect(() => {
     Promise.all([getJSON<Zone[]>('/zones.json'), getJSON<Record<string, Profile>>('/profiles.json')])
@@ -144,8 +146,10 @@ export default function App() {
             profile={profile}
             weights={weights}
             onClose={() => setSelectedId(null)}
+            onCompare={() => setComparing(true)}
           />
         )}
+        {comparing && selectedId && <Compare3D zoneId={selectedId} onClose={() => setComparing(false)} />}
       </main>
     </div>
   )

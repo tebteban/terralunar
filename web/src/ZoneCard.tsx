@@ -36,9 +36,10 @@ interface Props {
   profile: Profile
   weights: Weights
   onClose: () => void
+  onCompare: () => void
 }
 
-export default function ZoneCard({ ranked: { zone, score }, position, profile, weights, onClose }: Props) {
+export default function ZoneCard({ ranked: { zone, score }, position, profile, weights, onClose, onCompare }: Props) {
   const total = Object.values(weights).reduce((a, b) => a + b, 0) || 1
   const dims = Object.entries(profile.dimensions).map(([k, d]) => {
     const s = zone.scores[k] ?? 0
@@ -61,6 +62,11 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
           <p className="text-xs text-slate-500">similitud /100</p>
         </div>
       </header>
+
+      <button type="button" onClick={onCompare}
+        className="rounded-md bg-amber-400 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-300">
+        Comparar relieve con la Luna en 3D
+      </button>
 
       <section aria-label="Puntaje por variable">
         <ResponsiveContainer width="100%" height={240}>
