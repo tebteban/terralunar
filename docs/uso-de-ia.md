@@ -21,3 +21,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Comparador 3D Luna vs Tierra: `pipeline/02_compare_patches.py` (recortes LOLA y tiles de elevación, métricas) y `web/src/Compare3D.tsx` (three.js) | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Aplicación de docs/DESIGN.md a la web: tokens de color, Inter, pills, cards y límites en card negra | — |
 | 2026-11-14 | Claude Code (Claude Opus 5.5) | Vista "Polo sur lunar": `pipeline/03_moon_map.py` (mapa LOLA y grilla de métricas) y `web/src/MoonMap.tsx` (clic en la Luna → lugares parecidos en la Tierra); panel y comparador en variante oscura | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Análisis de la web en el navegador y propuestas de mejora; en `web/src/App.tsx`: preset "Personalizado" con "Restaurar", pesos en % real y aviso con pesos en 0 | — |
+| 2026-11-14 | Claude Code (Claude Opus 5.5) | Borradores de `docs/decisiones.md`, `docs/roadmap.md` y `docs/arquitectura.md` | — |
