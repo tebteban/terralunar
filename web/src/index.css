@@ -17,8 +17,8 @@
 }
 
 html, body, #root { height: 100%; }
-body { @apply bg-canvas text-ink antialiased; font-feature-settings: "ss01"; }
-input[type="range"] { accent-color: #000; }
+body { @apply bg-ink text-canvas antialiased; font-feature-settings: "ss01"; }
+input[type="range"] { accent-color: #fff; }
 
 /* Decorative space stays behind WebGL: the globe occludes it naturally. */
 .space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #020617; }
