@@ -19,6 +19,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     locale: 'es-AR',
+    // La app arranca en inglés (D-031); la suite recorre la interfaz en español, que es el idioma del código.
+    storageState: { cookies: [], origins: [{ origin: `http://localhost:${PORT}`, localStorage: [{ name: 'terralunar-lang', value: 'es' }] }] },
     // Las animaciones de entrada no cambian el contenido: con reduced-motion las capturas son estables.
     contextOptions: { reducedMotion: 'reduce' },
   },

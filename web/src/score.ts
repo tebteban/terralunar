@@ -1,3 +1,4 @@
+import {locale} from './fmt.ts'
 // Tipos de los contratos de data/ y el cálculo del ranking: S = Σ w_i · puntaje_i / Σ w_i
 
 export type Preset = 'movilidad' | 'excavacion' | 'habitat'
@@ -58,7 +59,7 @@ export function presetWeights(profile: Profile, preset: Preset): Weights {
 // etiquetas cortas de cada variable (radar de la ficha y panel lateral)
 export const SHORT: Record<string, string> = { lst: 'TEMP', ndvi: 'VEG', nieve: 'HIELO', lluvia: 'ARIDEZ', cobertura: 'SUELO', pendiente: 'PEND', rugosidad: 'RUG' }
 
-const num = (v: number) => v.toLocaleString('es-AR', { maximumFractionDigits: 2 }).replace('-', '−')
+const num = (v: number) => v.toLocaleString(locale(), { maximumFractionDigits: 2 }).replace('-', '−')
 // "Lo que pide la Luna": la meseta del trapecio difuso (donde la nota es 1), en las unidades de la variable
 export function target(d: Dimension) {
   const { a, b, c, d: e } = d.fuzzy
