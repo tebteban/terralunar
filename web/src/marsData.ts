@@ -70,12 +70,16 @@ function patchFrom(elev: (lon: number, lat: number) => number, lon: number, lat:
   }
   return {id:'mars-picked', name:'Región seleccionada',body:'marte', file:'',lat,lon,source:'NASA MGS MOLA MEGDR 32 px/°; grilla nominal 1,853 km; interpolación y promedio a 2 km',heights,...metrics(heights)}
 }
-export async function earthPatches(): Promise<Patch[]> {
+// Solo el índice (nombres y coordenadas): alcanza para excluir vecinos del catálogo sin bajar las mallas.
+export async function earthIndex(): Promise<Patch[]> {
   const response=await fetch('/compare/index.json')
   if(!response.ok) throw new Error('No se pudo cargar el catálogo terrestre')
   const index=await response.json()
   if(index.n!==250 || index.res_m!==80 || index.size_km!==20) throw new Error('Escala del catálogo terrestre incompatible')
-  return Promise.all(index.items.filter((i: {body:string;agua?:number})=>i.body==='tierra' && !i.agua).map(async (item: Patch)=>{
+  return index.items.filter((i: {body:string;agua?:number})=>i.body==='tierra' && !i.agua)
+}
+export async function earthPatches(): Promise<Patch[]> {
+  return Promise.all((await earthIndex()).map(async (item: Patch)=>{
     const r=await fetch(`/compare/${item.file}`)
     if(!r.ok) throw new Error(`Falta el recorte ${item.name}`)
     const buffer=await r.arrayBuffer()

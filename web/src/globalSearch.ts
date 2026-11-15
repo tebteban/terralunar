@@ -1,5 +1,5 @@
 import {thermalAt,type ThermalEvidence} from './thermalEvidence.ts'
-import {earthPatches,metrics,TOLERANCES,type Relief} from './marsData.ts'
+import {earthIndex,earthPatches,metrics,TOLERANCES,type Relief} from './marsData.ts'
 import {earthPatchZone} from './earthSelection.ts'
 import {withinBounds,type Region,type SearchBounds} from './regions.ts'
 import {maskDecision,type Cover,type MaskPolicy} from './coverageMask.ts'
@@ -17,10 +17,10 @@ async function sha(text:string){return Array.from(new Uint8Array(await crypto.su
 
 export async function loadCandidates(regions:Region[],scope:string,recent:boolean,signal?:AbortSignal){
  const candidates:Candidate[]=[],reports:CoverageReport[]=[]
- const references=await earthPatches().catch(()=>{throw Error('No se pudo cargar el catálogo para comprobar qué candidatos quedan fuera de los sitios de referencia.')})
+ const references=await earthIndex().catch(()=>{throw Error('No se pudo cargar el catálogo para comprobar qué candidatos quedan fuera de los sitios de referencia.')})
  const referencePoints=references.map(({lon,lat})=>({lon,lat}))
  if(scope==='global'||scope==='catalogue'){
-  try{const patches=references;for(const p of patches)candidates.push({...p,zone:earthPatchZone(p),features:p,origin:'catalogue',region:'Catálogo mundial',coverSource:'Sin cobertura terrestre integrada para este recorte',geology:[]});reports.push({name:'Catálogo mundial de referencia',count:patches.length,status:'DEM real; sin máscara de cobertura integrada'})}
+  try{const patches=await earthPatches();for(const p of patches)candidates.push({...p,zone:earthPatchZone(p),features:p,origin:'catalogue',region:'Catálogo mundial',coverSource:'Sin cobertura terrestre integrada para este recorte',geology:[]});reports.push({name:'Catálogo mundial de referencia',count:patches.length,status:'DEM real; sin máscara de cobertura integrada'})}
   catch(e){if(signal?.aborted)throw e;reports.push({name:'Catálogo mundial',count:0,status:String(e)})}
  }
  const requested=scope==='global'?regions:regions.filter(r=>r.id===scope)

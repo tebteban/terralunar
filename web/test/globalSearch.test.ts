@@ -23,6 +23,17 @@ test('datos ausentes no superan el filtro y coberturas excluidas no se puntúan'
  const r=rankCandidates([unknown,wet,dry],features,weights,{...DEFAULT_MASK,enabled:true})
  assert.equal(r.counts.unknown,1);assert.equal(r.counts.excluded,1);assert.deepEqual(r.rows.map(p=>p.id),['dry'])
 })
+test('una malla del catálogo ausente no bloquea la búsqueda regional',async()=>{
+ const original=globalThis.fetch
+ globalThis.fetch=async(input)=>{const u=String(input);if(u.startsWith('/compare/')&&u!=='/compare/index.json')return new Response('',{status:404});try{return new Response(readFileSync('../data'+u))}catch{return new Response('',{status:404})}}
+ try{
+  const regions=validateRegions(JSON.parse(readFileSync('../data/discovery/regions.json','utf8')))
+  const one=await loadCandidates(regions,regions[0].id,false)
+  assert.ok(one.candidates.length>0);assert.ok(one.referencePoints.length>0)
+  const all=await loadCandidates(regions,'global',false)
+  assert.ok(all.candidates.length>0);assert.match(all.reports.find(r=>r.name==='Catálogo mundial')!.status,/Falta el recorte/)
+ }finally{globalThis.fetch=original}
+})
 test('carga multirregional real y puntuación con datos locales, sin red',async()=>{
  const original=globalThis.fetch
  globalThis.fetch=async(input)=>{try{return new Response(readFileSync('../data'+String(input)))}catch{return new Response('',{status:404})}}
