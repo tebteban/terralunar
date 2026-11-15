@@ -2,7 +2,7 @@ import TeamMusic from './TeamMusic.tsx'
 import { useEffect, useState, type PointerEvent } from 'react'
 import { moonSimilarity } from './moonRelief.ts'
 import HalftoneMoon from './HalftoneMoon.tsx'
-import SpaceBackdrop from './SpaceBackdrop.tsx'
+import OrganicBackdrop from './OrganicBackdrop.tsx'
 
 export type LandingChoice = 'luna' | 'marte' | 'personalizado' | 'ejemplo'
 
@@ -96,11 +96,11 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
   }
 
   return (
-    <div className="relative h-full overflow-x-hidden overflow-y-auto bg-ink text-canvas" onPointerMove={onMove}>
-      <SpaceBackdrop bodies={false} />
+    <div className="relative h-full overflow-x-hidden overflow-y-auto bg-space text-canvas" onPointerMove={onMove}>
+      <OrganicBackdrop />
 
       {/* La Luna asoma desde abajo, tenue, como horizonte: acompaña sin competir con el contenido */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden" aria-hidden="true">
+      <div className="moon-horizon pointer-events-none absolute inset-x-0 top-0 z-[1] h-full overflow-hidden" aria-hidden="true">
       <div className="hero-moon pointer-events-none absolute left-1/2 top-[72%] aspect-square w-[max(160vw,900px)] -translate-x-1/2 md:top-[68%] md:w-[min(120vw,1400px)]" aria-hidden="true">
         <HalftoneMoon className="h-full w-full" annotate={false} />
       </div>
@@ -160,8 +160,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
         </main>
 
         {/* Debajo de la primera pantalla, fondo sólido: la Luna de puntos queda solo como horizonte del inicio */}
-        <div className="relative bg-ink">
-        <div className="pointer-events-none absolute inset-x-0 -top-32 h-32 bg-gradient-to-b from-transparent to-ink" aria-hidden="true" />
+        <div className="relative">
         <section className="mx-auto w-full max-w-[1120px] px-6 pt-8 pb-20 md:px-8" aria-labelledby="how-title">
           <h2 id="how-title" className="label-mono mb-6 text-center text-mute">Cómo funciona</h2>
           <ol className="grid gap-6 sm:grid-cols-3">
@@ -180,7 +179,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
           <section className="mx-auto w-full max-w-[1120px] px-6 pb-20 md:px-8" aria-label="El proyecto en cifras">
             <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4">
               {[[9, 'regiones candidatas de Artemis III'], [stats.regions, 'regiones terrestres con datos reales'], [stats.zones, 'recortes del catálogo de referencia'], [2, 'misiones planetarias de relieve']].map(([n, label]) => (
-                <div key={label} className="flex flex-col gap-1 bg-ink/90 p-6 text-left">
+                <div key={label} className="flex flex-col gap-1 bg-space/85 p-6 text-left backdrop-blur-sm">
                   <dt className="order-2 text-sm text-mute">{label}</dt>
                   <dd className="metric text-4xl font-semibold">{n}</dd>
                 </div>
@@ -213,9 +212,9 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
 
         </div>
 
-        <footer className="landing-rise flex shrink-0 justify-center bg-ink px-6 pb-6 text-center" style={{ animationDelay: '1700ms' }}>
+        <footer className="landing-rise flex shrink-0 justify-center px-6 pb-6 text-center" style={{ animationDelay: '1700ms' }}>
           <div className="flex flex-col items-center gap-2">
-            <p className="micro-cap bg-ink px-3 text-mute">Relieve: LRO LOLA · MOLA · DEM terrestre</p>
+            <p className="micro-cap px-3 text-mute">Relieve: LRO LOLA · MOLA · DEM terrestre</p>
             <p className="text-xs text-mute/70">Equipo q'kodigo · Santiago del Estero · NASA Space Apps Challenge 2026{mock ? ' · puntajes de demostración' : ''}</p>
           </div>
         </footer>

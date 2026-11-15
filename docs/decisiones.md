@@ -9,6 +9,19 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-022 — Fondo de la portada sobrio y orgánico, continuo y con formas difusas en movimiento
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: sobrio, estético, natural y legible).
+- **Problema:** la portada tenía un fondo (estrellas + Luna en puntos) y, más abajo, un bloque negro
+  con un degradé para tapar el corte: se notaba la costura.
+- **Cómo:** `web/src/OrganicBackdrop.tsx`, fijo detrás de todo el recorrido (sin costuras). Capas: cielo
+  con estrellas, tres manchas de luz difusa que derivan muy lento (48–66 s; arena, pizarra y terracota,
+  colores apagados y de bajo contraste), grano fino tipo película (SVG `feTurbulence`) y viñeta suave
+  que oscurece el centro para que el texto se lea. La Luna en puntos (LRO) queda como horizonte, más
+  tenue y fundida arriba y abajo. Se quitaron el bloque negro y el degradé. Solo se anima `transform`;
+  con "reducir movimiento" todo queda quieto.
+- **Formas abstractas:** se eligieron manchas difusas y lentas en vez de figuras nítidas o rápidas, que
+  distraerían de las opciones y bajarían la legibilidad.
+
 ## D-021 — Ficha de Luna y Marte como pestaña flotante desplegable
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban).
 - **Cómo:** `SurfacePanel` acepta `collapsible`. En Luna y Marte la ficha arranca plegada como una
@@ -21,6 +34,11 @@ borra: se marca como **Reemplazada por D-XXX**.
   usa todo el ancho y los controles +/−/N/◎ pasan al borde derecho.
 - **Límites de la analogía:** siguen dentro de la ficha; plegarla es una elección del usuario y la ficha
   se abre sola al haber resultados, así que los límites se ven junto a cada resultado.
+
+- **Ampliación (2026-11-15, después del flujo unificado de Eze):** también la Tierra. El panel izquierdo
+  se puede ocultar en todas las vistas (la barra dice "Tierra" o "Búsqueda personalizada"), y la ficha
+  "Ficha y candidatos terrestres" es pestaña flotante: se despliega sola al ejecutar un análisis nuevo o
+  al elegir un candidato, para que los resultados no queden escondidos (`web/src/App.tsx`).
 
 ## D-020 — Panel lateral ocultable en Luna, Marte y búsqueda personalizada
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban).

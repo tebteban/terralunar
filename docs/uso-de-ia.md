@@ -74,3 +74,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-15 | OpenAI Codex | Ingestión MOD11A1 HDF real con QC, proyección, percentiles día/noche, evidencia en ficha y exportación; pruebas. Paso 4 parcial: sin índice térmico ni series planetarias integradas. |
 
 | 2026-11-15 | OpenAI Codex | Adaptación de D-020 y D-021 al flujo de ejecución científica y evidencia MODIS | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel izquierdo ocultable y ficha flotante también en la Tierra, sobre el flujo unificado (`web/src/App.tsx`); D-020/D-021 | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Fondo orgánico continuo de la portada con manchas difusas en movimiento, grano y viñeta (`web/src/OrganicBackdrop.tsx`, `Landing.tsx`, `index.css`); D-022 | — |
