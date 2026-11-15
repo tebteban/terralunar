@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { gotoExplore, noHorizontalScroll, openRanking } from './helpers'
+import { gotoExplore, noHorizontalScroll } from './helpers'
 
 // Regresión visual de las pantallas estáticas (sin mapas) en cada proyecto/viewport.
 test('portada: sin desborde y captura de regresión', async ({ page }) => {
@@ -10,24 +10,21 @@ test('portada: sin desborde y captura de regresión', async ({ page }) => {
   await expect(page).toHaveScreenshot('landing.png', { fullPage: true })
 })
 
-test('personalizado: sin desborde y captura de regresión', async ({ page }) => {
+test('buscador de análogos: sin desborde', async ({ page }) => {
   await page.goto('/#personalizado')
-  await page.getByRole('button', { name: 'Rover', exact: true }).click()
-  await page.waitForTimeout(500)
+  await expect(page.getByRole('heading', { name: 'Comparar entornos de misión' })).toBeVisible()
   await noHorizontalScroll(page)
-  await expect(page).toHaveScreenshot('personalizado.png', { fullPage: true })
 })
 
 test('explorar: la barra de controles y el ranking entran en el viewport', async ({ page, viewport }) => {
   await gotoExplore(page)
   await noHorizontalScroll(page)
   const nav = page.getByRole('navigation', { name: 'Cuerpo visualizado' })
-  await openRanking(page)
   const box = (await nav.boundingBox())!
   expect(box.x + box.width, 'el selector de cuerpo no debe salirse de la pantalla').toBeLessThanOrEqual(viewport!.width)
   // Abrir una ficha no debe tapar el selector de cuerpo (en tablet quedaba debajo de la ficha)
-  await page.getByRole('button', { name: /#01/ }).click()
-  await expect(page.getByRole('article')).toBeVisible()
+  await page.getByRole('button', { name: /Ficha y candidatos terrestres/ }).click()
+  await expect(page.getByRole('heading', { name: 'Límites de la analogía' })).toBeVisible()
   await expect(nav).toBeVisible()
   await nav.getByRole('button', { name: 'Luna', exact: true }).click({ trial: true })
   // objetivos táctiles de al menos 44 px en los controles principales

@@ -18,13 +18,17 @@ export async function gotoExplore(page: Page) {
   await expect(page.getByRole('navigation', { name: 'Cuerpo visualizado' })).toBeVisible()
 }
 
-// En pantallas angostas el ranking vive en la pestaña "Ranking"; en desktop siempre está a la vista.
-export async function openRanking(page: Page) {
-  const tab = page.getByRole('navigation', { name: 'Paneles' }).getByRole('button', { name: /^Ranking/ })
-  if (await tab.isVisible()) await tab.click()
-}
-
 export async function noHorizontalScroll(page: Page) {
   const [sw, cw] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])
   expect(sw, 'la página no debe desbordar horizontalmente').toBeLessThanOrEqual(cw)
+}
+
+// Las fichas de Tierra, Luna y Marte arrancan plegadas como pestaña flotante (D-021): se despliegan tocándola.
+export async function openSurface(page: Page, label: string) {
+  const tab = page.getByRole('button', { name: new RegExp(label) })
+  const panel = page.getByRole('complementary', { name: label })
+  await expect(tab.or(panel).first()).toBeVisible({ timeout: 45_000 })
+  if (await tab.isVisible()) await tab.click()
+  await expect(panel).toBeVisible()
+  return panel
 }
