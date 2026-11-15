@@ -40,7 +40,7 @@ test('carga multirregional real y puntuación con datos locales, sin red',async(
  try{
   const regions=validateRegions(JSON.parse(readFileSync('../data/discovery/regions.json','utf8')))
   const all=await loadCandidates(regions,'global',true)
-  assert.ok(all.candidates.length>=65);assert.equal(all.reports.length,regions.length+2)
+  assert.ok(all.candidates.length>=65);assert.equal(all.reports.length,regions.length+3) // catálogo + MODIS + datos geomecánicos
   assert.ok(all.candidates.some(c=>c.origin==='catalogue'));assert.ok(all.candidates.some(c=>c.region.includes('Hawái')))
   assert.equal(all.candidates.filter(c=>c.thermal).length,38)
   const ranked=rankCandidates(all.candidates,features,weights,DEFAULT_MASK)

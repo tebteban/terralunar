@@ -1,3 +1,4 @@
+import ValidationPanel from './ValidationPanel.tsx'
 import {withPlanetaryEvidence} from './planetaryEvidence.ts'
 import {referenceFor,type AnalysisRun,serializeRun} from './analysisRun.ts'
 import {coord,num} from './fmt.ts'
@@ -72,6 +73,7 @@ export default function ScientificSearch({onClose,onSelect,onShowMap,selectedTar
    <p className="my-2 text-sm">{result.counts.loaded} ventanas cargadas · {result.counts.inArea} dentro del área · {result.counts.excluded} excluidas por cobertura · {result.counts.unknown} sin evidencia para el filtro · {result.counts.nearReference} ventanas cerca del catálogo excluidas · {(result.elapsed/1000).toFixed(1)} s.</p>
    <p className="text-sm">Índice de semejanza al destino, no probabilidad de éxito. Ventanas exploratorias separadas al menos 30 km entre sí.</p>
    <details className="my-3"><summary className="cursor-pointer font-semibold">Cobertura y procedencia de esta ejecución</summary>{result.reports.map(r=><p className="my-2 text-xs" key={r.name}><strong>{r.name}</strong> · {r.count} recortes · {r.status}{r.extent?' · extensión '+JSON.stringify(r.extent):''}</p>)}</details>
+   <ValidationPanel target={result.resolvedTarget.name} reference={result.reference} weights={result.weights}/>
    <div className="my-4 flex flex-wrap gap-2"><button className="btn-secondary" onClick={exportResults}>Descargar análisis + plan de ensayo</button><button className="btn-secondary" disabled={!visible.length} onClick={()=>download('terralunar-candidatos.geojson',{type:'FeatureCollection',features:visible.map(r=>({type:'Feature',geometry:r.zone.polygon,properties:{id:r.id,name:r.name,score:r.score,score_kind:'topographic-context',origin:r.origin,source:r.source,cell_m:2000,window_km:20}}))})}>Exportar GeoJSON</button>{onShowMap&&<button className="btn-primary" disabled={!visible.length} onClick={()=>{onRun(result);onShowMap(origin);onClose()}}>Ver {visible.length} candidatos en el globo</button>}</div>
    <label className="flex max-w-sm flex-col gap-1.5 text-sm">Mostrar<select className="field" value={origin} onChange={e=>setOrigin(e.target.value)}><option value="all">Todos</option><option value="sampled">Candidatos fuera del catálogo</option><option value="catalogue">Catálogo de referencia</option></select></label>
    {!visible.length&&<p role="status" className="my-4">No hay candidatos con estos filtros. Revisá área, cobertura o tipo de resultado; no implica que no existan análogos.</p>}

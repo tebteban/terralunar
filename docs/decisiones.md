@@ -9,6 +9,48 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-028 — Panel de validación con análogos USGS reservados
+- **Fecha:** 2026-11-15 · **Estado:** vigente (CLAUDE.md: la validación "nunca se recorta").
+- **Qué:** `pipeline/12_validation.py` mide el relieve de los 192 análogos USGS (división fit 137 / test 55 hecha
+  por hash del nombre antes de calcular, sin tocar) y de 300 ventanas de tierra al azar (semilla 20261115, entre
+  56° S y 60° N, ≥ 90 % tierra), con el mismo muestreo que los candidatos. `web/src/validation.ts` los puntúa con
+  la misma función del ranking (`reliefScore`, ahora compartida) y `ValidationPanel.tsx` lo muestra debajo de los
+  resultados de la búsqueda, recalculado con el destino y los pesos elegidos.
+- **Reglas fijadas antes de ver resultados:** métrica = % de sitios `test` con semejanza ≥ percentil 90 del fondo
+  al azar (azar puro ≈ 10 %); se descartan ventanas con < 50 % de tierra; `fit` se muestra aparte y no es la
+  métrica; se informa la probabilidad binomial de obtener ese acierto por azar.
+- **Resultado (pesos iguales, primera corrida, sin ajustar nada):** Mons Mouton 3 de 54 sitios `test` (6 %,
+  probabilidad por azar 92 %); Mons Malapert y Nobile Rim 2, 1 de 54 (2 %). **El relieve solo no distingue a los
+  análogos USGS mejor que el azar.** Lectura: casi todos son cráteres de impacto terrestres, erosionados y de
+  relieve suave a 2 km, que son análogos del *proceso* de impacto, no de la *forma* de una meseta o un macizo del
+  polo sur. No se cambian umbrales, pesos ni división para "mejorar" el número.
+- **Límite declarado:** la lista USGS es casi toda de cráteres de impacto: valida "parecido a un análogo planetario
+  conocido", no aptitud para un ensayo concreto. Falta la lista curada de análogos de ensayo (datos faltantes).
+
+## D-027 — Datos terrestres reales para los criterios geomecánicos pendientes
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: completar `docs/datos-faltantes.md` con datos reales).
+- **Qué:** `pipeline/11_geomechanics.py` mide, para las 176 ventanas de 20 km que usa la app, seis capas reales
+  y las deja en `data/geomechanics/earth.json` (~0,5 MB):
+  | Criterio | Dato | Fuente |
+  |---|---|---|
+  | Portancia | densidad aparente 0–5, 5–15, 15–30, 30–60 cm | SoilGrids 2.0 `bdod` (ISRIC, 250 m, WCS) |
+  | Volátiles | fracción con permafrost probable (PZI ≥ 0,5) | Global Permafrost Zonation Index (Gruber 2012, 1 km) |
+  | Refugio, morfología, portancia | pendiente a 30 m, mayor planicie < 5°, % de flancos con desnivel en rango | NASADEM (56° S–60° N) o Copernicus GLO-30 (fuera) |
+  | Composición | NIR (B08) y NDVI medianos de la escena más limpia 2024–2026 | Sentinel-2 L2A |
+  | Oscilación térmica | amplitud día−noche mensual y estacional, 12 compuestos | MODIS MOD11A2.061 Terra, 2024 |
+  | Supermáscara | % de agua, urbano y cultivo | ESA WorldCover 2021 v200 |
+- **Cómo se puntúa:** `geomechanics.ts` usa esos datos solo si la capa cubre la ventana; si no, el criterio sigue
+  "Pendiente" con el motivo de la fuente (p. ej. "el PZI no cubre la Antártida"). Tramos provisorios, a validar
+  por Civil: composición = mín(NIR en rango con caída lineal de 0,10 fuera; NDVI 0,4→0,05); portancia = mín(densidad
+  en rango con caída de 0,3 g/cm³; pendiente 30 m); volátiles = fracción PZI ≥ 0,5 (1,0 desde 10 % Luna, 50 % Marte);
+  refugio = 1,0 desde el 2 % de la ventana con desnivel 10–50 m y flanco 15–30° (Luna) o 2–15 m y 5–20° (Marte),
+  medido en ventanas de 7×7 píxeles (~210 m). La supermáscara agrega "sin cultivos" (lo pide el documento).
+- **Arcadia Planitia:** activado como destino de Marte con el centro oficial IAU (Feature 348: 46,66° N, 192,00° E).
+  Es el centro nominal de una planicie de ~2200 km, no un sitio de aterrizaje propuesto.
+- **Por qué MODIS 2024 y no 2025:** en Planetary Computer, 2025 tiene un hueco de julio a noviembre (consultado hoy).
+- **Qué no se hizo:** índice UV (NASA OMI requiere login Earthdata; la regla ya usa la altitud), inventarios de
+  glaciares de escombros, contenido de hielo y profundidad del permafrost (no existen como capa global).
+
 ## D-026 — El atlas auxiliar vuelve a la entrega pública (reemplaza D-023)
 
 **Qué:** `atlas.html`, `atlas.js` y su README vuelven a `data/explorador/`, junto a `global-terreno.js`,

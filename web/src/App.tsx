@@ -6,6 +6,7 @@ import ConsoleIcon from './ConsoleIcon.tsx'
 import MethodDialog from './MethodDialog.tsx'
 import ScientificSearch from './ScientificSearch.tsx'
 import {comparisonFor,exportRun,type AnalysisRun} from './analysisRun.ts'
+import ValidationPanel from './ValidationPanel.tsx'
 import {PROFILES} from './analogyScope.ts'
 import {coord,num} from './fmt.ts'
 import type {SearchTarget} from './searchTarget.ts'
@@ -60,6 +61,7 @@ export default function App(){
    <label className="text-sm">Mostrar<select aria-label="Filtrar candidatos" className="mt-1 min-h-11 w-full rounded-lg border border-pressed bg-canvas p-2 text-ink" value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">Todos</option><option value="sampled">Candidatos fuera del catálogo</option><option value="catalogue">Catálogo de referencia</option></select></label>
    {!visible.length&&<p role="status">No hay resultados con este filtro. No significa que no existan análogos.</p>}
    <ol className="flex flex-col gap-2">{visible.map(r=><li key={r.id}><button aria-pressed={selectedId===r.id} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border border-pressed p-3 text-left aria-pressed:bg-ink aria-pressed:text-canvas" onClick={()=>select(r.id)}><span className="min-w-0 text-sm font-semibold">{r.name}<small className="block font-normal">{r.origin==='sampled'?'Fuera del catálogo consultado':'Referencia del catálogo'}</small></span><strong className="metric">{num(r.score,1)}</strong></button></li>)}</ol>
+   <ValidationPanel target={run.resolvedTarget.name} reference={run.reference} weights={run.weights}/>
   </>}
  </section>
  const exampleView=example&&<Suspense fallback={<Loading/>}><Compare3D zoneId="mcmurdo-dry-valleys" onClose={()=>setExample(false)}/></Suspense>

@@ -18,21 +18,31 @@ Cosas que la app necesita y todavía no existen. Se anotan acá en vez de invent
 - **Perfil Marte:** no existe (es lo primero que se recorta).
 
 ## Consideraciones geomecánicas (D-024, documento de Civil `docs/consideraciones-geomecanicas.md`)
-Criterios que hoy quedan **pendientes** en la ficha porque falta el dato terrestre (no se inventa nota):
-- **Granulometría y composición (15 %):** reflectancia NIR del recorte (Sentinel-2 banda 8 o Landsat 8/9), ya
-  que la regla pide NIR 0,25–0,40 (Luna) o 0,15–0,30 (Marte) además del NDVI.
-- **Capacidad portante (15 %):** densidad aparente del suelo (p. ej. SoilGrids `bdod`, 250 m) o ensayos de campo.
-- **Volátiles y evaporitas (20 %):** mapa de permafrost / glaciares de escombros con profundidad y % de hielo
-  (p. ej. ESA CCI Permafrost; inventarios de glaciares de escombros de la Puna/Andes).
-- **Refugio subterráneo (10 %):** DEM de 30 m (NASADEM / Copernicus GLO-30) por candidato para medir desniveles
-  de 2–50 m y pendientes de flanco; con celdas de 2 km no se resuelven.
-- **Oscilaciones térmicas:** hoy se usa una sola fecha MODIS (día − noche). La regla pide amplitud diaria o
-  estacional: falta una serie temporal.
-- **Radiación:** se usa la altitud, como indica la regla; el índice UV no está integrado.
-- **Supermáscara:** depende de la capa de cobertura; donde falta agua, NDVI o zonas urbanas, la máscara se
-  informa como incompleta.
-- **Arcadia Planitia:** el perfil está cargado, pero el sitio no está entre los destinos de Marte de la app.
-  Faltan las coordenadas del área de estudio (p. ej. del boletín NASA HLS2) y su recorte MOLA para activarlo.
-- **Tramos intermedios de las reglas:** el documento fija los extremos (1,0 y 0,0); los tramos lineales entre
-  ellos son provisorios. Validar con Civil.
+**Actualizado 2026-11-15 (D-027):** `pipeline/11_geomechanics.py` consiguió datos reales para casi todo lo que
+faltaba. Estado por ítem:
+- ✅ **Granulometría y composición:** NIR (B08) y NDVI de Sentinel-2 L2A por ventana. **Sigue faltando:** la
+  mineralogía (anortosita / basalto); el NIR no la identifica. Dato posible: ASTER (índices de sílice y máficos).
+- ✅ **Capacidad portante:** densidad aparente SoilGrids 2.0 (0–60 cm). **Límite:** es una predicción a 250 m, no un
+  ensayo; cohesión y ángulo de fricción no existen como capa global → ensayos de campo o bibliografía por sitio.
+  SoilGrids no predice suelo sobre roca expuesta, hielo ni la Antártida: esas ventanas quedan pendientes.
+- 🟡 **Volátiles:** probabilidad de permafrost (PZI, Gruber 2012). **Sigue faltando:** profundidad y % de hielo
+  (ninguna capa global lo da), inventarios de glaciares de escombros (IANIGLA para Argentina) y la Antártida
+  (el PZI llega hasta 60° S; McMurdo queda pendiente).
+- ✅ **Refugio subterráneo:** NASADEM / Copernicus GLO-30 a 30 m. **Límite:** ve escarpes, no cuevas ni tubos de lava.
+- ✅ **Oscilaciones térmicas:** serie MOD11A2 de 12 meses (2024). **Límite:** pasadas ~10:30 y ~22:30, subestima la
+  amplitud diaria real.
+- ❌ **Radiación, índice UV:** no conseguido (NASA OMI `OMUVBd` requiere login Earthdata). La regla ya puntúa con
+  la altitud, así que no bloquea.
+- ✅ **Supermáscara:** WorldCover 2021 (agua, urbano, cultivo) + NDVI Sentinel-2 donde la región no tenía cobertura.
+- ✅ **Arcadia Planitia:** activado con el centro IAU (Feature 348). **Sigue faltando:** un área de aterrizaje
+  concreta (el boletín HLS2 de 2019 muestra el área de estudio SWIM en figuras, sin coordenadas en el texto).
+- ⚠️ **Contraste de cifras del documento:** Morgan et al. (NASA SWIM) **no respalda** "30–90 % de hielo en volumen"
+  para Arcadia: dice que en el depósito grueso (15 a >100 m) "any ice must be at a low overall fraction", aunque
+  infiere hielo cerca de la superficie. La dosis lunar medida (Chang'e-4, Zhang et al. 2020, *Science Advances*)
+  es 1369 µSv/día ≈ 0,50 Sv/año, más que los 0,32–0,40 Sv/año del documento. Revisar con Civil.
+- **Tramos intermedios de las reglas:** siguen provisorios (D-027 detalla cada uno). Validar con Civil.
 
+## Validación (D-028)
+- **Resultado actual:** con relieve solo, los análogos USGS `test` no superan al azar (6 % contra 10 % esperado para
+  Mons Mouton). Para una validación con sentido falta la **lista curada de análogos de ensayo** (movilidad,
+  excavación, hábitat) con cita por sitio, dividida fit/test antes de calcular. Le toca a Civil.
