@@ -1,0 +1,90 @@
+{
+  "version": "terrain-kmeans-1",
+  "features": [
+    "pendiente_mediana",
+    "pendiente_p90",
+    "rugosidad_m",
+    "desnivel_m"
+  ],
+  "train_ids": [
+    "pilot-0-0",
+    "pilot-0-1",
+    "pilot-0-2",
+    "pilot-0-3",
+    "pilot-0-4",
+    "pilot-0-5",
+    "pilot-1-0",
+    "pilot-1-1",
+    "pilot-1-2",
+    "pilot-1-3",
+    "pilot-1-4",
+    "pilot-1-5",
+    "pilot-2-0",
+    "pilot-2-1",
+    "pilot-2-2",
+    "pilot-2-3",
+    "pilot-2-4",
+    "pilot-2-5"
+  ],
+  "heldout_ids": [
+    "pilot-4-0",
+    "pilot-4-1",
+    "pilot-4-2",
+    "pilot-4-3",
+    "pilot-4-4",
+    "pilot-4-5",
+    "pilot-5-0",
+    "pilot-5-1",
+    "pilot-5-2",
+    "pilot-5-3",
+    "pilot-5-4",
+    "pilot-5-5"
+  ],
+  "buffer_ids": [
+    "pilot-3-0",
+    "pilot-3-1",
+    "pilot-3-2",
+    "pilot-3-3",
+    "pilot-3-4",
+    "pilot-3-5"
+  ],
+  "k": 3,
+  "k_selection": "Fixed exploratory choice; not tuned on held-out data",
+  "train_quantization_mse": 0.8233875568833431,
+  "heldout_quantization_mse": 2.1339607267001184,
+  "one_center_heldout_mse": 8.121783870941305,
+  "heldout_outside_training_ranges": 4,
+  "groups": [
+    {
+      "group": 1,
+      "count": 6,
+      "physical_center": {
+        "pendiente_mediana": 2.256724320042685,
+        "pendiente_p90": 4.729586105313891,
+        "rugosidad_m": 37.08633141347002,
+        "desnivel_m": 844.5411376953124
+      }
+    },
+    {
+      "group": 2,
+      "count": 10,
+      "physical_center": {
+        "pendiente_mediana": 5.021895475260139,
+        "pendiente_p90": 10.071556105970082,
+        "rugosidad_m": 80.80956258868048,
+        "desnivel_m": 1706.487646484375
+      }
+    },
+    {
+      "group": 3,
+      "count": 2,
+      "physical_center": {
+        "pendiente_mediana": 8.705423608575718,
+        "pendiente_p90": 14.710298656149885,
+        "rugosidad_m": 143.48725181751212,
+        "desnivel_m": 2166.6553955078125
+      }
+    }
+  ],
+  "limits": "Quantization error is not predictive accuracy or analog relevance. Single regional split, 36 windows, correlated slope features; no evidence of improvement over WLC ranking."
+}
