@@ -1,3 +1,4 @@
+import ScientificSearch from './ScientificSearch.tsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ResultsTarget } from './panelContext.ts'
 import ConsoleIcon from './ConsoleIcon.tsx'
@@ -21,6 +22,7 @@ async function getJSON<T>(path: string): Promise<T> {
 }
 
 export default function App() {
+  const [scientificOpen, setScientificOpen] = useState(false)
   const [zones, setZones] = useState<Zone[]>([])
   const [profiles, setProfiles] = useState<Record<string, Profile> | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -70,7 +72,7 @@ export default function App() {
   if (!profile) return <p className="p-6 text-body">Cargando datos…</p>
 
   return (
-    <ResultsTarget.Provider value={resultsTarget}>
+    <ResultsTarget.Provider value={resultsTarget}>{scientificOpen && <ScientificSearch onClose={() => setScientificOpen(false)} onSelect={pickEarth}/>}
     <div className={`app-shell stitch-shell body-${body} ${showTelemetry ? '' : 'telemetry-hidden'} ${leftOpen ? 'config-open' : ''} ${rightOpen ? 'results-open' : ''}`}>
       <header className="topbar">
         <a className="brand" href="#workspace" aria-label="TerraLunar, visor"><strong>TERRALUNAR</strong><span>Análogos terrestres para misiones planetarias</span></a>
@@ -82,7 +84,7 @@ export default function App() {
         <div className="source-status"><i/>DATOS ABIERTOS<br/>NASA / PDS</div>
         <div className="top-actions"><button className="mobile-toggle" aria-label="Mostrar configuración" aria-expanded={leftOpen} onClick={() => {setLeftOpen(!leftOpen);setRightOpen(false)}}>Parámetros</button><button aria-label="Fuentes y método" onClick={() => setMethodOpen(true)}>ⓘ</button><button aria-label="Alternar pantalla completa" onClick={fullscreen}><ConsoleIcon name="expand"/></button><button className="mobile-toggle" aria-expanded={rightOpen} onClick={() => {setRightOpen(!rightOpen);setLeftOpen(false)}}>Resultados</button></div>
       </header>
-      <nav className="console-rail" aria-label="Herramientas de análisis">
+      <nav className="console-rail" aria-label="Herramientas de análisis"><button onClick={() => setScientificOpen(true)}>Comparación científica</button>
         <div className="rail-caption">EXPLORACIÓN PLANETARIA <strong>04 VISTAS</strong></div>
         <button onClick={() => {setBody('tierra');setComparing(false);setLeftOpen(true)}}><ConsoleIcon name="catalog"/>Catálogo de Análogos</button>
         <button disabled={!selectedId} onClick={() => setComparing(true)}><ConsoleIcon name="terrain"/>Evaluación Geológica</button>
@@ -166,3 +168,4 @@ export default function App() {
     </ResultsTarget.Provider>
   )
 }
+

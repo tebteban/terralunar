@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test test/score.test.ts test/mars.test.ts"
+    "test": "node --test test/score.test.ts test/mars.test.ts test/scientific.test.ts"
   },
   "dependencies": {
     "geotiff": "^3.0.5",
@@ -31,3 +31,4 @@
     "vite": "^8.3.6"
   }
 }
+
