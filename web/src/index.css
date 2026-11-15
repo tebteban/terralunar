@@ -21,10 +21,22 @@
   --color-night-soft: #121318;
   --color-obsidian: #1a1b20;
   --color-space: #0b0c10;
-  --color-mars: #c4704f;          /* terracota apagado, solo para marcar Marte */
+  --color-mars: #c4704f;          /* terracota apagado, solo para marcar Marte (sobre oscuro: 5,1:1) */
+  --color-mars-ink: #8f4a2f;      /* Marte sobre papel (4,9:1 sobre canvas) */
+  --color-moon: #c8cad0;          /* gris frío, solo para marcar la Luna */
   --color-data: #d4973f;
-  --color-sim-low: #1e293b;
+  --color-ok: #7cc39a;            /* Δ dentro de la tolerancia (solo texto e indicadores) */
+  --color-warn: #e0a24a;          /* Δ fuera de la tolerancia */
+  --color-sim-low: #1e293b;       /* rampa de similitud 0,4 → 0,7 → 0,9 (mapa y leyenda) */
+  --color-sim-mid: #d97706;
   --color-sim-high: #fef3c7;
+  --font-hud: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Movimiento (DESIGN.md §7): salida expo para entradas/hover, estándar para cambios de estado */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-press: 120ms;
+  --duration-state: 200ms;
+  --duration-panel: 320ms;
   --radius-2xl: 1.375rem;         /* 22 px: tarjetas y paneles */
   --radius-xl: 1rem;
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.06), 0 16px 40px -12px rgb(0 0 0 / 0.45);
@@ -46,12 +58,39 @@ body { @apply bg-space text-canvas antialiased; font-feature-settings: "tnum" 1;
 @utility micro-cap { font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 16px; letter-spacing: 0.07em; text-transform: uppercase; }
 @utility metric { font-family: var(--font-sans); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 @utility button-cap { font-size: 14px; font-weight: 600; line-height: 20px; }
+/* Lectura de instrumento: coordenadas, códigos, HUD de cámara, fuentes de datos */
+@utility hud { font-family: var(--font-hud); font-size: 11px; line-height: 16px; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+/* Esquinas de retícula sobre un lienzo 3D o un panel: marca "esto es un instrumento" */
+@utility hud-frame {
+  position: relative;
+  &::before, &::after { content: ""; position: absolute; width: 14px; height: 14px; pointer-events: none; border: 1px solid color-mix(in srgb, var(--color-canvas) 45%, transparent); }
+  &::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+  &::after { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+}
+/* Barra indeterminada de 2 px para estados de carga */
+@utility loading-bar {
+  display: block; height: 2px; border-radius: 9999px; overflow: hidden; background: color-mix(in srgb, var(--color-canvas) 12%, transparent);
+  &::after { content: ""; display: block; height: 100%; width: 40%; border-radius: inherit; background: var(--color-canvas); animation: loading-slide 1.2s var(--ease-standard) infinite; }
+}
+@keyframes loading-slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+/* Entrada de un visor al cambiar de cuerpo y de un panel (ficha): opacidad + leve escala */
+@utility view-in { animation: view-in var(--duration-panel) var(--ease-out-expo) both; }
+@keyframes view-in { from { opacity: 0; transform: scale(0.985); } }
+@utility rise-in { animation: rise var(--duration-panel) var(--ease-out-expo) both; }
+/* Fila de lista con feedback de hover/press */
+@utility row { transition: background-color var(--duration-state) var(--ease-standard), transform var(--duration-state) var(--ease-standard); &:hover { transform: translateY(-1px); } &:active { transform: translateY(0) scale(0.995); } }
 /* En la capa de componentes: así las utilidades (h-8, px-4, text-xs…) pueden ajustar cada uso */
 @layer components {
 /* Botones píldora: primario oscuro (sobre papel), claro (sobre oscuro), secundario con borde suave */
-.btn-primary { @apply button-cap inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full bg-ink px-5 text-canvas shadow-[0_6px_16px_-8px_rgb(0_0_0/0.5)] transition-all hover:-translate-y-px hover:bg-elevated active:translate-y-0 disabled:pointer-events-none disabled:opacity-30; }
-.btn-ghost { @apply button-cap inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full bg-canvas px-5 text-ink transition-all hover:-translate-y-px hover:bg-canvas-soft active:translate-y-0 disabled:pointer-events-none disabled:opacity-30; }
-.btn-secondary { @apply button-cap inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-pressed/70 bg-transparent px-5 text-ink transition-colors hover:bg-canvas-soft; }
+.btn-primary { @apply button-cap inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full bg-ink px-5 text-canvas shadow-[0_6px_16px_-8px_rgb(0_0_0/0.5)] transition-all hover:-translate-y-px hover:bg-elevated active:translate-y-0 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-30; }
+.btn-ghost { @apply button-cap inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full bg-canvas px-5 text-ink transition-all hover:-translate-y-px hover:bg-canvas-soft active:translate-y-0 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-30; }
+.btn-secondary { @apply button-cap inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-pressed/70 bg-transparent px-5 text-ink transition-all hover:bg-canvas-soft active:scale-[0.98]; }
+/* Chip de tamaño táctil para los botones de "Comparar relieve 3D / Ver en la Tierra" dentro de listas */
+.btn-primary.btn-sm, .btn-secondary.btn-sm { @apply h-10 px-4 text-xs; }
+/* Controles nativos de MapLibre (zoom, brújula) al tamaño táctil de la consola */
+.maplibregl-ctrl-group button { width: 36px; height: 36px; }
+.maplibregl-ctrl-group { border-radius: 12px; overflow: hidden; }
+.maplibregl-ctrl-attrib { font-size: 10px; }
 /* Control flotante sobre el lienzo oscuro (Ver planeta, Vista cenital, avisos): vidrio suave */
 .chip-dark { @apply inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/[0.07] bg-rail/80 px-4 py-2 text-sm font-medium text-canvas shadow-float backdrop-blur-md transition-colors hover:bg-elevated/90; }
 /* Tarjeta obligatoria "Límites de la analogía" */
@@ -63,7 +102,8 @@ input[type="range"] { accent-color: #f3f1ec; }
 /* Decorative space stays behind WebGL: the globe occludes it naturally. */
 .space-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: var(--space-opacity, 1); background: #0b0c10; }
 .milky-way { position: absolute; inset: -50%; transform: rotate(-32deg); background: radial-gradient(ellipse at 50% 50%, #c0c9f018 0%, #8c79b41a 10%, #4c598318 18%, transparent 33%); filter: blur(16px); }
-.space-stars { position: absolute; inset: 0; }
+/* --px/--py: parallax leve con el puntero en la portada (Landing.tsx); 0 en el resto y con reduced-motion */
+.space-stars { position: absolute; inset: -2%; transform: translate3d(var(--px, 0px), var(--py, 0px), 0); transition: transform 1.2s var(--ease-out-expo); }
 .space-stars i { position: absolute; border-radius: 50%; background: #e9e4da; box-shadow: 0 0 3px #e9e4da40; animation: star-breathe 7s ease-in-out infinite alternate; animation-play-state: var(--space-motion, running); }
 .space-body, .space-saturn { position: absolute; animation: planet-drift 24s ease-in-out infinite alternate; animation-play-state: var(--space-motion, running); }
 .space-body, .saturn-sphere { border-radius: 50%; box-shadow: inset -14px -6px 20px #000c, 0 0 20px #809fff0a; }
@@ -127,5 +167,9 @@ input[type="range"] { accent-color: #f3f1ec; }
 
 @keyframes star-breathe { to { opacity: .2; } }
 @keyframes planet-drift { to { transform: translate3d(5px, -9px, 0); } }
-@media (prefers-reduced-motion: reduce) { .space-backdrop * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .space-backdrop *, .view-in, .rise-in { animation: none !important; }
+  .row, .btn-primary, .btn-ghost, .btn-secondary { transition: none !important; transform: none !important; }
+  .loading-bar::after { animation-duration: 3s; }
+}
 @media (max-width: 640px) { .space-jupiter, .space-saturn { display: none; } }

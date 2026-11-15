@@ -54,3 +54,13 @@ export function rank(zones: Zone[], w: Weights): Ranked[] {
 export function presetWeights(profile: Profile, preset: Preset): Weights {
   return Object.fromEntries(Object.entries(profile.dimensions).map(([k, d]) => [k, d.weights[preset]]))
 }
+
+const num = (v: number) => v.toLocaleString('es-AR', { maximumFractionDigits: 2 }).replace('-', '−')
+// "Lo que pide la Luna": la meseta del trapecio difuso (donde la nota es 1), en las unidades de la variable
+export function target(d: Dimension) {
+  const { a, b, c, d: e } = d.fuzzy
+  const unit = d.unit === 'NDVI' ? '' : ` ${d.unit}`
+  if (a === b) return `≤ ${num(c)}${unit}`
+  if (c === e) return `≥ ${num(b)}${unit}`
+  return `${num(b)} a ${num(c)}${unit}`
+}

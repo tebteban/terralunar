@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, type PointerEvent } from 'react'
 import HalftoneMoon from './HalftoneMoon.tsx'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
 
@@ -70,8 +70,16 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
     return () => window.removeEventListener('keydown', onKey)
   }, [onPick])
 
+  // Parallax de las estrellas con el puntero (±10 px). Con reduced-motion no se mueve nada.
+  const onMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const el = e.currentTarget
+    el.style.setProperty('--px', `${((e.clientX / el.clientWidth) - 0.5) * -20}px`)
+    el.style.setProperty('--py', `${((e.clientY / el.clientHeight) - 0.5) * -20}px`)
+  }
+
   return (
-    <div className="relative h-full overflow-x-hidden overflow-y-auto bg-ink text-canvas">
+    <div className="relative h-full overflow-x-hidden overflow-y-auto bg-ink text-canvas" onPointerMove={onMove}>
       <SpaceBackdrop bodies={false} />
 
       {/* La Luna asoma desde abajo, tenue, como horizonte: acompaña sin competir con el contenido */}

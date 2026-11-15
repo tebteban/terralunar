@@ -7,6 +7,9 @@ import MoonGlobe, { type GlobeIndex } from './MoonGlobe.tsx'
 import MoonView from './MoonView.tsx'
 import { latLonToPx } from './moonProj.ts'
 import { MOON_TOL, moonSimilarity } from './moonRelief.ts'
+import NoWebGL from './NoWebGL.tsx'
+import { hasWebGL } from './webgl.ts'
+import { coord, degrees, meters } from './fmt.ts'
 
 interface MoonIndex extends GlobeIndex {
   grid: { file: string; w: number; first_center_px: number; stride_px: number; layers: Metric[]; scale: number[] }
@@ -108,27 +111,29 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
 
   return (
     <div className="relative h-full w-full bg-space">
-      {index && hiRes && <MoonView onUnavailable={() => setHiRes(false)} onPick={(lat, lon) => {
+      {!hasWebGL() && <NoWebGL what="la Luna en 3D" href="https://trek.nasa.gov/moon/" label="Abrir NASA Moon Trek" />}
+      {!index && !error && hasWebGL() && <div className="flex h-full items-center justify-center" role="status"><div className="flex w-56 flex-col gap-2"><span className="hud text-mute">Cargando relieve LOLA…</span><span className="loading-bar" aria-hidden="true" /></div></div>}
+      {index && hasWebGL() && hiRes && <MoonView onUnavailable={() => setHiRes(false)} onPick={(lat, lon) => {
         if (lat > -80) return outside(lat)
         const p = latLonToPx(index, lat, lon)
         setNotice(null); setPick(pickAt(p.line, p.sample))
       }} />}
-      {index && !hiRes && <MoonGlobe index={index} pick={pick}
+      {index && hasWebGL() && !hiRes && <MoonGlobe index={index} pick={pick}
         onPick={(line, sample) => { setNotice(null); setPick(pickAt(line, sample)) }}
         onOutside={outside} />}
-      <div className="pointer-events-none absolute left-4 top-32 z-[1] hidden flex-col gap-1 rounded-2xl border border-hairline bg-rail/85 px-4 py-3 shadow-float md:flex">
+      <div className="pointer-events-none absolute left-4 top-32 z-[1] hidden flex-col gap-1 rounded-2xl border border-hairline bg-rail/85 px-4 py-3 shadow-float lg:flex">
         <span className="label-mono text-mute">Elegí un lugar en la Luna</span>
         <span className="metric text-[22px] leading-7 font-semibold text-canvas">Polo sur · 80°S — 90°S</span>
-        <span className="label-mono text-mute">LRO LOLA · proyección polar</span>
+        <span className="hud text-mute">LRO LOLA · proyección polar</span>
       </div>
-      {!hiRes && <p className="chip-dark pointer-events-none absolute bottom-6 left-6 z-[1] hidden font-mono text-xs font-normal md:inline-flex">
+      {!hiRes && <p className="chip-dark pointer-events-none absolute bottom-6 left-6 z-[1] hidden font-mono text-xs font-normal lg:inline-flex">
         Arrastrá para girar · rueda para acercar · clic en el polo sur
       </p>}
-      {notice && <p className="absolute left-6 top-56 z-[1] max-w-sm rounded-2xl border border-pressed bg-canvas p-4 text-sm text-ink shadow-card">{notice}</p>}
+      {notice && <p role="status" className="absolute left-6 top-56 z-[1] max-w-sm rounded-2xl border border-pressed bg-canvas p-4 text-sm text-ink shadow-card">{notice}</p>}
       {compare && compareId && <Compare3D zoneId={compareId} supplied={compare} onClose={() => { setCompare(null); setCompareId(null) }} />}
-      {error && <p className="absolute left-6 top-56 text-canvas">No se pudieron cargar los datos lunares: {error}</p>}
+      {error && <p role="alert" className="chip-dark absolute left-6 top-56 z-[1] max-w-sm text-xs">No se pudieron cargar los datos lunares: {error}</p>}
 
-      <aside className="absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[60%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:bottom-6 md:right-6 md:top-6 md:max-h-none md:w-[420px]">
+      <aside className="rise-in absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[56%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:bottom-6 lg:right-6 lg:top-[7.5rem] lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
         {!pick ? (
           <>
             <header className="flex flex-col gap-1.5">
@@ -142,7 +147,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
             <div className="flex flex-wrap gap-1.5">
               {index?.sites.map((s) => (
                 <button key={s.name} type="button" onClick={() => setPick(pickAt(s.line, s.sample))}
-                  className="h-7 rounded-full bg-canvas-soft px-3 font-mono text-xs text-body transition-colors hover:bg-ink hover:text-canvas">{s.name}</button>
+                  className="min-h-9 rounded-full bg-canvas-soft px-3 font-mono text-xs text-body transition-colors hover:bg-ink hover:text-canvas">{s.name}</button>
               ))}
             </div>
             <p className="text-xs text-body">Son los accidentes que dan nombre a las regiones candidatas de Artemis III (centros según la IAU).</p>
@@ -153,16 +158,16 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
             <header className="flex flex-col gap-1.5">
               <span className="label-mono text-body">Coordenadas del punto</span>
               <h2 className="text-2xl leading-8 font-bold tracking-tight">Punto elegido en la Luna</h2>
-              <p className="metric text-xs text-body">
-                {pick.lat.toFixed(2)}°, {pick.lon.toFixed(1)}° E{nearest && ` · a ${nearest.km.toFixed(0)} km de ${nearest.s.name}`}
+              <p className="hud text-xs text-body">
+                {coord(pick.lat, pick.lon)}{nearest && ` · a ${nearest.km.toFixed(0)} km de ${nearest.s.name}`}
               </p>
             </header>
             <dl className="grid grid-cols-2 gap-2">
               {(Object.keys(LABELS) as Metric[]).map((k) => (
                 <div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4">
                   <dt className="text-[13px] text-body">{LABELS[k][0]}</dt>
-                  <dd className="metric text-[22px] leading-7 font-semibold">{(Math.round(pick.m[k] * 10) / 10).toLocaleString('es-AR')}{LABELS[k][1]}</dd>
-                  <span className="label-mono text-[10px] text-body">LOLA · ventana 20 km</span>
+                  <dd className="metric text-[22px] leading-7 font-semibold">{k.startsWith('pendiente') ? degrees(pick.m[k]) : meters(pick.m[k])}</dd>
+                  <span className="micro-cap text-[10px] text-body">LOLA · ventana 20 km</span>
                 </div>
               ))}
             </dl>
@@ -174,15 +179,15 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
                     <div className="flex items-start gap-3">
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-bold">{e.name}</span>
-                        <span className="metric block text-[11px] text-body">
-                          pend. {e.pendiente_mediana}° · rug. {e.rugosidad_m} m · desn. {e.desnivel_m} m
+                        <span className="hud block text-body">
+                          pend. {degrees(e.pendiente_mediana)} · rug. {meters(e.rugosidad_m)} · desn. {meters(e.desnivel_m)}
                         </span>
                       </span>
                       <span className={`metric rounded-full px-2.5 py-1 text-xs font-bold ${i === 0 ? 'bg-ink text-canvas' : 'bg-pressed text-ink'}`}>{Math.round(s * 100)}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <button type="button" onClick={() => openCompare(e)} className="btn-primary h-8 px-4 text-xs">Comparar relieve 3D</button>
-                      <button type="button" onClick={() => onPickEarth(e.id)} className="btn-secondary h-8 px-4 text-xs">Ver en la Tierra</button>
+                      <button type="button" onClick={() => openCompare(e)} className="btn-primary btn-sm">Comparar relieve 3D</button>
+                      <button type="button" onClick={() => onPickEarth(e.id)} className="btn-secondary btn-sm">Ver en la Tierra</button>
                     </div>
                   </li>
                 ))}

@@ -29,7 +29,7 @@ function toXYZ(lat: number, lon: number, r: number) {
 
 export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
   const box = useRef<HTMLDivElement>(null)
-  const cameraLabel = useRef<HTMLOutputElement>(null)
+  const cameraLabel = useRef<HTMLParagraphElement>(null)
   const api = useRef<{ showPick: (p: Props['pick'], fly?: boolean) => void; reset: () => void; zoom: (factor: number) => void; north: () => void } | null>(null)
   const handlers = useRef({ onPick, onOutside })
   useEffect(() => { handlers.current = { onPick, onOutside } })
@@ -327,13 +327,13 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
   useEffect(() => { api.current?.showPick(pick) }, [pick])
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-space">
+    <div className="hud-frame relative h-full w-full overflow-hidden bg-space">
       <SpaceBackdrop />
-      <div ref={box} className="absolute inset-0 md:right-[470px]" role="region" aria-label="Globo 3D de la Luna. Arrastrá para moverte, rueda para acercar; clic en el polo sur para analizar." />
+      <div ref={box} className="absolute inset-0 lg:right-[470px]" role="region" aria-label="Globo 3D de la Luna. Arrastrá para moverte, rueda para acercar; clic en el polo sur para analizar." />
       <button type="button" onClick={() => api.current?.reset()}
-        className="chip-dark absolute left-4 top-4">Ver planeta</button>
-      <output ref={cameraLabel} className="metric pointer-events-none absolute bottom-20 left-6 hidden text-[11px] text-mute md:block" />
-      <div className="absolute right-4 bottom-6 z-[1] flex flex-col gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float md:right-[494px]">
+        className="chip-dark absolute left-4 top-4 min-h-10">Ver planeta</button>
+      <p ref={cameraLabel} aria-hidden="true" className="hud pointer-events-none absolute bottom-20 left-6 hidden text-mute lg:block" />
+      <div className="absolute right-4 bottom-6 z-[1] flex flex-col gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float lg:right-[494px]">
         <button type="button" aria-label="Acercar Luna" title="Acercar" onClick={() => api.current?.zoom(0.75)} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">+</button>
         <button type="button" aria-label="Alejar Luna" title="Alejar" onClick={() => api.current?.zoom(1.33)} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">−</button>
         <button type="button" aria-label="Orientar Luna al norte" title="Norte arriba" onClick={() => api.current?.north()} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">N</button>

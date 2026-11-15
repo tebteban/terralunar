@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Chevron, TopBar } from './Landing.tsx'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
-import { rank, type Dimension, type Preset, type Profile, type Weights, type Zone } from './score.ts'
+import { rank, target, type Dimension, type Preset, type Profile, type Weights, type Zone } from './score.ts'
 
 // Explicación simple de cada variable: qué mide y por qué importa para la Luna.
 const HELP: Record<string, string> = {
@@ -34,16 +34,6 @@ const STARTS: { id: Preset; label: string }[] = [
 
 export type Selection = Record<string, number> // variable → importancia (1 a 3)
 
-const num = (v: number) => v.toLocaleString('es-AR', { maximumFractionDigits: 2 }).replace('-', '−')
-
-// "Lo que pide la Luna": la meseta del trapecio difuso (donde la nota es 1), en las unidades de la variable
-function target(d: Dimension) {
-  const { a, b, c, d: e } = d.fuzzy
-  const unit = d.unit === 'NDVI' ? '' : ` ${d.unit}`
-  if (a === b) return `≤ ${num(c)}${unit}`
-  if (c === e) return `≥ ${num(b)}${unit}`
-  return `${num(b)} a ${num(c)}${unit}`
-}
 
 // Dibujo chico del trapecio: nota 0 afuera, sube, meseta en 1, baja.
 function Trapezoid({ d, on }: { d: Dimension; on: boolean }) {
@@ -106,7 +96,7 @@ export default function CustomSearch({ profile, zones, initial, mock, onBack, on
         <div className="relative z-10 mx-auto grid w-full max-w-[1200px] grid-cols-[minmax(0,1fr)] gap-12 px-6 pt-6 pb-28 md:px-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:pb-16">
           <main className="flex flex-col gap-12">
             <header className="landing-rise flex flex-col gap-6">
-              <button type="button" onClick={onBack} className="flex items-center gap-2 self-start text-sm font-medium text-mute hover:text-canvas">
+              <button type="button" onClick={onBack} className="-my-2 flex min-h-10 items-center gap-2 self-start text-sm font-medium text-mute hover:text-canvas">
                 <Chevron className="rotate-180" /> Inicio
               </button>
               <h1 className="display text-[26px] leading-[34px] text-balance md:text-[32px] md:leading-10">Armá tu búsqueda</h1>
@@ -122,12 +112,12 @@ export default function CustomSearch({ profile, zones, initial, mock, onBack, on
                 <dt className="micro-cap text-mute">Empezar desde</dt>
                 <dd className="flex flex-wrap items-center gap-2">
                   {STARTS.map((s) => (
-                    <button key={s.id} type="button" onClick={() => startFrom(s.id)} className="rounded-full bg-white/5 px-4 py-1.5 text-sm text-pressed transition-colors hover:bg-canvas hover:text-ink">
+                    <button key={s.id} type="button" onClick={() => startFrom(s.id)} className="min-h-10 rounded-full bg-white/5 px-4 text-sm text-pressed transition-colors hover:bg-canvas hover:text-ink">
                       {s.label}
                     </button>
                   ))}
                   {keys.length > 0 && (
-                    <button type="button" onClick={() => setSel({})} className="px-3 py-1.5 text-sm text-mute underline underline-offset-4 hover:text-canvas">Limpiar</button>
+                    <button type="button" onClick={() => setSel({})} className="min-h-10 px-3 text-sm text-mute underline underline-offset-4 hover:text-canvas">Limpiar</button>
                   )}
                 </dd>
               </dl>
@@ -165,7 +155,7 @@ export default function CustomSearch({ profile, zones, initial, mock, onBack, on
                                 type="button"
                                 aria-pressed={sel[k] === l.value}
                                 onClick={() => setSel({ ...sel, [k]: l.value })}
-                                className="rounded-full px-3.5 py-1.5 font-mono text-xs text-mute transition-colors hover:text-canvas aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink"
+                                className="min-h-9 rounded-full px-3.5 font-mono text-xs text-mute transition-colors hover:text-canvas aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink"
                               >
                                 {l.label}
                               </button>

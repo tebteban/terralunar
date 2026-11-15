@@ -1,7 +1,9 @@
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts'
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts'
+import ConsoleIcon from './ConsoleIcon.tsx'
+import { coord, num } from './fmt.ts'
 import { LIMITS } from './limits.ts'
 import LimitsCard from './LimitsCard.tsx'
-import type { Profile, Ranked, Weights } from './score.ts'
+import { target, type Profile, type Ranked, type Weights } from './score.ts'
 
 
 // Capas de Worldview equivalentes a nuestras dimensiones. La 1ª queda arriba; "(hidden)" = cargada pero apagada.
@@ -25,6 +27,8 @@ function worldviewUrl(ring: number[][]) {
   return `https://worldview.earthdata.nasa.gov/?v=${v.map((n) => n.toFixed(3)).join(',')}&l=${WORLDVIEW_LAYERS}&t=${fecha}`
 }
 
+const SHORT: Record<string, string> = { lst: 'TEMP', ndvi: 'VEG', nieve: 'HIELO', lluvia: 'ARIDEZ', cobertura: 'SUELO', pendiente: 'PEND', rugosidad: 'RUG' }
+
 interface Props {
   ranked: Ranked
   position: number
@@ -39,19 +43,19 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
   const total = Object.values(weights).reduce((a, b) => a + b, 0) || 1
   const dims = Object.entries(profile.dimensions).map(([k, d]) => {
     const s = zone.scores[k] ?? 0
-    return { key: k, short: ({lst:"TEMP",ndvi:"VEG",nieve:"HIELO",lluvia:"ARIDEZ",cobertura:"SUELO",pendiente:"PEND",rugosidad:"RUG"} as Record<string,string>)[k] ?? d.name, name: d.name, dataset: d.dataset, score: s, contribution: ((weights[k] ?? 0) * s) / total }
+    return { key: k, short: SHORT[k] ?? d.name, name: d.name, dataset: d.dataset, asks: target(d), score: s, weight: (weights[k] ?? 0) / total, contribution: ((weights[k] ?? 0) * s) / total }
   })
   const datasets = [...new Set([...zone.sources, ...dims.map((d) => d.dataset)])]
 
   return (
-    <article className="absolute inset-x-2 top-2 bottom-2 z-10 flex flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:right-6 md:top-6 md:bottom-6 md:w-[420px]">
+    <article className="rise-in absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[72%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:right-6 lg:top-[7.5rem] lg:bottom-6 lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
       <header className="flex flex-col gap-1.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="label-mono text-body">#{String(position).padStart(2, '0')} · {zone.country} · <span className="metric">{zone.area_km2.toLocaleString('es-AR')}</span> km²</p>
-          {zone.known && <span className="rounded-full bg-canvas-soft px-2.5 py-0.5 font-mono text-[11px] font-semibold text-ink">Análogo conocido</span>}
+          {zone.known && <span className="hud rounded-full bg-canvas-soft px-2.5 py-0.5 font-semibold text-ink">Análogo conocido</span>}
         </div>
         <h2 className="text-2xl leading-8 font-bold tracking-tight">{zone.name}</h2>
-        <p className="metric text-xs text-body">{zone.centroid[1].toFixed(4)}°, {zone.centroid[0].toFixed(4)}°{mock && <span className="font-sans"> · puntaje de demostración</span>}</p>
+        <p className="hud text-body">{coord(zone.centroid[1], zone.centroid[0], 4)}{mock && <span className="font-sans"> · puntaje de demostración</span>}</p>
       </header>
 
       <div className="flex items-center justify-between gap-4 rounded-2xl bg-canvas-softer p-4">
@@ -65,7 +69,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
         </p>
       </div>
 
-      <button type="button" onClick={onCompare} className="btn-primary h-11 w-full">
+      <button type="button" onClick={onCompare} className="btn-primary w-full">
         Comparar relieve 3D con la Luna o Marte
       </button>
 
@@ -79,7 +83,17 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
             <PolarGrid stroke="#ddd9d1" />
             <PolarAngleAxis dataKey="short" tick={{ fill: '#615e58', fontSize: 10.5, fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }} />
             <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
-            <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} dot={{ r: 3, fill: '#000' }} isAnimationActive={false} />
+            <Radar dataKey="score" stroke="#16161a" strokeWidth={2} fill="#16161a" fillOpacity={0.12} dot={{ r: 3, fill: '#16161a' }} isAnimationActive={false} />
+            <Tooltip cursor={false} isAnimationActive={false} content={({ payload }) => {
+              const d = payload?.[0]?.payload as (typeof dims)[number] | undefined
+              return d ? (
+                <div className="rounded-xl border border-pressed bg-canvas px-3 py-2 text-xs text-ink shadow-float">
+                  <strong className="block">{d.name}</strong>
+                  <span className="metric">nota {num(d.score, 2)}</span> · la Luna pide {d.asks}
+                  <span className="micro-cap block text-body">{d.dataset}</span>
+                </div>
+              ) : null
+            }} />
           </RadarChart>
         </ResponsiveContainer>
       </section>
@@ -88,14 +102,16 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
         <h3 className="label-mono text-body">Aporte al puntaje</h3>
         <ul className="flex flex-col gap-2.5">
           {[...dims].sort((a, b) => b.contribution - a.contribution).map((d) => (
-            <li key={d.key} className="flex flex-col gap-1">
-              <span className="flex justify-between gap-2 font-mono text-[11px]">
-                <span className="truncate" title={d.dataset}>{d.name}</span>
-                <span className="metric shrink-0 font-bold">+{(d.contribution * 100).toFixed(1)} ptos</span>
+            // las variables sin peso se atenúan: siguen listadas para que la ficha sea completa, pero no compiten
+            <li key={d.key} className={`flex flex-col gap-1 ${d.weight === 0 ? 'opacity-50' : ''}`}>
+              <span className="flex justify-between gap-2 text-[12px]">
+                <span className="truncate" title={d.dataset}>{d.name} <span className="hud text-body">nota {num(d.score, 2)} · peso {Math.round(d.weight * 100)}%</span></span>
+                <span className="metric shrink-0 font-bold">+{num(d.contribution * 100)} ptos</span>
               </span>
               <span className="h-1.5 rounded-full bg-pressed">
                 <span className="block h-full rounded-full bg-ink" style={{ width: `${(d.contribution / (score || 1)) * 100}%` }} />
               </span>
+              <span className="hud text-body">la Luna pide {d.asks}</span>
             </li>
           ))}
         </ul>
@@ -103,14 +119,14 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
 
       <LimitsCard items={LIMITS} />
 
-      <section className="flex flex-col gap-1 font-mono text-[11px] text-body">
+      <section className="flex flex-col gap-1 text-body">
         <h3 className="label-mono text-ink">Fuentes</h3>
-        <p className="uppercase">{datasets.join(' · ')}</p>
-        {zone.notes && <p className="mt-1 font-sans text-[13px] italic">{zone.notes}</p>}
+        <p className="hud uppercase">{datasets.join(' · ')}</p>
+        {zone.notes && <p className="mt-1 text-[13px] italic">{zone.notes}</p>}
       </section>
 
       <a href={worldviewUrl(zone.polygon.coordinates[0])} target="_blank" rel="noreferrer" className="btn-secondary w-full">
-        Abrir en Worldview (imágenes satelitales) ↗
+        Abrir en Worldview (imágenes satelitales) <ConsoleIcon name="external" />
       </a>
       <button type="button" onClick={onClose} className="btn-secondary mt-auto w-full">
         Cerrar ficha

@@ -3,6 +3,8 @@ import { LngLatBounds, Map as MapLibre, NavigationControl, ScaleControl, setWork
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
+import NoWebGL from './NoWebGL.tsx'
+import { hasWebGL } from './webgl.ts'
 import type { Ranked } from './score.ts'
 
 // MapLibre v6 busca su worker al lado de su propio archivo; Vite lo mueve, así que le damos la URL
@@ -62,6 +64,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
   }
 
   useEffect(() => {
+    if (!hasWebGL()) return
     const m = new MapLibre({ container: container.current!, style: STYLE, center: [-30, 15], zoom: 1.4, minZoom: -0.5,
       canvasContextAttributes: { antialias: true } })
     map.current = m
@@ -154,18 +157,28 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
 
   useEffect(focus, [selectedId]) // solo mover la cámara al cambiar la selección, no al mover sliders
 
-  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-space">
+  if (!hasWebGL()) return <NoWebGL what="el globo terrestre" href="https://worldview.earthdata.nasa.gov/" label="Abrir NASA Worldview" />
+
+  return <div ref={scene} className="space-scene hud-frame relative h-full w-full overflow-hidden bg-space">
     <SpaceBackdrop />
     <div ref={container} className="relative h-full w-full" role="region" aria-label="Globo 3D de la Tierra y mapa de zonas análogas" />
-    <button type="button" className="chip-dark absolute left-4 top-4"
+    <button type="button" className="chip-dark absolute left-4 top-4 min-h-10"
       onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 1.4, pitch: 0, bearing: 0, duration: 1800 })}>
       Ver planeta
     </button>
-    <div className="absolute bottom-10 left-4 z-[1] hidden items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float md:flex">
-      <button type="button" onClick={focus} disabled={!selectedId} className="rounded-full px-3.5 py-1.5 text-xs text-canvas hover:bg-elevated disabled:opacity-40">Centrar selección</button>
-      <button type="button" onClick={() => { const m = map.current; if (m) m.easeTo({ pitch: m.getPitch() > 5 ? 0 : 60, duration: 650 }) }} className="rounded-full px-3.5 py-1.5 text-xs text-canvas hover:bg-elevated">Cenital / oblicua</button>
+    <div className="absolute bottom-10 left-4 z-[1] hidden items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float lg:flex">
+      <button type="button" onClick={focus} disabled={!selectedId} className="min-h-9 rounded-full px-3.5 text-xs text-canvas hover:bg-elevated disabled:opacity-40">Centrar selección</button>
+      <button type="button" onClick={() => { const m = map.current; if (m) m.easeTo({ pitch: m.getPitch() > 5 ? 0 : 60, duration: 650 }) }} className="min-h-9 rounded-full px-3.5 text-xs text-canvas hover:bg-elevated">Cenital / oblicua</button>
     </div>
-    {cameraInfo && <output className="metric pointer-events-none absolute bottom-3 left-28 z-[1] hidden text-[11px] text-mute md:block">{cameraInfo}</output>}
+    {/* Leyenda de la rampa de similitud: el color de los puntos es el puntaje */}
+    <div className="pointer-events-none absolute right-16 bottom-10 z-[1] hidden flex-col gap-1.5 rounded-xl border border-hairline bg-rail/85 px-3 py-2 backdrop-blur-sm sm:flex" aria-label="Leyenda: color según puntaje de similitud">
+      <span className="label-mono text-[10px] text-mute">Similitud /100</span>
+      <span className="h-1.5 w-36 rounded-full" style={{ background: 'linear-gradient(90deg, var(--color-sim-low), var(--color-sim-mid) 60%, var(--color-sim-high))' }} aria-hidden="true" />
+      <span className="hud flex justify-between text-mute" aria-hidden="true"><span>40</span><span>70</span><span>90</span></span>
+      <span className="flex items-center gap-1.5 text-[10px] text-mute"><span className="size-2 rounded-full border-2 border-canvas" aria-hidden="true" /> análogo conocido (USGS)</span>
+    </div>
+    {/* aria-hidden: la lectura de cámara cambia todo el tiempo y no debe anunciarse como región viva */}
+    {cameraInfo && <p aria-hidden="true" className="hud pointer-events-none absolute bottom-3 left-28 z-[1] hidden text-mute lg:block">{cameraInfo}</p>}
     {mapError && <button type="button" className="chip-dark absolute left-4 top-28 z-[1] text-xs" onClick={() => setMapError('')}>{mapError} · Cerrar</button>}
   </div>
 
@@ -185,7 +198,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
     const bounds = new LngLatBounds()
     for (const c of zone.polygon.coordinates[0]) bounds.extend(c as [number, number])
     const cam = m.cameraForBounds(bounds, {
-      padding: { top: 60, bottom: 60, left: 60, right: window.innerWidth >= 768 ? 480 : 60 },
+      padding: { top: 60, bottom: 60, left: 60, right: window.innerWidth >= 1024 ? 480 : 60 },
     })
     m.flyTo({ ...cam, pitch: 60, bearing: -20, speed: 1.4 })
   }

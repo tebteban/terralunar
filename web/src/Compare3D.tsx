@@ -4,7 +4,12 @@ import { fromUrl } from 'geotiff'
 import { offset } from './marsData.ts'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { MARS_SITES, earthPatches, marsSitePatch, similarity } from './marsData.ts'
-import { moonSimilarity } from './moonRelief.ts'
+import { MOON_TOL, moonSimilarity } from './moonRelief.ts'
+import { TOLERANCES as MARS_TOL } from './marsData.ts'
+import ConsoleIcon from './ConsoleIcon.tsx'
+import NoWebGL from './NoWebGL.tsx'
+import { hasWebGL } from './webgl.ts'
+import { coord, degrees, meters } from './fmt.ts'
 
 // Comparador Luna vs Tierra: dos maquetas del MISMO tamaño (20 x 20 km), misma resolución (80 m),
 // misma exageración vertical y misma luz. Girar una gira la otra.
@@ -30,6 +35,7 @@ function Terrain({ item, index, link, slot, exaggeration, meshHeights, meshN }: 
   const box = useRef<HTMLDivElement>(null)
   const [terrainError, setTerrainError] = useState('')
   useEffect(() => {
+    if (!hasWebGL()) return
     const el = box.current!
     let disposed = false
     const size = index.size_km * 1000
@@ -90,25 +96,36 @@ function Terrain({ item, index, link, slot, exaggeration, meshHeights, meshN }: 
     }).catch(e => { if (!disposed) setTerrainError(String(e)) })
     return () => { scene.traverse(object => { if (object instanceof THREE.Mesh) { object.geometry.dispose(); const materials = Array.isArray(object.material) ? object.material : [object.material]; materials.forEach(m => m.dispose()) } }); disposed = true; ro.disconnect(); controls.dispose(); renderer.dispose(); renderer.forceContextLoss(); el.innerHTML = '' } // forceContextLoss: liberar el contexto WebGL (Chrome mantiene ~16)
   }, [item, index, link, slot, exaggeration, meshHeights, meshN])
-  return <div className="relative h-full w-full"><div ref={box} className="h-full w-full" aria-label={`Relieve 3D de ${item.name}`} />{terrainError && <p role="alert" className="absolute top-2 left-2 text-white">{terrainError}</p>}</div>
+  if (!hasWebGL()) return <NoWebGL what="la maqueta de relieve" href="https://trek.nasa.gov/" label="Abrir NASA Trek" />
+  return <div className="relative h-full w-full"><div ref={box} className="h-full w-full" aria-label={`Relieve 3D de ${item.name}`} />{terrainError && <p role="alert" className="absolute top-2 left-2 text-canvas">{terrainError}</p>}</div>
 }
 
+// En la Tierra se muestra el Δ contra el objetivo y si entra en la tolerancia del método (ok/warn).
 function Stats({ item, other }: { item: Item; other?: Item }) {
-  const rows: [string, keyof Item, string][] = [
+  const rows: [string, 'pendiente_mediana' | 'pendiente_p90' | 'rugosidad_m' | 'desnivel_m', string][] = [
     ['Pendiente mediana', 'pendiente_mediana', '°'], ['Pendiente alta (p90)', 'pendiente_p90', '°'],
     ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel total', 'desnivel_m', ' m'],
   ]
+  const tol = other?.body === 'marte' ? MARS_TOL : MOON_TOL
   return (
     <dl className="flex flex-col divide-y divide-white/10">
-      {rows.map(([label, key, unit]) => (
-        <div key={key} className="flex items-baseline justify-between gap-3 py-2">
-          <dt className="text-[13px] text-mute">{label}</dt>
-          <dd className="metric flex items-baseline gap-1.5 text-right text-lg font-semibold text-canvas">
-            {Number(item[key]).toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}{unit}
-            {other && <span className="text-xs font-normal text-mute">({other.body === 'marte' ? 'Marte' : 'Luna'}: {Number(other[key]).toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}{unit})</span>}
-          </dd>
-        </div>
-      ))}
+      {rows.map(([label, key, unit]) => {
+        const d = other ? item[key] - other[key] : 0
+        const ok = other ? Math.abs(d) <= tol[key] : true
+        const fmt = unit === '°' ? degrees : meters
+        return (
+          <div key={key} className="flex items-baseline justify-between gap-3 py-2">
+            <dt className="text-[13px] text-mute">{label}</dt>
+            <dd className="metric flex items-baseline gap-2 text-right text-lg font-semibold text-canvas">
+              {fmt(item[key])}
+              {other && <span className="hud flex items-center gap-1.5 font-normal text-mute" title={`Tolerancia del método: ${tol[key]}${unit.trim()}`}>
+                <span className={`size-1.5 rounded-full ${ok ? 'bg-ok' : 'bg-warn'}`} aria-hidden="true" />
+                Δ {d > 0 ? '+' : ''}{fmt(d)} · tol {tol[key]}{unit}
+              </span>}
+            </dd>
+          </div>
+        )
+      })}
     </dl>
   )
 }
@@ -250,14 +267,14 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
           <span className="label-mono whitespace-nowrap text-mute">Exageración vertical: <span className="metric font-bold text-canvas">×{exaggeration}</span></span>
           <input aria-label="Exageración vertical" className="w-28" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
         </label>}
-        <button type="button" onClick={onClose} className="btn-ghost ml-auto h-10">Cerrar ✕</button>
+        <button type="button" onClick={onClose} className="btn-ghost ml-auto h-10">Cerrar <ConsoleIcon name="close" /></button>
       </header>
 
       {index && moon && earth && (
         <div className="-mt-2 flex items-center justify-between gap-4 border-b border-white/10 pb-2 font-mono text-xs text-mute">
           <span className="flex min-w-0 items-center gap-2">
             <span className="shrink-0 rounded bg-white/10 px-2 py-0.5 font-bold text-canvas">MISMA ESCALA</span>
-            <span className="truncate uppercase">{short(moon.source)} ⟷ {short(earth.source)}</span>
+            <span className="truncate uppercase">{short(moon.source)} · {short(earth.source)}</span>
           </span>
           <span className="hidden shrink-0 gap-5 md:flex">
             <span>GRILLA: {index.size_km} × {index.size_km} km</span>
@@ -281,21 +298,21 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                     <span className={`shrink-0 rounded-full border px-3 py-1 font-mono text-xs font-bold uppercase ${tag(it.body)}`}>{bodyName(it.body)}</span>
                     <span className="min-w-0">
                       <h3 className="truncate text-lg leading-6 font-bold tracking-tight">{it.name}</h3>
-                      <span className="metric block text-xs text-mute">{it.lat.toFixed(2)}°, {it.lon.toFixed(2)}°</span>
+                      <span className="hud block text-mute">{coord(it.lat, it.lon)}</span>
                     </span>
                   </div>
                   <span className="hidden shrink-0 text-right font-mono text-[11px] leading-4 uppercase 2xl:block">
-                    <span className="block tracking-widest text-white/30">{slot === 0 ? 'Objetivo' : 'Análogo terrestre'}</span>
-                    <span className="block text-white/50">{slot === 0 ? `${bodyName(it.body)} · ${short(it.source)}` : 'misma luz y escala'}</span>
+                    <span className="block tracking-widest text-mute">{slot === 0 ? 'Objetivo' : 'Análogo terrestre'}</span>
+                    <span className="block text-mute">{slot === 0 ? `${bodyName(it.body)} · ${short(it.source)}` : 'misma luz y escala'}</span>
                   </span>
                 </div>
 
                 {/* Visor 3D de alto fijo, como en la maqueta: no depende del espacio que sobre */}
-                <div className="relative h-72 w-full overflow-hidden rounded-xl border border-white/10 bg-ink sm:h-96">
+                <div className="hud-frame relative h-72 w-full overflow-hidden rounded-xl border border-white/10 bg-ink sm:h-96">
                   <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
                     <Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={detail ? (slot === 0 ? detail.mars : detail.earth) : undefined} meshN={detail ? 100 : undefined} />
                   </div>
-                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 font-mono text-[11px] text-white/45">
+                  <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 font-mono text-[11px] text-mute">
                     <div className="flex justify-between">
                       <span>{Math.abs(it.lat).toFixed(2)}° {it.lat < 0 ? 'S' : 'N'}</span>
                       <span>{Math.abs(it.lon).toFixed(2)}° {it.lon < 0 ? 'O' : 'E'}</span>
@@ -324,7 +341,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
           </div>
 
           <p className="mx-auto flex max-w-full items-center gap-3 rounded-full border border-white/20 bg-black/90 px-5 py-2.5 text-center text-sm shadow-limits">
-            <span aria-hidden="true">⟲</span>
+            <ConsoleIcon name="rotate" className="text-mute" />
             <span>Ambas maquetas: <strong className="metric">{index.size_km} × {index.size_km} km</strong>, misma escala, misma luz. <span className="text-mute">Arrastrá para girar: las dos giran juntas.</span></span>
           </p>
           {detailStatus && moon?.body === 'marte' && <p role="status" className="text-center font-mono text-xs text-mute">{detailStatus}</p>}
@@ -342,7 +359,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                 <div className="flex flex-col">
                   <span className="label-mono text-mute">Índice de relieve</span>
                   <span className="text-sm font-bold">Parecido de relieve: <span className="metric">{Math.round(score * 100)}/100</span></span>
-                  <span className="font-mono text-[11px] text-white/50">Solo pendiente, rugosidad y desnivel · tolerancias provisorias</span>
+                  <span className="hud text-mute">Solo pendiente, rugosidad y desnivel · tolerancias provisorias</span>
                 </div>
               </div>
             )}

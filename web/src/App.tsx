@@ -1,14 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
-import Compare3D from './Compare3D.tsx'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import ConsoleIcon from './ConsoleIcon.tsx'
 import MethodDialog from './MethodDialog.tsx'
 import CustomSearch, { type Selection } from './CustomSearch.tsx'
 import Landing, { type LandingChoice } from './Landing.tsx'
 import MapView from './MapView.tsx'
-import MoonMap from './MoonMap.tsx'
-import MarsView from './MarsView.tsx'
-import ZoneCard from './ZoneCard.tsx'
 import { presetWeights, rank, type Preset, type Profile, type Weights, type Zone } from './score.ts'
+
+// Los visores pesados (three.js, Recharts, geotiff) se bajan solo cuando se abren: la portada y el mapa cargan antes.
+const ZoneCard = lazy(() => import('./ZoneCard.tsx'))
+const MoonMap = lazy(() => import('./MoonMap.tsx'))
+const MarsView = lazy(() => import('./MarsView.tsx'))
+const Compare3D = lazy(() => import('./Compare3D.tsx'))
 
 const PRESETS: { id: Preset; label: string }[] = [
   { id: 'movilidad', label: 'Movilidad de rover' },
@@ -31,6 +33,8 @@ const DATOS_DE_PRUEBA = true
 
 type Screen = 'inicio' | 'personalizado' | 'explorar'
 type Body = 'tierra' | 'luna' | 'marte'
+// En pantallas angostas (< lg) la barra lateral se parte en dos paneles que tapan el mapa cuando se abren.
+type Panel = 'ajustes' | 'mapa' | 'ranking'
 
 // La pantalla vive en la URL (#personalizado, #explorar, #marte) para que funcione el botón "atrás".
 function fromHash(): { screen: Screen; body: Body } {
@@ -40,6 +44,15 @@ function fromHash(): { screen: Screen; body: Body } {
   if (h === 'explorar') return { screen: 'explorar', body: 'tierra' }
   return { screen: 'inicio', body: 'tierra' }
 }
+
+const Loading = ({ what }: { what: string }) => (
+  <div className="flex h-full w-full items-center justify-center bg-space" role="status">
+    <div className="flex w-56 flex-col gap-2">
+      <span className="hud text-mute">Cargando {what}…</span>
+      <span className="loading-bar" aria-hidden="true" />
+    </div>
+  </div>
+)
 
 export default function App() {
   const [zones, setZones] = useState<Zone[]>([])
@@ -57,6 +70,8 @@ export default function App() {
   // De Eze (c891b87): diálogo de método y pantalla completa
   const [methodOpen, setMethodOpen] = useState(false)
   const [notice, setNotice] = useState('')
+  const [panel, setPanel] = useState<Panel>('mapa')
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     Promise.all([getJSON<Zone[]>('/zones.json'), getJSON<Record<string, Profile>>('/profiles.json')])
@@ -66,7 +81,7 @@ export default function App() {
         setWeights(presetWeights(p.luna, 'movilidad'))
       })
       .catch((e) => setError(String(e)))
-  }, [])
+  }, [attempt])
 
   useEffect(() => {
     const onPop = () => {
@@ -91,6 +106,7 @@ export default function App() {
   // "Personalizado" se deriva comparando con el preset: no hace falta otro estado que mantener sincronizado
   const isCustom = custom !== null || (profile ? !sameWeights(weights, presetWeights(profile, preset)) : false)
   const selectedIndex = ranked.findIndex((r) => r.zone.id === selectedId)
+  const topScore = ranked[0]?.score || 1
 
   const choosePreset = (p: Preset) => {
     setPreset(p)
@@ -98,7 +114,7 @@ export default function App() {
     if (profile) setWeights(presetWeights(profile, p))
   }
 
-  const pickEarth = (id: string) => { setBody('tierra'); setComparing(false); setSelectedId(id) }
+  const pickEarth = (id: string) => { setBody('tierra'); setComparing(false); setSelectedId(id); setPanel('mapa') }
   const fullscreen = async () => {
     try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen() }
     catch { setNotice('La pantalla completa no está disponible en este navegador.') }
@@ -116,8 +132,20 @@ export default function App() {
   if (screen === 'inicio') return (
     <Landing onPick={pick} mock={DATOS_DE_PRUEBA} />
   )
-  if (error) return <p className="p-6 text-canvas">No se pudieron cargar los datos: {error}</p>
-  if (!profile) return <p className="p-6 text-mute">Cargando datos…</p>
+  if (error) return (
+    <div className="flex h-full items-center justify-center bg-space p-6 text-canvas">
+      <div role="alert" className="hud-frame flex max-w-sm flex-col gap-3 rounded-2xl border border-hairline bg-rail p-6">
+        <span className="label-mono text-mute">Sin datos</span>
+        <p className="text-sm leading-5">No se pudieron cargar los datos del catálogo.</p>
+        <p className="hud text-mute">{error}</p>
+        <div className="flex gap-2">
+          <button type="button" className="btn-ghost h-10" onClick={() => { setError(null); setAttempt((a) => a + 1) }}>Reintentar</button>
+          <button type="button" className="chip-dark h-10" onClick={() => go('inicio')}>Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  )
+  if (!profile) return <Loading what="el catálogo" />
 
   if (screen === 'personalizado') return (
     <CustomSearch
@@ -135,18 +163,29 @@ export default function App() {
   )
 
   const visibleDims = Object.entries(profile.dimensions).filter(([k]) => custom === null || k in custom)
+  const section = (p: Panel) => (panel === p ? 'contents' : 'hidden lg:contents')
 
   return (
     <div className="flex h-full flex-col bg-space">
       {DATOS_DE_PRUEBA && <DataBanner onMethod={() => setMethodOpen(true)} onFullscreen={fullscreen} />}
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-      <aside className={`flex flex-col gap-7 overflow-y-auto border-r border-hairline bg-rail p-6 text-canvas md:w-[390px] md:shrink-0`}>
+      {/* Pestañas solo en pantallas angostas: Ajustes · Mapa · Ranking */}
+      <nav aria-label="Paneles" className="flex shrink-0 border-b border-hairline bg-rail px-2 lg:hidden">
+        {([['ajustes', 'Ajustes'], ['mapa', 'Mapa'], ['ranking', 'Ranking']] as const).map(([id, label]) => (
+          <button key={id} type="button" aria-pressed={panel === id} onClick={() => setPanel(id)}
+            className="button-cap relative min-h-11 flex-1 text-mute transition-colors aria-pressed:text-canvas after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:bg-transparent aria-pressed:after:bg-canvas">
+            {label}{id === 'ranking' && <span className="metric ml-1.5 text-xs text-mute">{ranked.length}</span>}
+          </button>
+        ))}
+      </nav>
+      <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
+      <aside className={`${panel === 'mapa' ? 'hidden' : 'absolute inset-0 z-20 flex'} flex-col gap-7 overflow-y-auto border-hairline bg-rail p-6 text-canvas lg:static lg:flex lg:w-[340px] lg:shrink-0 lg:border-r xl:w-[390px]`}>
         <header className="flex flex-col gap-1">
           <h1 className="text-xl leading-7 font-bold tracking-tight">TerraLunar</h1>
           <p className="text-[13px] leading-[18px] text-mute">Buscador de análogos terrestres para misiones planetarias.</p>
         </header>
 
         {body !== 'tierra' ? <PlanetOverview body={body} onMethod={() => setMethodOpen(true)} /> : <>
+        <div className={section('ajustes')}>
         <label className="flex flex-col gap-2">
           <span className="label-mono text-mute">Destino de misión</span>
           <select className="h-11 rounded-full border border-hairline bg-white/5 px-4 text-sm text-canvas focus:outline-2 focus:outline-canvas">
@@ -164,7 +203,7 @@ export default function App() {
                 type="button"
                 aria-pressed={preset === p.id && !isCustom}
                 onClick={() => choosePreset(p.id)}
-                className={`rounded-full px-3.5 py-1.5 text-sm transition-colors ${
+                className={`min-h-10 rounded-full px-3.5 text-sm transition-colors ${
                   preset === p.id && !isCustom ? 'bg-canvas font-semibold text-ink' : 'text-mute hover:text-canvas'
                 }`}
               >
@@ -175,7 +214,7 @@ export default function App() {
           {custom !== null && (
             <p className="flex items-center justify-between gap-2 text-[13px] text-mute">
               <span>Búsqueda personalizada · {Object.keys(custom).length} variables</span>
-              <button type="button" onClick={() => go('personalizado')} className="shrink-0 font-medium text-canvas underline underline-offset-2">
+              <button type="button" onClick={() => go('personalizado')} className="-my-2 shrink-0 py-2 font-medium text-canvas underline underline-offset-2">
                 Editar
               </button>
             </p>
@@ -183,7 +222,7 @@ export default function App() {
           {custom === null && isCustom && (
             <p className="flex items-center justify-between gap-2 text-[13px] text-mute">
               <span>Personalizado (basado en «{PRESETS.find((p) => p.id === preset)?.label}»)</span>
-              <button type="button" onClick={() => choosePreset(preset)} className="shrink-0 font-medium text-canvas underline underline-offset-2">
+              <button type="button" onClick={() => choosePreset(preset)} className="-my-2 shrink-0 py-2 font-medium text-canvas underline underline-offset-2">
                 Restaurar
               </button>
             </p>
@@ -193,18 +232,18 @@ export default function App() {
         <section className="flex flex-col gap-3">
           <h2 className="flex flex-col gap-1">
             <span className="label-mono text-mute">Pesos de similitud</span>
-            <span className="text-[13px] leading-[18px] text-mute/80">Arrastrá cada control: el ranking se recalcula en el momento.</span>
+            <span className="text-[13px] leading-[18px] text-mute/80">El ranking se recalcula al mover cada control.</span>
           </h2>
           {visibleDims.map(([k, d]) => (
             <label key={k} className="flex flex-col gap-1.5">
-              <span className="flex justify-between text-[13px]">
-                <span className="text-pressed" title={d.dataset}>{d.name}</span>
+              <span className="flex items-baseline justify-between gap-2 text-[13px]">
+                <span className="text-pressed" title={d.dataset}>{d.name} <span className="hud text-mute">{d.unit}</span></span>
                 <span className="metric text-[13px] font-semibold">
                   {totalWeight > 0 ? Math.round(((weights[k] ?? 0) / totalWeight) * 100) : 0}%
                 </span>
               </span>
               <input
-                type="range" min={0} max={1} step={0.05} value={weights[k] ?? 0}
+                type="range" min={0} max={1} step={0.05} value={weights[k] ?? 0} aria-label={`Peso de ${d.name}`}
                 onChange={(e) => setWeights({ ...weights, [k]: Number(e.target.value) })}
               />
             </label>
@@ -213,7 +252,9 @@ export default function App() {
             <p role="alert" className="rounded-2xl border border-canvas p-3 text-sm font-medium text-canvas">Todos los pesos están en 0: el ranking no tiene sentido. Subí al menos uno.</p>
           )}
         </section>
+        </div>
 
+        <div className={section('ranking')}>
         <section className="flex flex-col gap-2">
           <h2 className="flex items-center justify-between">
             <span className="label-mono text-mute">Ranking de sitios terrestres</span>
@@ -227,7 +268,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => pickEarth(zone.id)}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors ${
+                    className={`row flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left ${
                       on ? 'bg-canvas text-ink' : 'bg-white/[0.04] hover:bg-white/10'
                     }`}
                   >
@@ -240,6 +281,10 @@ export default function App() {
                         <span className={`label-mono text-[10px] ${on ? 'text-body' : 'text-mute'}`}>{zone.country}</span>
                         {zone.known && <span className={`rounded-full px-1.5 font-mono text-[10px] ${on ? 'bg-ink text-canvas' : 'bg-white/15 text-canvas'}`}>análogo conocido</span>}
                       </span>
+                      {/* gauge: largo relativo al primer puesto, así la caída del ranking se ve sin leer números */}
+                      <span className={`mt-1.5 block h-0.5 w-full rounded-full ${on ? 'bg-pressed' : 'bg-white/10'}`} aria-hidden="true">
+                        <span className={`block h-full rounded-full ${on ? 'bg-ink' : 'bg-canvas/70'}`} style={{ width: `${(score / topScore) * 100}%` }} />
+                      </span>
                     </span>
                     <span className="metric text-[22px] leading-7 font-semibold">{(score * 100).toFixed(0)}</span>
                   </button>
@@ -248,47 +293,55 @@ export default function App() {
             })}
           </ol>
         </section>
+        </div>
         <div className="flex flex-col gap-2 rounded-2xl border border-hairline bg-white/[0.03] p-4 text-[13px] leading-[18px] text-mute">
           <strong className="text-canvas">Catálogo en preparación</strong>
           <p>Estos pesos modifican solo el ranking terrestre de demostración. Luna y Marte usan comparaciones de relieve independientes.</p>
         </div>
-        <button type="button" onClick={() => setMethodOpen(true)} className="btn-ghost h-10 w-full">Fuentes y método ↗</button>
+        <button type="button" onClick={() => setMethodOpen(true)} className="btn-ghost h-10 w-full">Fuentes y método <ConsoleIcon name="external" /></button>
         </>}
       </aside>
 
-      <main className="relative min-h-[60vh] flex-1 bg-space">
-        <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
-        {body === 'luna' && <MoonMap onPickEarth={pickEarth} />}
-        {body === 'marte' && <MarsView onPickEarth={pickEarth} />}
-        <nav className="absolute left-4 top-16 z-10 flex items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float" aria-label="Cuerpo visualizado">
-          <button type="button" onClick={() => go('inicio')} className="rounded-full px-3.5 py-1.5 text-sm text-mute hover:text-canvas" aria-label="Volver al inicio">← Inicio</button>
-          <span className="h-5 w-px bg-hairline" aria-hidden="true" />
+      <main className="relative min-h-0 flex-1 overflow-hidden bg-space">
+        {/* key=body: cada cuerpo entra con su propia transición (view-in) */}
+        <div key={body} className="view-in h-full">
+          <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
+          {body === 'luna' && <Suspense fallback={<Loading what="la Luna (LRO LOLA)" />}><MoonMap onPickEarth={pickEarth} /></Suspense>}
+          {body === 'marte' && <Suspense fallback={<Loading what="Marte (MOLA)" />}><MarsView onPickEarth={pickEarth} /></Suspense>}
+        </div>
+        <nav className="absolute left-2 right-2 top-16 z-10 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-hairline bg-rail p-1 shadow-float sm:right-auto sm:left-4" aria-label="Cuerpo visualizado">
+          <button type="button" onClick={() => go('inicio')} className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-3 text-sm text-mute hover:text-canvas" aria-label="Volver al inicio" title="Inicio">
+            <ConsoleIcon name="back" /><span className="hidden xl:inline">Inicio</span>
+          </button>
+          <span className="h-5 w-px shrink-0 bg-hairline" aria-hidden="true" />
           {(['tierra', 'luna', 'marte'] as const).map(b => (
-            <button key={b} type="button" aria-pressed={body === b && !comparing} onClick={() => { setBody(b); setComparing(false) }}
-              className="flex items-center gap-2 rounded-full px-4 py-1.5 text-sm text-mute transition-colors hover:text-canvas aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink">
+            <button key={b} type="button" aria-pressed={body === b && !comparing} onClick={() => { setBody(b); setComparing(false); setPanel('mapa') }}
+              className="flex min-h-10 shrink-0 items-center gap-2 rounded-full px-3.5 text-sm text-mute transition-colors hover:text-canvas aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink sm:px-4">
               {b === 'marte' && <span className="size-2 rounded-full bg-mars" aria-hidden="true" />}
               {{ tierra: 'Tierra', luna: 'Luna', marte: 'Marte' }[b]}
             </button>
           ))}
-          <span className="h-5 w-px bg-hairline" aria-hidden="true" />
+          <span className="h-5 w-px shrink-0 bg-hairline" aria-hidden="true" />
           <button type="button" disabled={!selectedId} aria-pressed={comparing} onClick={() => setComparing(true)}
             title={selectedId ? 'Comparar el relieve del candidato elegido' : 'Elegí un lugar del ranking para comparar'}
-            className="rounded-full px-4 py-1.5 text-sm text-mute transition-colors hover:text-canvas disabled:opacity-40 disabled:hover:text-mute aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink">
-            Comparador 3D
+            className="min-h-10 shrink-0 rounded-full px-3.5 text-sm whitespace-nowrap text-mute transition-colors hover:text-canvas disabled:opacity-40 disabled:hover:text-mute aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink sm:px-4">
+            <span className="hidden xl:inline">Comparador </span>3D
           </button>
         </nav>
         {body === 'tierra' && selectedIndex >= 0 && (
-          <ZoneCard
-            ranked={ranked[selectedIndex]}
-            position={selectedIndex + 1}
-            profile={profile}
-            weights={weights}
-            onClose={() => setSelectedId(null)}
-            onCompare={() => setComparing(true)}
-            mock={DATOS_DE_PRUEBA}
-          />
+          <Suspense fallback={null}>
+            <ZoneCard
+              ranked={ranked[selectedIndex]}
+              position={selectedIndex + 1}
+              profile={profile}
+              weights={weights}
+              onClose={() => setSelectedId(null)}
+              onCompare={() => setComparing(true)}
+              mock={DATOS_DE_PRUEBA}
+            />
+          </Suspense>
         )}
-        {comparing && selectedId && <Compare3D zoneId={selectedId} onClose={() => setComparing(false)} />}
+        {comparing && selectedId && <Suspense fallback={<Loading what="el comparador 3D" />}><Compare3D zoneId={selectedId} onClose={() => setComparing(false)} /></Suspense>}
       </main>
       </div>
       <MethodDialog open={methodOpen} onClose={() => setMethodOpen(false)} />
@@ -307,7 +360,7 @@ function PlanetOverview({ body, onMethod }: { body: 'luna' | 'marte'; onMethod: 
         <span className="label-mono text-mute">Cuerpo seleccionado</span>
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-xl leading-7 font-bold tracking-tight">{luna ? 'Luna' : 'Marte'}</h2>
-          <span className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] font-semibold ${luna ? 'bg-white/10 text-canvas' : 'bg-mars/15 text-[#ffb59c]'}`}>{luna ? 'LRO / LOLA' : 'MGS / MOLA'}</span>
+          <span className={`hud rounded-full px-2.5 py-0.5 font-semibold ${luna ? 'bg-white/10 text-canvas' : 'bg-mars/15 text-[#ffb59c]'}`}>{luna ? 'LRO / LOLA' : 'MGS / MOLA'}</span>
         </div>
         <p className="text-[13px] leading-[18px] text-mute">
           {luna ? 'Polo sur · 80°S — 90°S. Elegí una región para comparar su relieve con lugares de la Tierra.' : 'Explorá cráteres, llanuras y valles. Elegí una región para extraer un recorte de terreno.'}
@@ -319,7 +372,7 @@ function PlanetOverview({ body, onMethod }: { body: 'luna' | 'marte'; onMethod: 
         <div><dt className="label-mono text-mute">Alcance</dt><dd className="text-[13px] text-mute">{luna ? 'Métricas del polo sur lunar (LOLA a 80 m).' : 'Comparación regional a 2 km por celda. Exploratorio, sin calibrar.'}</dd></div>
       </dl>
       <p className="text-[13px] leading-[18px] text-mute">Los pesos del catálogo terrestre no se aplican acá: el parecido se calcula solo con el relieve.</p>
-      <button type="button" onClick={onMethod} className="btn-ghost h-10 w-full">Fuentes y límites del análisis ↗</button>
+      <button type="button" onClick={onMethod} className="btn-ghost h-10 w-full">Fuentes y límites del análisis <ConsoleIcon name="external" /></button>
     </div>
   )
 }
@@ -327,12 +380,12 @@ function PlanetOverview({ body, onMethod }: { body: 'luna' | 'marte'; onMethod: 
 // Banner de datos de prueba (DESIGN.md, "Telemetry / Mock Data Banner"): fuentes reales que usa la app.
 function DataBanner({ onMethod, onFullscreen }: { onMethod: () => void; onFullscreen: () => void }) {
   return (
-    <div className="flex h-8 shrink-0 items-center justify-between gap-4 border-b border-hairline bg-space px-5 text-xs text-mute" role="note">
+    <div className="flex h-9 shrink-0 items-center justify-between gap-4 border-b border-hairline bg-space px-3 text-xs text-mute sm:px-5" role="note">
       <span className="flex min-w-0 items-center gap-2"><span className="size-1.5 shrink-0 rounded-full bg-data" aria-hidden="true" /><span className="truncate">Datos de prueba · puntajes simulados para evaluación</span></span>
-      <span className="flex shrink-0 items-center gap-3 text-mute">
-        <span className="hidden gap-2 xl:flex text-mute/80">MODIS · GPM IMERG · NASADEM · LRO LOLA · MOLA</span>
-        <button type="button" onClick={onMethod} className="cursor-pointer rounded-full px-2 py-0.5 font-medium text-canvas transition-colors hover:bg-elevated">Fuentes y método</button>
-        <button type="button" onClick={onFullscreen} aria-label="Alternar pantalla completa" title="Pantalla completa" className="grid size-7 cursor-pointer place-items-center rounded-full text-canvas transition-colors hover:bg-elevated [&_svg]:size-4"><ConsoleIcon name="expand" /></button>
+      <span className="flex shrink-0 items-center gap-1 text-mute sm:gap-3">
+        <span className="hud hidden text-mute/80 xl:flex">MODIS · GPM IMERG · NASADEM · LRO LOLA · MOLA</span>
+        <button type="button" onClick={onMethod} className="min-h-9 cursor-pointer rounded-full px-2.5 font-medium text-canvas transition-colors hover:bg-elevated">Fuentes y método</button>
+        <button type="button" onClick={onFullscreen} aria-label="Alternar pantalla completa" title="Pantalla completa" className="grid size-9 cursor-pointer place-items-center rounded-full text-canvas transition-colors hover:bg-elevated [&_svg]:size-4"><ConsoleIcon name="expand" /></button>
       </span>
     </div>
   )
