@@ -1,0 +1,172 @@
+{
+  "version": "cover-2",
+  "pilot_sha256": "5b106af6175679e3e1f202fcaac99e0daf521908875df16c0bb587ffbf6fd593",
+  "product": "ESA WorldCover 2021 v200",
+  "year": 2021,
+  "native_resolution_m": 10,
+  "method": "Native categorical values at regular 100x100 sample points per window (~200m). Not exhaustive; small features may be missed.",
+  "attribution": "© ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium",
+  "sources": [
+    "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N18W156_Map.tif"
+  ],
+  "created": "2026-11-15T01:58:53.402Z",
+  "items": [
+    {
+      "id": "hawaii-0-0",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0,
+      "vegetation": 0.1786,
+      "bare": 0.8214,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 596,
+        "30": 1190,
+        "60": 8214
+      }
+    },
+    {
+      "id": "hawaii-0-1",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0.0006,
+      "vegetation": 0.8137,
+      "bare": 0.1857,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 4537,
+        "20": 468,
+        "30": 3132,
+        "50": 6,
+        "60": 1857
+      }
+    },
+    {
+      "id": "hawaii-0-2",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0.106,
+      "built": 0.0002,
+      "vegetation": 0.4154,
+      "bare": 0.4784,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 1140,
+        "20": 85,
+        "30": 2929,
+        "50": 2,
+        "60": 4784,
+        "80": 1060
+      }
+    },
+    {
+      "id": "hawaii-1-0",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0,
+      "vegetation": 0.4285,
+      "bare": 0.5715,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 579,
+        "20": 5,
+        "30": 3701,
+        "60": 5715
+      }
+    },
+    {
+      "id": "hawaii-1-1",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0,
+      "vegetation": 0.1042,
+      "bare": 0.8958,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 61,
+        "30": 981,
+        "60": 8958
+      }
+    },
+    {
+      "id": "hawaii-1-2",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0.0014,
+      "vegetation": 0.8488,
+      "bare": 0.1498,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 5114,
+        "20": 866,
+        "30": 2508,
+        "50": 14,
+        "60": 1498
+      }
+    },
+    {
+      "id": "hawaii-2-0",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0,
+      "vegetation": 0.4961,
+      "bare": 0.5039,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 264,
+        "20": 2,
+        "30": 4695,
+        "60": 5039
+      }
+    },
+    {
+      "id": "hawaii-2-1",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0.0018,
+      "vegetation": 0.4297,
+      "bare": 0.5685,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 309,
+        "30": 3988,
+        "50": 18,
+        "60": 5685
+      }
+    },
+    {
+      "id": "hawaii-2-2",
+      "samples": 10000,
+      "valid_fraction": 1,
+      "water": 0,
+      "built": 0.0011,
+      "vegetation": 0.9748,
+      "bare": 0.0241,
+      "snow_ice": 0,
+      "ndvi": null,
+      "classes": {
+        "10": 5373,
+        "20": 1113,
+        "30": 3262,
+        "50": 11,
+        "60": 241
+      }
+    }
+  ],
+  "failures": []
+}

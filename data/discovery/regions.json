@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "regions": [
+    {
+      "id": "pilot",
+      "name": "Atacama · 36 ventanas",
+      "base": "/discovery/",
+      "coverage": true,
+      "recent": true,
+      "model": true,
+      "geology": true
+    },
+    {
+      "id": "hawaii",
+      "name": "Hawái · 9 ventanas",
+      "base": "/discovery/hawaii/",
+      "coverage": true,
+      "recent": true,
+      "model": false,
+      "geology": false
+    },
+    {
+      "id": "namib",
+      "name": "Namib · Namibia · 9 ventanas",
+      "base": "/discovery/namib/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
+    },
+    {
+      "id": "australia",
+      "name": "Pilbara · Australia · 9 ventanas",
+      "base": "/discovery/australia/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
+    },
+    {
+      "id": "utah",
+      "name": "Utah · Estados Unidos · 9 ventanas",
+      "base": "/discovery/utah/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
+    },
+    {
+      "id": "qaidam",
+      "name": "Qaidam · China · 9 ventanas",
+      "base": "/discovery/qaidam/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
+    }
+  ]
+}

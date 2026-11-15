@@ -6,3 +6,6 @@ __pycache__/
 web/test-results/
 web/playwright-report/
 .playwright-mcp/
+pipeline/.deps/
+
+pipeline/.runtime/

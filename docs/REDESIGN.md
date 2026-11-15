@@ -1,7 +1,3 @@
-> **Nota (D-016):** este rediseño se mezcló con `develop`. Se conservó el sistema de `docs/DESIGN.md` y se integraron sus funciones (método, pantalla completa, controles de cámara, resumen de cuerpo). Ver `docs/decisiones.md`, D-016.
-
-## Últimos ajustes de Eze (main, 492e963)
-
 # Diseño vigente: Stitch TerraLunar Science Console
 
 La referencia vigente es el ZIP stitch_terralunar_terrain_analog_explorer proporcionado por el usuario. Reemplaza la propuesta grafito/ámbar anterior, conservada debajo como historial técnico.
@@ -17,6 +13,8 @@ Validación: build y TypeScript; lint; pruebas de cálculo; Chrome automatizado 
 ---
 
 ## Historial: primera propuesta reemplazada
+
+> **Nota (D-016):** este rediseño se mezcló con `develop`. Se conservó el sistema de `docs/DESIGN.md` y se integraron sus funciones (método, pantalla completa, controles de cámara, resumen de cuerpo). Ver `docs/decisiones.md`, D-016.
 
 # TerraLunar — interfaz científica
 

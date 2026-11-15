@@ -1,0 +1,14 @@
+{
+  "source": "https://sigam.segemar.gov.ar/geoserver217/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=sigam%3Ae1M.NOA.Geol&outputFormat=application%2Fjson&srsName=EPSG%3A4326&bbox=-68.59065721767928%2C-24.539592218234723%2C-67.40934278232072%2C-23.460407781765277%2CEPSG%3A4326&maxFeatures=5000",
+  "provider": "SEGEMAR SIGAM",
+  "layer": "NOA Unidades Geológicas 1M",
+  "scale": 1000000,
+  "scope": "Regional bounding box context; Argentina only, not whole-window or planetary equivalence",
+  "sha256": "8250db9bb0be44e75105b3bd262b9985a9764cd0da2da5d7c8250274a49dd205",
+  "feature_count": 72,
+  "properties_example": {
+    "unidad": "Mmv",
+    "edad": "Mioceno medio ( 17-11 Ma )",
+    "tipoderoca": "Rocas volc nicas mesosil¡cicas a b s¡cas"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "purpose": "Independent geographic transfer diagnostic; no suitability labels",
+  "training_region": "Atacama",
+  "evaluation_region": "Hawaii",
+  "model_version": "terrain-kmeans-1",
+  "model_refit": false,
+  "windows": 9,
+  "outside_training_range": 6,
+  "mean_distance": 1.7973518227700156,
+  "rows": [
+    {
+      "id": "hawaii-0-0",
+      "lat": 19.32013592725509,
+      "lon": -155.69080856767349,
+      "group": 2,
+      "distance": 2.0959605582571803,
+      "outsideTrainingRange": false
+    },
+    {
+      "id": "hawaii-0-1",
+      "lat": 19.32013592725509,
+      "lon": -155.5,
+      "group": 2,
+      "distance": 3.1008523654330875,
+      "outsideTrainingRange": true
+    },
+    {
+      "id": "hawaii-0-2",
+      "lat": 19.32013592725509,
+      "lon": -155.30919143232651,
+      "group": 2,
+      "distance": 1.4736666406997072,
+      "outsideTrainingRange": false
+    },
+    {
+      "id": "hawaii-1-0",
+      "lat": 19.5,
+      "lon": -155.69080856767349,
+      "group": 2,
+      "distance": 2.364307247829807,
+      "outsideTrainingRange": true
+    },
+    {
+      "id": "hawaii-1-1",
+      "lat": 19.5,
+      "lon": -155.5,
+      "group": 2,
+      "distance": 2.1558095922739033,
+      "outsideTrainingRange": true
+    },
+    {
+      "id": "hawaii-1-2",
+      "lat": 19.5,
+      "lon": -155.30919143232651,
+      "group": 1,
+      "distance": 1.4378373776669704,
+      "outsideTrainingRange": true
+    },
+    {
+      "id": "hawaii-2-0",
+      "lat": 19.67986407274491,
+      "lon": -155.69080856767349,
+      "group": 1,
+      "distance": 1.1626535111588074,
+      "outsideTrainingRange": true
+    },
+    {
+      "id": "hawaii-2-1",
+      "lat": 19.67986407274491,
+      "lon": -155.5,
+      "group": 1,
+      "distance": 0.8142609963610488,
+      "outsideTrainingRange": false
+    },
+    {
+      "id": "hawaii-2-2",
+      "lat": 19.67986407274491,
+      "lon": -155.30919143232651,
+      "group": 1,
+      "distance": 1.5708181152496261,
+      "outsideTrainingRange": true
+    }
+  ],
+  "conclusion": "No ground truth for analog relevance. Do not claim improved discovery or global validity from clustering distances."
+}

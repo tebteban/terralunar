@@ -1,3 +1,7 @@
+import { earthPatchZone, type PickEarth } from './earthSelection.ts'
+import AnalogyScope from './AnalogyScope.tsx'
+import { profileScope } from './analogyScope.ts'
+import {lunarTarget,type SearchTarget} from './searchTarget.ts'
 import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useState } from 'react'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
@@ -17,7 +21,7 @@ interface MoonIndex extends GlobeIndex {
 }
 type Metric = 'pendiente_mediana' | 'pendiente_p90' | 'rugosidad_m' | 'desnivel_m'
 type Metrics = Record<Metric, number>
-interface EarthItem extends Metrics { id: string; name: string; body: string; file: string; lat: number; lon: number; source: string }
+interface EarthItem extends Metrics { id: string; name: string; body: string; file: string; lat: number; lon: number; source: string; agua?: number }
 
 const LABELS: Record<Metric, [string, string]> = {
   pendiente_mediana: ['Pendiente mediana', '°'], pendiente_p90: ['Pendiente alta (p90)', '°'],
@@ -29,7 +33,9 @@ const similarity = moonSimilarity
 
 interface Pick { line: number; sample: number; lat: number; lon: number; m: Metrics }
 
-export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string) => void }) {
+export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEarth;onAnalyze?:(target:SearchTarget)=>void }) {
+  const [experiment,setExperiment]=useState('regional')
+  const canRank=profileScope(experiment).canScreen
   const [index, setIndex] = useState<MoonIndex | null>(null)
   const [grid, setGrid] = useState<Uint16Array | null>(null)
   const [earth, setEarth] = useState<EarthItem[]>([])
@@ -55,7 +61,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
     ]).then(([g, c]) => {
       if (!alive) return
       setGrid(new Uint16Array(g))
-      setEarth(c.items.filter((it: EarthItem) => it.body === 'tierra'))
+      setEarth(c.items.filter((it: EarthItem) => it.body === 'tierra' && !it.agua))
     }).catch(e => { if (alive) setError(String(e)) })
     return () => { alive = false }
   }, [])
@@ -67,6 +73,8 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
     const i = Math.min(w - 1, Math.max(0, Math.round((line - f) / s)))
     const j = Math.min(w - 1, Math.max(0, Math.round((sample - f) / s)))
     const m = Object.fromEntries(layers.map((k, l) => [k, grid[l * w * w + i * w + j] / scale[l]])) as Metrics
+    line = f + i * s
+    sample = f + j * s
     const x = (sample - index.lola_offset) * index.lola_res_m
     const y = (index.lola_offset - line) * index.lola_res_m
     const lat = (2 * Math.atan(Math.hypot(x, y) / (2 * index.radius_m)) - Math.PI / 2) * (180 / Math.PI)
@@ -107,10 +115,12 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
     setCompareId(e.id)
   }
 
+  const analyze=async()=>{if(!pick||!onAnalyze)return;try{onAnalyze({...await lunarTarget(pick.line,pick.sample,pick.lat,pick.lon),experiment})}catch(e){setNotice(String(e))}}
   const outside = (lat: number) => setNotice(`Tocaste ${lat.toFixed(0)}°: por ahora analizamos el relieve del polo sur (80°–90° S), donde están los sitios de Artemis III. Girá la Luna hacia abajo.`)
 
   return (
     <div className="relative h-full w-full bg-space">
+      {pick&&onAnalyze&&canRank&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
       {!hasWebGL() && <NoWebGL what="la Luna en 3D" href="https://trek.nasa.gov/moon/" label="Abrir NASA Moon Trek" />}
       {!index && !error && hasWebGL() && <div className="flex h-full items-center justify-center" role="status"><div className="flex w-56 flex-col gap-2"><span className="hud text-mute">Cargando relieve LOLA…</span><span className="loading-bar" aria-hidden="true" /></div></div>}
       {index && hasWebGL() && hiRes && <MoonView onUnavailable={() => setHiRes(false)} onPick={(lat, lon) => {
@@ -134,6 +144,13 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
       {error && <p role="alert" className="chip-dark absolute left-6 top-56 z-[1] max-w-sm text-xs">No se pudieron cargar los datos lunares: {error}</p>}
 
       <aside className="rise-in absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[56%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:bottom-6 lg:right-6 lg:top-[7.5rem] lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
+        <label className="flex flex-col gap-2 text-sm">Destino de misión · Luna
+          <select aria-label="Destino lunar" value={index?.sites.find(s=>s.line===pick?.line&&s.sample===pick?.sample)?.name ?? ''} onChange={e=>{const site=index?.sites.find(s=>s.name===e.target.value);if(site)setPick(pickAt(site.line,site.sample))}}>
+            <option value="">{pick?'Punto seleccionado en el mapa':'Elegí una región o un punto'}</option>
+            {index?.sites.map(s=><option key={s.name} value={s.name}>{s.name}</option>)}
+          </select>
+        </label>
+        <AnalogyScope value={experiment} onChange={setExperiment} disabled={false}/>
         {!pick ? (
           <>
             <header className="flex flex-col gap-1.5">
@@ -156,12 +173,13 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
         ) : (
           <>
             <header className="flex flex-col gap-1.5">
-              <span className="label-mono text-body">Coordenadas del punto</span>
+              <span className="label-mono text-body">Centro de la ventana analizada</span>
               <h2 className="text-2xl leading-8 font-bold tracking-tight">Punto elegido en la Luna</h2>
               <p className="hud text-xs text-body">
                 {coord(pick.lat, pick.lon)}{nearest && ` · a ${nearest.km.toFixed(0)} km de ${nearest.s.name}`}
               </p>
             </header>
+            <p className="text-xs text-body">El clic se ajusta al centro disponible de la grilla LOLA (paso de {index ? index.grid.stride_px * index.lola_res_m / 1000 : 4} km). Estas coordenadas identifican la ventana utilizada para el ranking.</p>
             <dl className="grid grid-cols-2 gap-2">
               {(Object.keys(LABELS) as Metric[]).map((k) => (
                 <div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4">
@@ -172,9 +190,9 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
               ))}
             </dl>
             <section className="flex flex-col gap-2">
-              <h3 className="text-lg leading-7 font-bold tracking-tight">Lugares parecidos en la Tierra</h3>
+              <h3 className="text-lg leading-7 font-bold tracking-tight">Paisajes terrestres de contexto</h3>
               <ol className="flex flex-col gap-2">
-                {matches.map(({ e, s }, i) => (
+                {(canRank?matches:[]).map(({ e, s }, i) => (
                   <li key={e.id} className="flex flex-col gap-2.5 rounded-2xl bg-canvas-softer p-4 transition-colors hover:bg-canvas-soft">
                     <div className="flex items-start gap-3">
                       <span className="min-w-0 flex-1">
@@ -187,7 +205,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button type="button" onClick={() => openCompare(e)} className="btn-primary btn-sm">Comparar relieve 3D</button>
-                      <button type="button" onClick={() => onPickEarth(e.id)} className="btn-secondary btn-sm">Ver en la Tierra</button>
+                      <button type="button" onClick={() => onPickEarth(e.id, earthPatchZone(e), s*100)} className="btn-secondary btn-sm">Ver en la Tierra</button>
                     </div>
                   </li>
                 ))}
@@ -195,7 +213,7 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
               <p className="rounded-2xl bg-canvas-soft p-3 font-mono text-[11px] leading-relaxed text-body">
                 Parecido de relieve /100 = promedio de máx(0, 1 − diferencia/tolerancia). Tolerancias provisorias:
                 pendiente {TOL.pendiente_mediana}°, p90 {TOL.pendiente_p90}°, rugosidad {TOL.rugosidad_m} m, desnivel {TOL.desnivel_m} m.
-                Solo relieve: no incluye temperatura ni suelo.
+                Solo relieve: no incluye temperatura ni suelo. Métricas a 80 m; no comparar este puntaje directamente con Marte a 2 km. La búsqueda científica utiliza 2 km en ambos cuerpos.
               </p>
             </section>
             <LimitsCard items={LIMITS} />

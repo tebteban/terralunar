@@ -1,3 +1,4 @@
+import TeamMusic from './TeamMusic.tsx'
 import { useEffect, type PointerEvent } from 'react'
 import HalftoneMoon from './HalftoneMoon.tsx'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
@@ -7,9 +8,9 @@ export type LandingChoice = 'luna' | 'marte' | 'personalizado'
 const TITLE = 'TerraLunar'
 
 const OPTIONS: { id: LandingChoice; key: string; title: string; tag: string; text: string }[] = [
-  { id: 'luna', key: '1', title: 'Luna', tag: 'Principal', text: 'Lugares de la Tierra parecidos al polo sur lunar, donde irán las bases.' },
+  { id: 'luna', key: '1', title: 'Luna', tag: 'Principal', text: 'Elegí una región del polo sur lunar y buscá entornos terrestres comparables.' },
   { id: 'marte', key: '2', title: 'Marte', tag: 'Exploratorio', text: 'Explorá el relieve de Marte y compará con lugares de la Tierra.' },
-  { id: 'personalizado', key: '3', title: 'Personalizado', tag: 'A medida', text: 'Elegí vos qué variables comparar y cuánto importa cada una.' },
+  { id: 'personalizado', key: '3', title: 'Búsqueda global', tag: 'Datos reales', text: 'Compará el catálogo mundial y las regiones procesadas; elegí el ensayo y sus pesos.' },
 ]
 
 const STEPS = ['Destino', 'Variables', 'Mapa'] as const
@@ -88,7 +89,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
       </div>
 
       <div className="relative z-10 flex min-h-full flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-end px-6 md:px-8">
+        <header className="relative flex h-24 shrink-0 items-start justify-end px-6 pt-6 md:h-28 md:px-8"><TeamMusic />
           {mock && <span className="micro-cap text-mute">Datos de prueba</span>}
         </header>
 

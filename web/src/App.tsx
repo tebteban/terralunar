@@ -1,4 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import type { SearchTarget } from './searchTarget.ts'
+import ScientificSearch from './ScientificSearch.tsx'
 import ConsoleIcon from './ConsoleIcon.tsx'
 import MethodDialog from './MethodDialog.tsx'
 import CustomSearch, { type Selection } from './CustomSearch.tsx'
@@ -55,6 +57,11 @@ const Loading = ({ what }: { what: string }) => (
 )
 
 export default function App() {
+  const [searchTarget,setSearchTarget]=useState<SearchTarget|null>(null)
+  const analyze=(target:SearchTarget)=>{setSearchTarget(target);setScientificOpen(true)}
+  const [scientificOpen,setScientificOpen]=useState(false)
+  const [scientificMap,setScientificMap]=useState<{zone:Zone;score:number}[]>([])
+  const [discovery,setDiscovery]=useState<{zone:Zone;score:number}|null>(null)
   const [zones, setZones] = useState<Zone[]>([])
   const [profiles, setProfiles] = useState<Record<string, Profile> | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -114,7 +121,14 @@ export default function App() {
     if (profile) setWeights(presetWeights(profile, p))
   }
 
-  const pickEarth = (id: string) => { setBody('tierra'); setComparing(false); setSelectedId(id); setPanel('mapa') }
+  const pickEarth = (id: string, zone?: Zone, score?: number) => {
+    if (!zone) setScientificMap([])
+    setDiscovery(zone ? { zone, score: score ?? 0 } : null)
+    setBody('tierra')
+    setComparing(false)
+    setSelectedId(id)
+    setPanel('mapa')
+  }
   const fullscreen = async () => {
     try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen() }
     catch { setNotice('La pantalla completa no está disponible en este navegador.') }
@@ -123,9 +137,9 @@ export default function App() {
   const pick = (c: LandingChoice) => {
     setSelectedId(null)
     setComparing(false)
-    if (c === 'personalizado') return go('personalizado')
+    if (c === 'personalizado') {setScientificOpen(true);return go('explorar')}
     if (c === 'luna') choosePreset(preset)
-    go('explorar', c === 'marte' ? 'marte' : 'tierra')
+    go('explorar', c === 'marte' ? 'marte' : 'luna')
   }
 
   // La portada no depende de los datos: se muestra mientras cargan.
@@ -179,13 +193,46 @@ export default function App() {
       </nav>
       <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
       <aside className={`${panel === 'mapa' ? 'hidden' : 'absolute inset-0 z-20 flex'} flex-col gap-7 overflow-y-auto border-hairline bg-rail p-6 text-canvas lg:static lg:flex lg:w-[340px] lg:shrink-0 lg:border-r xl:w-[390px]`}>
+        <button type="button" className="btn-primary" onClick={() => setScientificOpen(true)}>Buscar en todas las regiones</button>
         <header className="flex flex-col gap-1">
           <h1 className="text-xl leading-7 font-bold tracking-tight">TerraLunar</h1>
           <p className="text-[13px] leading-[18px] text-mute">Buscador de análogos terrestres para misiones planetarias.</p>
         </header>
 
-        {body !== 'tierra' ? <PlanetOverview body={body} onMethod={() => setMethodOpen(true)} /> : <>
-        <div className={section('ajustes')}>
+        {scientificMap.length > 0 && body === 'tierra' && (
+          <section className="flex flex-col gap-2">
+            <h2 className="font-bold">Candidatos de la búsqueda · {scientificMap.length}</h2>
+            <p className="text-xs text-mute">Recortes con datos reales. Cobertura mundial discontinua.</p>
+            <ol className="flex max-h-72 flex-col gap-1 overflow-y-auto">
+              {scientificMap.map(r => (
+                <li key={r.zone.id}>
+                  <button type="button" className="flex w-full justify-between gap-2 rounded-lg bg-white/5 p-2 text-left text-sm" onClick={() => pickEarth(r.zone.id, r.zone, r.score)}>
+                    <span>{r.zone.name}</span>
+                    <strong>{r.score.toFixed(1)}</strong>
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <button type="button" className="btn-ghost" onClick={() => { setScientificMap([]); setDiscovery(null); setSelectedId(null) }}>Cerrar resultados</button>
+          </section>
+        )}
+        {scientificMap.length > 0 && !discovery && body === 'tierra' ? (
+          <p className="text-sm text-mute">Elegí un candidato del globo o la lista para ver su recorte de 20 × 20 km.</p>
+        ) : discovery && body === 'tierra' ? (
+          <section className="flex flex-col gap-3">
+            <h2 className="text-xl font-bold">Recorte terrestre analizado</h2>
+            <p>{discovery.zone.name}</p>
+            <p className="metric">{discovery.score.toFixed(1)}/100 · similitud topográfica</p>
+            <p>La línea blanca delimita la ventana utilizada en la comparación. El puntaje corresponde al objetivo planetario elegido.</p>
+            <p>{discovery.zone.notes}</p>
+            <p className="text-xs text-mute">{discovery.zone.sources.join(' · ')}</p>
+            <button type="button" className="btn-ghost" onClick={() => { setScientificMap([]); setDiscovery(null); setSelectedId(null) }}>Volver al catálogo de demostración</button>
+          </section>
+        ) : body !== 'tierra' ? (
+          <PlanetOverview body={body} onMethod={() => setMethodOpen(true)} />
+        ) : (
+          <>
+            <div className={section('ajustes')}>
         <label className="flex flex-col gap-2">
           <span className="label-mono text-mute">Destino de misión</span>
           <select className="h-11 rounded-full border border-hairline bg-white/5 px-4 text-sm text-canvas focus:outline-2 focus:outline-canvas">
@@ -195,7 +242,7 @@ export default function App() {
         </label>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="label-mono mb-2 text-mute">Tipo de prueba</legend>
+          <legend className="label-mono mb-2 text-mute">Tipo de prueba · simulación</legend>
           <div className="flex flex-wrap gap-1.5 rounded-[22px] bg-white/5 p-1">
             {PRESETS.map((p) => (
               <button
@@ -299,15 +346,26 @@ export default function App() {
           <p>Estos pesos modifican solo el ranking terrestre de demostración. Luna y Marte usan comparaciones de relieve independientes.</p>
         </div>
         <button type="button" onClick={() => setMethodOpen(true)} className="btn-ghost h-10 w-full">Fuentes y método <ConsoleIcon name="external" /></button>
-        </>}
+        </>)}
       </aside>
 
       <main className="relative min-h-0 flex-1 overflow-hidden bg-space">
         {/* key=body: cada cuerpo entra con su propia transición (view-in) */}
         <div key={body} className="view-in h-full">
-          <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={setSelectedId} /></div>
-          {body === 'luna' && <Suspense fallback={<Loading what="la Luna (LRO LOLA)" />}><MoonMap onPickEarth={pickEarth} /></Suspense>}
-          {body === 'marte' && <Suspense fallback={<Loading what="Marte (MOLA)" />}><MarsView onPickEarth={pickEarth} /></Suspense>}
+          <div className={body === 'tierra' ? 'h-full' : 'hidden'}>
+            <MapView
+              key={scientificMap.length ? 'scientific' : 'catalogue'}
+              ranked={scientificMap.length ? scientificMap.map(r => ({ zone: r.zone, score: r.score / 100 })) : discovery ? [{ zone: discovery.zone, score: discovery.score / 100 }] : ranked}
+              selectedId={selectedId}
+              onSelect={id => {
+                const r = scientificMap.find(r => r.zone.id === id)
+                if (r) pickEarth(id, r.zone, r.score)
+                else if (discovery?.zone.id !== id) pickEarth(id)
+              }}
+            />
+          </div>
+          {body === 'luna' && <Suspense fallback={<Loading what="la Luna (LRO LOLA)" />}><MoonMap onAnalyze={analyze} onPickEarth={pickEarth} /></Suspense>}
+          {body === 'marte' && <Suspense fallback={<Loading what="Marte (MOLA)" />}><MarsView onAnalyze={analyze} onPickEarth={pickEarth} /></Suspense>}
         </div>
         <nav className="absolute left-2 right-2 top-16 z-10 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-hairline bg-rail p-1 shadow-float sm:right-auto sm:left-4" aria-label="Cuerpo visualizado">
           <button type="button" onClick={() => go('inicio')} className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-3 text-sm text-mute hover:text-canvas" aria-label="Volver al inicio" title="Inicio">
@@ -322,13 +380,13 @@ export default function App() {
             </button>
           ))}
           <span className="h-5 w-px shrink-0 bg-hairline" aria-hidden="true" />
-          <button type="button" disabled={!selectedId} aria-pressed={comparing} onClick={() => setComparing(true)} aria-label="Comparador 3D"
+          <button type="button" disabled={!selectedId || !!discovery} aria-pressed={comparing} onClick={() => setComparing(true)} aria-label="Comparador 3D"
             title={selectedId ? 'Comparar el relieve del candidato elegido' : 'Elegí un lugar del ranking para comparar'}
             className="min-h-10 shrink-0 rounded-full px-3.5 text-sm whitespace-nowrap text-mute transition-colors hover:text-canvas disabled:opacity-40 disabled:hover:text-mute aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink sm:px-4">
             <span className="hidden xl:inline">Comparador </span>3D
           </button>
         </nav>
-        {body === 'tierra' && selectedIndex >= 0 && (
+        {body === 'tierra' && !discovery && selectedIndex >= 0 && (
           <Suspense fallback={null}>
             <ZoneCard
               ranked={ranked[selectedIndex]}
@@ -341,9 +399,11 @@ export default function App() {
             />
           </Suspense>
         )}
-        {comparing && selectedId && <Suspense fallback={<Loading what="el comparador 3D" />}><Compare3D zoneId={selectedId} onClose={() => setComparing(false)} /></Suspense>}
+        {comparing && selectedId && !discovery && <Suspense fallback={<Loading what="el comparador 3D" />}><Compare3D zoneId={selectedId} onClose={() => setComparing(false)} /></Suspense>}
       </main>
       </div>
+      {scientificOpen&&<ScientificSearch selectedTarget={searchTarget} onClose={()=>setScientificOpen(false)} onSelect={pickEarth} onShowMap={results=>{setScientificMap(results);setDiscovery(null);setSelectedId(null);setBody('tierra');setComparing(false)}}/>}
+      {discovery&&body==='tierra'&&<aside className="fixed right-6 bottom-6 z-20 max-w-sm rounded-2xl bg-white p-6 text-black"><h2>{discovery.zone.name}</h2><p>{discovery.score.toFixed(1)}/100 · similitud topográfica</p><p>{discovery.zone.centroid.join(', ')} · 20 × 20 km</p><p>{discovery.zone.notes}</p><button onClick={()=>setScientificOpen(true)}>Volver a búsqueda</button><button onClick={()=>{setDiscovery(null);setSelectedId(null)}}>Cerrar candidato</button></aside>}
       <MethodDialog open={methodOpen} onClose={() => setMethodOpen(false)} />
       {notice && <button type="button" className="chip-dark fixed bottom-4 left-1/2 z-50 -translate-x-1/2 text-xs" onClick={() => setNotice('')}>{notice} · Cerrar</button>}
     </div>

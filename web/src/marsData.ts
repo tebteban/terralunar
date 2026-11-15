@@ -1,3 +1,4 @@
+import { combine, targetMatch } from './scientificEngine.ts'
 // NASA MOLA MEGDR 32 px/degree. Signed big-endian metres above the areoid.
 export const MARS_RADIUS = 3396000
 export const PATCH_N = 10
@@ -90,7 +91,7 @@ export async function earthPatches(): Promise<Patch[]> {
 }
 export const TOLERANCES: Relief = {pendiente_mediana:5,pendiente_p90:8,rugosidad_m:200,desnivel_m:1000}
 export function similarity(a: Relief,b: Relief) {
-  return Object.entries(TOLERANCES).reduce((s,[k,t])=>s+Math.max(0,1-Math.abs(a[k as keyof Relief]-b[k as keyof Relief])/t),0)/4
+  return combine(Object.entries(TOLERANCES).map(([k,t])=>({id:k,weight:1,value:targetMatch(a[k as keyof Relief],b[k as keyof Relief],t)}))).score! / 100
 }
 
 // Sitios de referencia en Marte (compartidos por la vista de Marte y el comparador de la ficha terrestre)

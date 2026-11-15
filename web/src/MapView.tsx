@@ -38,12 +38,13 @@ function toGeoJSON(ranked: Ranked[], selectedId: string | null, kind: 'polygon' 
 }
 
 interface Props {
+  active?: boolean
   ranked: Ranked[]
   selectedId: string | null
   onSelect: (id: string) => void
 }
 
-export default function MapView({ ranked, selectedId, onSelect }: Props) {
+export default function MapView({ ranked, selectedId, onSelect, active = true }: Props) {
   // De Eze (c891b87): lectura de cámara y aviso si falla una capa
   const [cameraInfo, setCameraInfo] = useState('')
   const [mapError, setMapError] = useState('')
@@ -155,7 +156,12 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
 
   useEffect(sync, [ranked, selectedId])
 
-  useEffect(focus, [selectedId]) // solo mover la cámara al cambiar la selección, no al mover sliders
+  const selectedGeometry = JSON.stringify(ranked.find(r=>r.zone.id===selectedId)?.zone.polygon ?? null)
+  useEffect(() => {
+    if (!active) return
+    const frame = requestAnimationFrame(() => { map.current?.resize(); focus() })
+    return () => cancelAnimationFrame(frame)
+  }, [selectedId, active, selectedGeometry]) // refocus after restoring a hidden map or replacing its footprint
 
   if (!hasWebGL()) return <NoWebGL what="el globo terrestre" href="https://worldview.earthdata.nasa.gov/" label="Abrir NASA Worldview" />
 

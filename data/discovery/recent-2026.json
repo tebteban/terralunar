@@ -1,0 +1,604 @@
+{
+  "version": "sentinel-recent-1",
+  "pilot_sha256": "3227bdde73067f7fc0fa4cf2d43cc9dda63ef5e0323ef8acc5d03da0e01a505c",
+  "product": "Sentinel-2 L2A 2026; SCL and calibrated NDVI",
+  "method": "200m approximate nearest overview sampling; latest clear observation from selected tiles; SCL 4/5/6 only; NDVI filter uses window p90; built-up not measured",
+  "sources": [
+    {
+      "id": "S2B_MSIL2A_20261113T143649_R096_T19KEQ_20261113T181914",
+      "datetime": "2026-11-13T14:36:49.024000Z",
+      "accepted_samples": 4670,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EQ/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEQ_20261113T181914.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EQ/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEQ_20261113T181914.SAFE/GRANULE/L2A_T19KEQ_A050601_20261113T144134/IMG_DATA/R10m/T19KEQ_20261113T143649_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EQ/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEQ_20261113T181914.SAFE/GRANULE/L2A_T19KEQ_A050601_20261113T144134/IMG_DATA/R10m/T19KEQ_20261113T143649_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EQ/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEQ_20261113T181914.SAFE/GRANULE/L2A_T19KEQ_A050601_20261113T144134/IMG_DATA/R20m/T19KEQ_20261113T143649_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261113T143649_R096_T19KEP_20261113T181914",
+      "datetime": "2026-11-13T14:36:49.024000Z",
+      "accepted_samples": 155887,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EP/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEP_20261113T181914.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EP/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEP_20261113T181914.SAFE/GRANULE/L2A_T19KEP_A050601_20261113T144134/IMG_DATA/R10m/T19KEP_20261113T143649_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EP/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEP_20261113T181914.SAFE/GRANULE/L2A_T19KEP_A050601_20261113T144134/IMG_DATA/R10m/T19KEP_20261113T143649_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/EP/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19KEP_20261113T181914.SAFE/GRANULE/L2A_T19KEP_A050601_20261113T144134/IMG_DATA/R20m/T19KEP_20261113T143649_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261113T143649_R096_T19JFN_20261113T181914",
+      "datetime": "2026-11-13T14:36:49.024000Z",
+      "accepted_samples": 18582,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/FN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JFN_20261113T181914.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/FN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JFN_20261113T181914.SAFE/GRANULE/L2A_T19JFN_A050601_20261113T144134/IMG_DATA/R10m/T19JFN_20261113T143649_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/FN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JFN_20261113T181914.SAFE/GRANULE/L2A_T19JFN_A050601_20261113T144134/IMG_DATA/R10m/T19JFN_20261113T143649_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/FN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JFN_20261113T181914.SAFE/GRANULE/L2A_T19JFN_A050601_20261113T144134/IMG_DATA/R20m/T19JFN_20261113T143649_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261113T143649_R096_T19JEN_20261113T181914",
+      "datetime": "2026-11-13T14:36:49.024000Z",
+      "accepted_samples": 5539,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/EN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JEN_20261113T181914.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/EN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JEN_20261113T181914.SAFE/GRANULE/L2A_T19JEN_A050601_20261113T144134/IMG_DATA/R10m/T19JEN_20261113T143649_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/EN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JEN_20261113T181914.SAFE/GRANULE/L2A_T19JEN_A050601_20261113T144134/IMG_DATA/R10m/T19JEN_20261113T143649_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/J/EN/2026/11/13/S2B_MSIL2A_20261113T143649_N0513_R096_T19JEN_20261113T181914.SAFE/GRANULE/L2A_T19JEN_A050601_20261113T144134/IMG_DATA/R20m/T19JEN_20261113T143649_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261110T142719_R053_T19KFQ_20261110T180922",
+      "datetime": "2026-11-10T14:27:19.024000Z",
+      "accepted_samples": 4161,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FQ/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFQ_20261110T180922.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FQ/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFQ_20261110T180922.SAFE/GRANULE/L2A_T19KFQ_A050558_20261110T143453/IMG_DATA/R10m/T19KFQ_20261110T142719_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FQ/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFQ_20261110T180922.SAFE/GRANULE/L2A_T19KFQ_A050558_20261110T143453/IMG_DATA/R10m/T19KFQ_20261110T142719_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FQ/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFQ_20261110T180922.SAFE/GRANULE/L2A_T19KFQ_A050558_20261110T143453/IMG_DATA/R20m/T19KFQ_20261110T142719_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261110T142719_R053_T19KFP_20261110T180922",
+      "datetime": "2026-11-10T14:27:19.024000Z",
+      "accepted_samples": 51191,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FP/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFP_20261110T180922.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FP/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFP_20261110T180922.SAFE/GRANULE/L2A_T19KFP_A050558_20261110T143453/IMG_DATA/R10m/T19KFP_20261110T142719_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FP/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFP_20261110T180922.SAFE/GRANULE/L2A_T19KFP_A050558_20261110T143453/IMG_DATA/R10m/T19KFP_20261110T142719_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/19/K/FP/2026/11/10/S2B_MSIL2A_20261110T142719_N0513_R053_T19KFP_20261110T180922.SAFE/GRANULE/L2A_T19KFP_A050558_20261110T143453/IMG_DATA/R20m/T19KFP_20261110T142719_SCL_20m.tif"
+      }
+    }
+  ],
+  "failures": [],
+  "items": [
+    {
+      "id": "pilot-0-0",
+      "valid_fraction": 0.9978,
+      "ndvi": 0.08525036244005796,
+      "ndvi_median": 0.06336573823806917,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-0-1",
+      "valid_fraction": 0.9261,
+      "ndvi": 0.06590136054421768,
+      "ndvi_median": 0.039169604386995675,
+      "water": 0.007882518086599719,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-0-2",
+      "valid_fraction": 0.6412,
+      "ndvi": 0.056834933494405424,
+      "ndvi_median": 0.023155667834186315,
+      "water": 0.0006238303181534623,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-0-3",
+      "valid_fraction": 0.7859,
+      "ndvi": 0.0555558911864231,
+      "ndvi_median": 0.031201248049922026,
+      "water": 0.0002544853034737244,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-0-4",
+      "valid_fraction": 0.8841,
+      "ndvi": 0.0546197039305769,
+      "ndvi_median": 0.035483870967742,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-0-5",
+      "valid_fraction": 0.9478,
+      "ndvi": 0.04527587605644202,
+      "ndvi_median": 0.016086027654498306,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-1-0",
+      "valid_fraction": 1.0,
+      "ndvi": 0.07017543859649125,
+      "ndvi_median": 0.05197822938859764,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-1-1",
+      "valid_fraction": 0.9994,
+      "ndvi": 0.054185145833341324,
+      "ndvi_median": 0.031180447359431956,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-1-2",
+      "valid_fraction": 0.6255,
+      "ndvi": 0.06558005415277647,
+      "ndvi_median": 0.03783231083844576,
+      "water": 0.00047961630695443646,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-1-3",
+      "valid_fraction": 0.3499,
+      "ndvi": 0.050399070327455976,
+      "ndvi_median": 0.017964071856287504,
+      "water": 0.00685910260074307,
+      "vegetation": 0.0017147756501857674,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-1-4",
+      "valid_fraction": 0.5262,
+      "ndvi": 0.07107157388795,
+      "ndvi_median": 0.04958024796212878,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-1-5",
+      "valid_fraction": 0.8231,
+      "ndvi": 0.07364271635907528,
+      "ndvi_median": 0.04019164226776684,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-2-0",
+      "valid_fraction": 0.9998,
+      "ndvi": 0.06761155738739119,
+      "ndvi_median": 0.05123940704241495,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-2-1",
+      "valid_fraction": 0.9986,
+      "ndvi": 0.05468706707718459,
+      "ndvi_median": 0.033513812489815574,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-2-2",
+      "valid_fraction": 0.9953,
+      "ndvi": 0.08485567901423258,
+      "ndvi_median": 0.04963338973491259,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-2-3",
+      "valid_fraction": 0.3573,
+      "ndvi": 0.09448223733938027,
+      "ndvi_median": 0.061170911000262645,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-2-4",
+      "valid_fraction": 0.329,
+      "ndvi": 0.06788625059970255,
+      "ndvi_median": 0.04639023917767919,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-2-5",
+      "valid_fraction": 0.9734,
+      "ndvi": 0.08470948443181711,
+      "ndvi_median": 0.056352394955356086,
+      "water": 0.0008218615163344976,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-3-0",
+      "valid_fraction": 1.0,
+      "ndvi": 0.060612603910471734,
+      "ndvi_median": 0.0374066419595153,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-3-1",
+      "valid_fraction": 0.9999,
+      "ndvi": 0.06902823204368644,
+      "ndvi_median": 0.05089183439698906,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-3-2",
+      "valid_fraction": 1.0,
+      "ndvi": 0.09033388068722556,
+      "ndvi_median": 0.06803360043802076,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-3-3",
+      "valid_fraction": 0.4,
+      "ndvi": 0.10905864406767199,
+      "ndvi_median": 0.09079742187654227,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-3-4",
+      "valid_fraction": 0.087,
+      "ndvi": 0.06530300327088907,
+      "ndvi_median": 0.04236754106092158,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-3-5",
+      "valid_fraction": 0.9697,
+      "ndvi": 0.08114343817863137,
+      "ndvi_median": 0.0530702973048069,
+      "water": 0.00938434567391977,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-4-0",
+      "valid_fraction": 0.9709,
+      "ndvi": 0.0597129231516625,
+      "ndvi_median": 0.04452054794520546,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-4-1",
+      "valid_fraction": 0.8604,
+      "ndvi": 0.06309964469400553,
+      "ndvi_median": 0.040190050020629364,
+      "water": 0.006508600650860065,
+      "vegetation": 0.00023245002324500232,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-4-2",
+      "valid_fraction": 0.8435,
+      "ndvi": 0.0747663640541031,
+      "ndvi_median": 0.04596862458956584,
+      "water": 0.0,
+      "vegetation": 0.00035566093657379963,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-4-3",
+      "valid_fraction": 0.3829,
+      "ndvi": 0.08407919101938244,
+      "ndvi_median": 0.07208387942332894,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-4-4",
+      "valid_fraction": 0.0,
+      "ndvi": null,
+      "ndvi_median": null,
+      "water": null,
+      "vegetation": null,
+      "built": null,
+      "dates": []
+    },
+    {
+      "id": "pilot-4-5",
+      "valid_fraction": 0.7213,
+      "ndvi": 0.06888350909359608,
+      "ndvi_median": 0.04730913642052573,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    },
+    {
+      "id": "pilot-5-0",
+      "valid_fraction": 0.6097,
+      "ndvi": 0.060876719230192375,
+      "ndvi_median": 0.048295454545454544,
+      "water": 0.0042643923240938165,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-5-1",
+      "valid_fraction": 0.1439,
+      "ndvi": 0.057795372956415306,
+      "ndvi_median": 0.04417940534184443,
+      "water": 0.06045865184155664,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-5-2",
+      "valid_fraction": 0.1391,
+      "ndvi": 0.053062617300801945,
+      "ndvi_median": 0.03488943488943504,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-5-3",
+      "valid_fraction": 0.1069,
+      "ndvi": 0.06639518262985944,
+      "ndvi_median": 0.05190920288579989,
+      "water": 0.0,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-13"
+      ]
+    },
+    {
+      "id": "pilot-5-4",
+      "valid_fraction": 0.0,
+      "ndvi": null,
+      "ndvi_median": null,
+      "water": null,
+      "vegetation": null,
+      "built": null,
+      "dates": []
+    },
+    {
+      "id": "pilot-5-5",
+      "valid_fraction": 0.6074,
+      "ndvi": 0.07130922925330858,
+      "ndvi_median": 0.05103938632139486,
+      "water": 0.004280540006585446,
+      "vegetation": 0.0,
+      "built": null,
+      "dates": [
+        "2026-11-10"
+      ]
+    }
+  ],
+  "created": "2026-11-15T01:47:23.207839+00:00"
+}

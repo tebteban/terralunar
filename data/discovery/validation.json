@@ -1,0 +1,102 @@
+{
+  "target": "luna-mons-mouton",
+  "target_features": {
+    "pendiente_mediana": 2.8816496751791036,
+    "pendiente_p90": 5.095459375670143,
+    "rugosidad_m": 59.351256226176034,
+    "desnivel_m": 1218.2415771484375
+  },
+  "weights": {
+    "pendiente_mediana": 25,
+    "pendiente_p90": 25,
+    "rugosidad_m": 25,
+    "desnivel_m": 25
+  },
+  "eligible": 36,
+  "representatives": 8,
+  "top": [
+    {
+      "id": "pilot-4-3",
+      "lat": -23.73020389088264,
+      "lon": -67.90155713038679,
+      "features": {
+        "pendiente_mediana": 3.0435266234244263,
+        "pendiente_p90": 5.103749088318049,
+        "rugosidad_m": 36.66665260271368,
+        "desnivel_m": 1282.345947265625
+      },
+      "score": 94.7265252008862
+    },
+    {
+      "id": "pilot-1-1",
+      "lat": -24.26979610911736,
+      "lon": -68.29532860883964,
+      "features": {
+        "pendiente_mediana": 2.9880007471642087,
+        "pendiente_p90": 6.02542696853633,
+        "rugosidad_m": 45.29040620032515,
+        "desnivel_m": 1213.130615234375
+      },
+      "score": 94.67671561128472
+    },
+    {
+      "id": "pilot-3-1",
+      "lat": -23.910067963627547,
+      "lon": -68.29532860883964,
+      "features": {
+        "pendiente_mediana": 2.875418701546504,
+        "pendiente_p90": 4.648298675372062,
+        "rugosidad_m": 28.050503901832776,
+        "desnivel_m": 1043.51220703125
+      },
+      "score": 90.29063964993291
+    },
+    {
+      "id": "pilot-3-5",
+      "lat": -23.910067963627547,
+      "lon": -67.50778565193393,
+      "features": {
+        "pendiente_mediana": 4.024004206716534,
+        "pendiente_p90": 8.185414904329662,
+        "rugosidad_m": 87.32281546308177,
+        "desnivel_m": 1239.232177734375
+      },
+      "score": 80.6109063959902
+    },
+    {
+      "id": "pilot-0-4",
+      "lat": -24.44966018186227,
+      "lon": -67.70467139116036,
+      "features": {
+        "pendiente_mediana": 2.1343877659471917,
+        "pendiente_p90": 3.8734184523163373,
+        "rugosidad_m": 32.01535271391158,
+        "desnivel_m": 683.53564453125
+      },
+      "score": 75.66017631389705
+    }
+  ],
+  "sensitivity": [
+    {
+      "double_weight": "pendiente_mediana",
+      "top1": "pilot-1-1",
+      "top5_overlap": 4
+    },
+    {
+      "double_weight": "pendiente_p90",
+      "top1": "pilot-4-3",
+      "top5_overlap": 5
+    },
+    {
+      "double_weight": "rugosidad_m",
+      "top1": "pilot-1-1",
+      "top5_overlap": 4
+    },
+    {
+      "double_weight": "desnivel_m",
+      "top1": "pilot-1-1",
+      "top5_overlap": 4
+    }
+  ],
+  "interpretation": "Technical checks and weight sensitivity only; no independent scientific ground truth."
+}
