@@ -392,7 +392,7 @@ export default function Compare3D({ zoneId, onClose, supplied, analysisScore, an
                 {bodyName(it.body)} · {f.toUpperCase()}
               </button>
             )))}
-            <span className="hud w-full text-center text-mute">Modelos en metros con la exageración ×{num(exaggeration)} de la vista; superficie abierta, sin base para imprimir.</span>
+            <span className="hud w-full text-center text-mute">Modelos en metros con la exageración ×{num(exaggeration)} de la vista. STL: sólido con base, listo para imprimir. OBJ: superficie para Blender.</span>
             {exportMsg && <p role="status" className="w-full text-center text-xs text-canvas">{exportMsg}</p>}
           </div>
 
