@@ -261,3 +261,7 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ## Revisión Luna/Marte — 2026-11-15
 Ver en Tierra transmite coordenadas, huella de muestreo de 20 km y puntaje calculado, sin reutilizar polígonos ni puntajes mock. La geometría replica earth_patch del pipeline (111320 m/grado, corrección coseno). Ambos visores usan el motor WLC para los mismos cuatro descriptores; no se equiparan tolerancias de rugosidad a 80 m y 2 km. La búsqueda científica es la ruta de escala común a 2 km. Perfiles de ensayo compartidos; aterrizaje separado de movilidad. Solo topografía regional puede emitir ranking con los datos actuales. Destinos de Marte seleccionables, sin afirmar aprobación para bases. Selección lunar informa el centro de la grilla realmente utilizado.
+
+
+## Formato compartido tras el merge
+Las fichas planetarias y terrestres comparten SurfacePanel. La Luna usa siempre datos LOLA locales sin selección implícita por token. Ver revision-merge-2026-11-15.md.

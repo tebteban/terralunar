@@ -1,3 +1,4 @@
+import SurfacePanel from './SurfacePanel.tsx'
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts'
 import ConsoleIcon from './ConsoleIcon.tsx'
 import { coord, num } from './fmt.ts'
@@ -48,7 +49,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
   const datasets = [...new Set([...zone.sources, ...dims.map((d) => d.dataset)])]
 
   return (
-    <article className="rise-in absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[72%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:right-6 lg:top-[7.5rem] lg:bottom-6 lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
+    <SurfacePanel label="Ficha de la Tierra">
       <header className="flex flex-col gap-1.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="label-mono text-body">#{String(position).padStart(2, '0')} · {zone.country} · <span className="metric">{zone.area_km2.toLocaleString('es-AR')}</span> km²</p>
@@ -131,6 +132,6 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
       <button type="button" onClick={onClose} className="btn-secondary mt-auto w-full">
         Cerrar ficha
       </button>
-    </article>
+    </SurfacePanel>
   )
 }

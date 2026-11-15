@@ -1,3 +1,4 @@
+import SurfacePanel from './SurfacePanel.tsx'
 import { earthPatchZone, type PickEarth } from './earthSelection.ts'
 import AnalogyScope from './AnalogyScope.tsx'
 import { profileScope } from './analogyScope.ts'
@@ -207,7 +208,7 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
     </div>
     {cameraInfo&&<p aria-hidden="true" className="hud pointer-events-none absolute bottom-2 left-6 z-[1] hidden text-mute lg:block">{cameraInfo}</p>}
     {(status||error)&&<p role={error?'alert':'status'} className="chip-dark absolute bottom-6 left-6 z-[1] max-w-sm font-mono text-xs font-normal"><span className={`size-2 shrink-0 rounded-full ${error?'bg-warn':'bg-mars'}`} aria-hidden="true"/>{error||status}</p>}
-    <aside className="rise-in absolute inset-x-2 bottom-2 z-10 flex max-h-[56%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:bottom-6 lg:right-6 lg:top-[7.5rem] lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
+    <SurfacePanel label="Ficha de Marte">
       <header className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between gap-2">
           <span className="label-mono text-body">Cuerpo seleccionado · exploratorio</span>
@@ -260,7 +261,7 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
         <p>Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
         <a className="underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA</a>
       </details>
-    </aside>
+    </SurfacePanel>
     {compare&&supplied&&<Compare3D zoneId={compare} supplied={supplied} onClose={()=>setCompare(null)}/>}
   </div>
 }

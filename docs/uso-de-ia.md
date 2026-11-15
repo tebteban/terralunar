@@ -60,3 +60,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Paginación STAC acotada y verificable, consulta sin descarga, pruebas de cursores, deduplicación y truncamiento; conserva datos procesados. |
 | 2026-11-15 | Claude Code (Claude Fable 5.1) + skills `impeccable`, `ui-ux-pro-max`, Playwright MCP | Auditoría de diseño y UX (`AUDIT.md`), dirección de arte (`DESIGN.md`), suite e2e (`web/e2e/`, `web/playwright.config.ts`), layout por pestañas en pantallas angostas, fallback sin WebGL (`webgl.ts`, `NoWebGL.tsx`), formato de datos (`fmt.ts`), leyenda del mapa, Δ con tolerancia en el comparador, tokens e íconos (`index.css`, `ConsoleIcon.tsx`), carga diferida de visores; `CHANGELOG-DESIGN.md`; D-019 | — |
 | 2026-11-15 | OpenAI Codex | Auditoría de navegación Luna/Marte, destinos, perfiles de ensayo, huellas de recortes terrestres y pruebas de regresión | — |
+
+| 2026-11-15 | OpenAI Codex | Revisión de merge c396da6 en develop, SurfacePanel compartido, Luna local sin token, formato y caché del comparador |
