@@ -9,6 +9,30 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-025 — Datos terrestres reales para los criterios geomecánicos pendientes
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: completar `docs/datos-faltantes.md` con datos reales).
+- **Qué:** `pipeline/11_geomechanics.py` mide, para las 176 ventanas de 20 km que usa la app, seis capas reales
+  y las deja en `data/geomechanics/earth.json` (~0,5 MB):
+  | Criterio | Dato | Fuente |
+  |---|---|---|
+  | Portancia | densidad aparente 0–5, 5–15, 15–30, 30–60 cm | SoilGrids 2.0 `bdod` (ISRIC, 250 m, WCS) |
+  | Volátiles | fracción con permafrost probable (PZI ≥ 0,5) | Global Permafrost Zonation Index (Gruber 2012, 1 km) |
+  | Refugio, morfología, portancia | pendiente a 30 m, mayor planicie < 5°, % de flancos con desnivel en rango | NASADEM (56° S–60° N) o Copernicus GLO-30 (fuera) |
+  | Composición | NIR (B08) y NDVI medianos de la escena más limpia 2024–2026 | Sentinel-2 L2A |
+  | Oscilación térmica | amplitud día−noche mensual y estacional, 12 compuestos | MODIS MOD11A2.061 Terra, 2024 |
+  | Supermáscara | % de agua, urbano y cultivo | ESA WorldCover 2021 v200 |
+- **Cómo se puntúa:** `geomechanics.ts` usa esos datos solo si la capa cubre la ventana; si no, el criterio sigue
+  "Pendiente" con el motivo de la fuente (p. ej. "el PZI no cubre la Antártida"). Tramos provisorios, a validar
+  por Civil: composición = mín(NIR en rango con caída lineal de 0,10 fuera; NDVI 0,4→0,05); portancia = mín(densidad
+  en rango con caída de 0,3 g/cm³; pendiente 30 m); volátiles = fracción PZI ≥ 0,5 (1,0 desde 10 % Luna, 50 % Marte);
+  refugio = 1,0 desde el 2 % de la ventana con desnivel 10–50 m y flanco 15–30° (Luna) o 2–15 m y 5–20° (Marte),
+  medido en ventanas de 7×7 píxeles (~210 m). La supermáscara agrega "sin cultivos" (lo pide el documento).
+- **Arcadia Planitia:** activado como destino de Marte con el centro oficial IAU (Feature 348: 46,66° N, 192,00° E).
+  Es el centro nominal de una planicie de ~2200 km, no un sitio de aterrizaje propuesto.
+- **Por qué MODIS 2024 y no 2025:** en Planetary Computer, 2025 tiene un hueco de julio a noviembre (consultado hoy).
+- **Qué no se hizo:** índice UV (NASA OMI requiere login Earthdata; la regla ya usa la altitud), inventarios de
+  glaciares de escombros, contenido de hielo y profundidad del permafrost (no existen como capa global).
+
 ## D-024 — Consideraciones geomecánicas de Civil, aplicadas solo con datos medidos
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban; documento del equipo de Civil).
 - **Qué:** `docs/consideraciones-geomecanicas.md` define 7 criterios con pesos (morfología 20 %, volátiles

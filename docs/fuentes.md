@@ -122,3 +122,16 @@ Criterios y umbrales: documento del equipo de Civil (`docs/consideraciones-geome
 | [NASA HLS2 Newsletter · Arcadia Planitia](https://www.nasa.gov/wp-content/uploads/2015/06/hls2_newsletter_02-19_v19_tagged.pdf) | Restricciones de ingeniería y portancia |
 | [NASA PDS Geosciences Node](https://pds-geosciences.wustl.edu/) | MOLA / LOLA para calibrar umbrales |
 
+
+## Datos terrestres para la ficha geomecánica (D-025, `pipeline/11_geomechanics.py`)
+| Fuente | Uso | Acceso |
+|---|---|---|
+| [NASADEM HGT v001](https://planetarycomputer.microsoft.com/dataset/nasadem) (NASA/JPL) | pendiente 30 m, refugio, morfología (56° S–60° N) | Planetary Computer, sin login |
+| [MODIS MOD11A2.061](https://planetarycomputer.microsoft.com/dataset/modis-11A2-061) (NASA LP DAAC) | amplitud térmica diaria y estacional, 2024 | Planetary Computer, sin login |
+| [Copernicus DEM GLO-30](https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-30) (ESA) | igual que NASADEM fuera de su cobertura | Planetary Computer |
+| [Sentinel-2 L2A](https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a) (ESA) | NIR B08 y NDVI | Planetary Computer |
+| [ESA WorldCover 2021 v200](https://planetarycomputer.microsoft.com/dataset/esa-worldcover) | supermáscara (agua, urbano, cultivo) | Planetary Computer |
+| [SoilGrids 2.0 `bdod`](https://www.isric.org/explore/soilgrids) (ISRIC; Poggio et al. 2021, doi:10.5194/soil-7-217-2021) | densidad aparente del suelo | WCS `maps.isric.org`, sin login |
+| [Global Permafrost Zonation Index](https://microsite.geo.uzh.ch/cryodata/pf_global/) (Gruber 2012, doi:10.5194/tc-6-221-2012) | probabilidad de permafrost | binario de 3,1 GB leído por rangos HTTP |
+| [IAU Gazetteer, Arcadia Planitia (Feature 348)](https://planetarynames.wr.usgs.gov/Feature/348) | centro del destino Arcadia | web |
+| Zhang et al. 2020, *Science Advances* 6:eaaz1334 | dosis en la superficie lunar (contraste del documento de Civil) | paper |

@@ -1,4 +1,5 @@
 import {thermalAt,type ThermalEvidence} from './thermalEvidence.ts'
+import {geoEarthAt,type GeoEarth} from './geoEarth.ts'
 import {earthIndex,earthPatches,metrics,TOLERANCES,type Relief} from './marsData.ts'
 import {earthPatchZone} from './earthSelection.ts'
 import {withinBounds,type Region,type SearchBounds} from './regions.ts'
@@ -9,7 +10,7 @@ import {combine,targetMatch} from './scientificEngine.ts'
 import {classify,type TerrainModel} from './terrainML.ts'
 import type {Zone} from './score.ts'
 
-export type Candidate={thermal?:ThermalEvidence;file?:string;heights?:Float32Array;id:string;name:string;source:string;zone:Zone;features:Relief;origin:'catalogue'|'sampled';region:string;cover?:Cover;coverSource:string;geology:Record<string,unknown>[];ml?:ReturnType<typeof classify>;modelId?:string}
+export type Candidate={thermal?:ThermalEvidence;earth?:GeoEarth;file?:string;heights?:Float32Array;id:string;name:string;source:string;zone:Zone;features:Relief;origin:'catalogue'|'sampled';region:string;cover?:Cover;coverSource:string;geology:Record<string,unknown>[];ml?:ReturnType<typeof classify>;modelId?:string}
 export type SearchResult=Candidate & {score:number;contributions:ReturnType<typeof combine>['contributions'];filterStatus:string}
 export type CoverageReport={name:string;count:number;status:string;extent?:number[][];manifestHash?:string}
 async function json(url:string,signal?:AbortSignal){const r=await fetch(url,{signal});if(!r.ok)throw Error(`${url}: HTTP ${r.status}`);return r.json()}
@@ -56,6 +57,11 @@ export async function loadCandidates(regions:Region[],scope:string,recent:boolea
   for(const c of candidates)c.thermal=thermalAt(thermal,c.id,c.zone.centroid[0],c.zone.centroid[1])
   reports.push({name:'Temperatura superficial MODIS',count:candidates.filter(c=>c.thermal).length,status:'Observación terrestre parcial; no modifica el índice topográfico'})
  }catch(e){if(signal?.aborted)throw e;reports.push({name:'Temperatura superficial MODIS',count:0,status:'Sin observaciones disponibles: '+String(e)})}
+ try{
+  const earth=await json('/geomechanics/earth.json',signal)
+  for(const c of candidates)c.earth=geoEarthAt(earth,c.id,c.zone.centroid[0],c.zone.centroid[1])
+  reports.push({name:'Datos geomecánicos (SoilGrids, PZI, NASADEM/Copernicus, Sentinel-2, MODIS, WorldCover)',count:candidates.filter(c=>c.earth).length,status:'Solo se usan en la ficha geomecánica; no modifican el índice topográfico'})
+ }catch(e){if(signal?.aborted)throw e;reports.push({name:'Datos geomecánicos',count:0,status:'Sin datos: '+String(e)})}
  if(signal?.aborted)throw new DOMException('Cancelado','AbortError')
  if(!candidates.length)throw Error('No hay recortes válidos disponibles en esta búsqueda.')
  return {candidates,reports,referencePoints}

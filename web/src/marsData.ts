@@ -103,6 +103,9 @@ export const MARS_SITES = [
   {name:'Olympus Mons',lon:-133.8,lat:18.65}, {name:'Valles Marineris',lon:-60,lat:-13},
   {name:'Jezero',lon:77.58,lat:18.44}, {name:'Gale',lon:137.4,lat:-4.6},
   {name:'Elysium Planitia',lon:135.6,lat:4.5}, {name:'Hellas Planitia',lon:70,lat:-42.4},
+  // Centro oficial IAU (Gazetteer of Planetary Nomenclature, Feature 348): 46,66° N, 192,00° E planetocéntrico.
+  // La planicie mide ~2200 km: este recorte de 20 km es su centro nominal, no un sitio de aterrizaje propuesto.
+  {name:'Arcadia Planitia',lon:-168,lat:46.66},
 ]
 
 // Recorte de un sitio sin bajar todo MOLA: solo las franjas de 11,25° de latitud que toca (~6 MB c/u)
