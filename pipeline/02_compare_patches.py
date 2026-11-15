@@ -146,7 +146,7 @@ if __name__ == "__main__":
         z = moon_patch(grid, s["lat"], s["lon"])
         items.append({**s, "body": "luna", "file": f"{s['id']}.bin", "min_m": save(s["id"], z), **metrics(z),
                       "source": "LRO LOLA GDR ldem_80s_80m (NASA PDS)"})
-    for zone in json.loads((ROOT / "data" / "zones.json").read_text(encoding="utf-8")):
+    for zone in json.loads((ROOT / "data" / "earth_sites.json").read_text(encoding="utf-8"))["sites"]:  # nombres y coordenadas reales
         if only and zone["id"] not in only:
             continue
         lon, lat = zone["centroid"]

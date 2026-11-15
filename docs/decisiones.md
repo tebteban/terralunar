@@ -9,6 +9,15 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-029 — Fuera los datos de prueba (mock)
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Matías).
+- **Qué:** se borran `data/zones.json` (20 zonas con puntajes inventados), `data/zones.schema.json`,
+  `pipeline/00_mock_data.py` (que además podía pisar `known_analogs.geojson` real con datos falsos) y las pantallas
+  huérfanas `CustomSearch.tsx` y `ZoneCard.tsx`, que ya no se importaban. La app no usaba nada de eso.
+- **Qué se conserva:** los nombres y coordenadas reales de los 20 sitios del catálogo, en `data/earth_sites.json`,
+  que `pipeline/02_compare_patches.py` usa para medir su relieve.
+- **Nota:** `CLAUDE.md` todavía describe el contrato de `zones.json`; queda como historia del plan inicial.
+
 ## D-028 — Panel de validación con análogos USGS reservados
 - **Fecha:** 2026-11-15 · **Estado:** vigente (CLAUDE.md: la validación "nunca se recorta").
 - **Qué:** `pipeline/12_validation.py` mide el relieve de los 192 análogos USGS (división fit 137 / test 55 hecha

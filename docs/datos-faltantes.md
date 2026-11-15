@@ -2,8 +2,8 @@
 
 Cosas que la app necesita y todavía no existen. Se anotan acá en vez de inventarlas.
 
-- **Todo `data/zones.json` es MOCK.** Puntajes inventados a mano; los reemplaza el pipeline real.
-- **Polígonos de zonas:** el mock usa un cuadrado del área indicada alrededor del centroide.
+- ~~`data/zones.json` MOCK~~ **borrado (D-029).** La app no lo usaba; los nombres y coordenadas reales de los 20
+  sitios del catálogo quedaron en `data/earth_sites.json`.
 - **Lista de análogos de referencia para validar:** `data/known_analogs.geojson` ya tiene la capa USGS real (192 sitios, división fit/test por hash del nombre: 137/55), pero son casi todos cráteres de impacto y no incluye los análogos de ensayo clásicos (Atacama, Mauna Kea, Valles Secos, Death Valley, Lanzarote, Holuhraun). Falta una lista curada de análogos de ensayo para movilidad/excavación/hábitat, con cita por sitio (programas de análogos de NASA, ESA, papers), dividida fit/test ANTES de calcular. Le toca a Civil.
 - **Umbrales difusos (`a, b, c, d`) y pesos de presets en `profiles.json`:** provisorios. Validar con el de civil y el ingeniero aeroespacial; idealmente derivados de LRO Diviner (temperatura) y LOLA (pendiente/rugosidad) de los sitios Artemis III.
 - **Litología (anortosita, tierras altas):** no hay dimensión todavía. Falta un dataset geológico global.
