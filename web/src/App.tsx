@@ -47,6 +47,7 @@ export default function App() {
   const [searchTarget,setSearchTarget]=useState<SearchTarget|null>(null)
   const analyze=(target:SearchTarget)=>{setSearchTarget(target);setScientificOpen(true)}
   const [scientificOpen,setScientificOpen]=useState(false)
+  const [scientificMap,setScientificMap]=useState<{zone:Zone;score:number}[]>([])
   const [discovery,setDiscovery]=useState<{zone:Zone;score:number}|null>(null)
   const [zones, setZones] = useState<Zone[]>([])
   const [profiles, setProfiles] = useState<Record<string, Profile> | null>(null)
@@ -104,7 +105,7 @@ export default function App() {
     if (profile) setWeights(presetWeights(profile, p))
   }
 
-  const pickEarth = (id: string) => { setDiscovery(null); setBody('tierra'); setComparing(false); setSelectedId(id) }
+  const pickEarth = (id: string, zone?: Zone, score?: number) => { if(!zone)setScientificMap([]); setDiscovery(zone ? {zone,score:score??0} : null); setBody('tierra'); setComparing(false); setSelectedId(id) }
   const fullscreen = async () => {
     try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen() }
     catch { setNotice('La pantalla completa no está disponible en este navegador.') }
@@ -113,9 +114,9 @@ export default function App() {
   const pick = (c: LandingChoice) => {
     setSelectedId(null)
     setComparing(false)
-    if (c === 'personalizado') return go('personalizado')
+    if (c === 'personalizado') {setScientificOpen(true);return go('explorar')} 
     if (c === 'luna') choosePreset(preset)
-    go('explorar', c === 'marte' ? 'marte' : 'tierra')
+    go('explorar', c === 'marte' ? 'marte' : 'luna')
   }
 
   // La portada no depende de los datos: se muestra mientras cargan.
@@ -147,12 +148,13 @@ export default function App() {
       {DATOS_DE_PRUEBA && <DataBanner onMethod={() => setMethodOpen(true)} onFullscreen={fullscreen} />}
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
       <aside className={`flex flex-col gap-7 overflow-y-auto border-r border-hairline bg-rail p-6 text-canvas md:w-[390px] md:shrink-0`}>
-        <button className="btn-primary" onClick={()=>setScientificOpen(true)}>Comparación científica</button><header className="flex flex-col gap-1">
+        <button className="btn-primary" onClick={()=>setScientificOpen(true)}>Buscar en todas las regiones</button><header className="flex flex-col gap-1">
           <h1 className="text-xl leading-7 font-bold tracking-tight">TerraLunar</h1>
           <p className="text-[13px] leading-[18px] text-mute">Buscador de análogos terrestres para misiones planetarias.</p>
         </header>
 
-        {body !== 'tierra' ? <PlanetOverview body={body} onMethod={() => setMethodOpen(true)} /> : <>
+        {scientificMap.length>0 && body==='tierra' && <section className="flex flex-col gap-2"><h2 className="font-bold">Candidatos de la búsqueda · {scientificMap.length}</h2><p className="text-xs text-mute">Recortes con datos reales. Cobertura mundial discontinua.</p><ol className="flex max-h-72 flex-col gap-1 overflow-y-auto">{scientificMap.map(r=><li key={r.zone.id}><button className="flex w-full justify-between gap-2 rounded-lg bg-white/5 p-2 text-left text-sm" onClick={()=>pickEarth(r.zone.id,r.zone,r.score)}><span>{r.zone.name}</span><strong>{r.score.toFixed(1)}</strong></button></li>)}</ol><button className="btn-ghost" onClick={()=>{setScientificMap([]);setDiscovery(null);setSelectedId(null)}}>Cerrar resultados</button></section>}
+        {scientificMap.length>0 && !discovery && body==='tierra' ? <p className="text-sm text-mute">Elegí un candidato del globo o la lista para ver su recorte de 20 × 20 km.</p> : discovery && body === 'tierra' ? <section className="flex flex-col gap-3"><h2 className="text-xl font-bold">Recorte terrestre analizado</h2><p>{discovery.zone.name}</p><p className="metric">{discovery.score.toFixed(1)}/100 · similitud topográfica</p><p>La línea blanca delimita la ventana utilizada en la comparación. El puntaje corresponde al objetivo planetario elegido.</p><p>{discovery.zone.notes}</p><p className="text-xs text-mute">{discovery.zone.sources.join(' · ')}</p><button className="btn-ghost" onClick={()=>{setScientificMap([]);setDiscovery(null);setSelectedId(null)}}>Volver al catálogo de demostración</button></section> : body !== 'tierra' ? <PlanetOverview body={body} onMethod={() => setMethodOpen(true)} /> : <>
         <label className="flex flex-col gap-2">
           <span className="label-mono text-mute">Destino de misión</span>
           <select className="h-11 rounded-full border border-hairline bg-white/5 px-4 text-sm text-canvas focus:outline-2 focus:outline-canvas">
@@ -162,7 +164,7 @@ export default function App() {
         </label>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="label-mono mb-2 text-mute">Tipo de prueba</legend>
+          <legend className="label-mono mb-2 text-mute">Tipo de prueba · simulación</legend>
           <div className="flex flex-wrap gap-1.5 rounded-[22px] bg-white/5 p-1">
             {PRESETS.map((p) => (
               <button
@@ -263,7 +265,7 @@ export default function App() {
       </aside>
 
       <main className="relative min-h-[60vh] flex-1 bg-space">
-        <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={discovery?[{zone:discovery.zone,score:discovery.score/100}]:ranked} selectedId={selectedId} onSelect={pickEarth} /></div>
+        <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView key={scientificMap.length?'scientific':'catalogue'} active={body === 'tierra'} ranked={scientificMap.length?scientificMap.map(r=>({zone:r.zone,score:r.score/100})):discovery?[{zone:discovery.zone,score:discovery.score/100}]:ranked} selectedId={selectedId} onSelect={id=>{const r=scientificMap.find(r=>r.zone.id===id);if(r)pickEarth(id,r.zone,r.score);else if(discovery?.zone.id!==id)pickEarth(id)}} /></div>
         {body === 'luna' && <MoonMap onAnalyze={analyze} onPickEarth={pickEarth} />}
         {body === 'marte' && <MarsView onAnalyze={analyze} onPickEarth={pickEarth} />}
         <nav className="absolute left-4 top-16 z-10 flex items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float" aria-label="Cuerpo visualizado">
@@ -297,7 +299,7 @@ export default function App() {
         {comparing && selectedId && !discovery && <Compare3D zoneId={selectedId} onClose={() => setComparing(false)} />}
       </main>
       </div>
-      {scientificOpen&&<ScientificSearch selectedTarget={searchTarget} onClose={()=>setScientificOpen(false)} onSelect={(id,zone,score)=>{pickEarth(id);if(zone)setDiscovery({zone,score:score??0})}}/>}
+      {scientificOpen&&<ScientificSearch selectedTarget={searchTarget} onClose={()=>setScientificOpen(false)} onSelect={pickEarth} onShowMap={results=>{setScientificMap(results);setDiscovery(null);setSelectedId(null);setBody('tierra');setComparing(false)}}/>}
       {discovery&&body==='tierra'&&<aside className="fixed right-6 bottom-6 z-20 max-w-sm rounded-2xl bg-white p-6 text-black"><h2>{discovery.zone.name}</h2><p>{discovery.score.toFixed(1)}/100 · similitud topográfica</p><p>{discovery.zone.centroid.join(', ')} · 20 × 20 km</p><p>{discovery.zone.notes}</p><button onClick={()=>setScientificOpen(true)}>Volver a búsqueda</button><button onClick={()=>{setDiscovery(null);setSelectedId(null)}}>Cerrar candidato</button></aside>}
       <MethodDialog open={methodOpen} onClose={() => setMethodOpen(false)} />
       {notice && <button type="button" className="chip-dark fixed bottom-4 left-1/2 z-50 -translate-x-1/2 text-xs" onClick={() => setNotice('')}>{notice} · Cerrar</button>}

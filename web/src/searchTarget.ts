@@ -1,5 +1,5 @@
 import {metrics,type Relief} from './marsData.ts'
-export type SearchTarget={name:string;body:'luna'|'marte';lat:number;lon:number;features:Relief;source:string;cell_m:2000;window_km:20}
+export type SearchTarget={experiment?:string;name:string;body:'luna'|'marte';lat:number;lon:number;features:Relief;source:string;cell_m:2000;window_km:20}
 export async function lunarTarget(line:number,sample:number,lat:number,lon:number):Promise<SearchTarget>{
  if(![line,sample,lat,lon].every(Number.isFinite))throw Error('Coordenadas inválidas')
  const r=await fetch('/moon/index.json');if(!r.ok)throw Error('Índice lunar no disponible');const index=await r.json();const g=index.globe

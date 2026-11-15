@@ -139,3 +139,6 @@ npm run build              # build de producción (chequea tipos)
 | 2026-11-14 | Fuentes Archivo (títulos) y JetBrains Mono (lecturas técnicas) por Google Fonts, junto a Inter | D-011 |
 | 2026-11-14 | Sistema de diseño aeroespacial (`docs/DESIGN.md`): Barlow Condensed + Barlow reemplazan a Inter, Archivo y JetBrains Mono | D-012 |
 | 2026-11-14 | Sistema "TerraLunar Science Console": vuelven Inter y JetBrains Mono; nuevo `LimitsCard.tsx` | D-014 |
+
+
+- 2026-11-15: earthSelection.ts construye la huella del DEM de catálogo y el contrato PickEarth transporta Zone + puntaje. Los scorers lunar y marciano delegan en scientificEngine conservando tolerancias por escala.

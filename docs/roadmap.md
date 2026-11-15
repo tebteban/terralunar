@@ -130,3 +130,6 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 Perfil Marte → zoom a 30 m → imágenes de detalle → tercer preset → diseño fino.
 **Nunca se recorta:** validación con sitios reservados, límites de la analogía en cada ficha,
 tiempo de presentación.
+
+
+- 2026-11-15: corregida transferencia de recortes Luna/Marte a Tierra y reencuadre tras ocultar el mapa; añadidos destinos y perfiles de ensayo compartidos. Pendiente: mediciones para ensayos no topográficos y validación científica de tolerancias.

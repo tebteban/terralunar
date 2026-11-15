@@ -1,3 +1,6 @@
+import { earthPatchZone, type PickEarth } from './earthSelection.ts'
+import AnalogyScope from './AnalogyScope.tsx'
+import { profileScope } from './analogyScope.ts'
 import type {SearchTarget} from './searchTarget.ts'
 import { startGlobeRotation } from './globeRotation.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -26,7 +29,9 @@ function imageBlob(url: string) {
   return request
 }
 let protocolCount = 0
-export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:(id:string)=>void;onAnalyze?:(target:SearchTarget)=>void}) {
+export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth;onAnalyze?:(target:SearchTarget)=>void}) {
+  const [experiment,setExperiment]=useState('regional')
+  const canRank=profileScope(experiment).canScreen
   const container=useRef<HTMLDivElement>(null), scene=useRef<HTMLDivElement>(null), map=useRef<MapLibre|null>(null)
   const choose=useRef<(lon:number,lat:number)=>void>(()=>{})
   const [cameraInfo,setCameraInfo]=useState('') // de Eze (c891b87)
@@ -206,6 +211,14 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:(id:strin
         <h2 className="text-2xl leading-8 font-bold tracking-tight">{pick?'Punto elegido en Marte':'Elegí un lugar en Marte'}</h2>
         <p className="text-sm leading-5 text-body">Elegí un punto para extraer <span className="metric">20 × 20</span> km y comparar su relieve con el catálogo terrestre.</p>
       </header>
+      <label className="flex flex-col gap-2 text-sm">Destino de misión · Marte
+        <select aria-label="Destino marciano" value={SITES.find(s=>Math.abs(s.lon-(pick?.lon??999))<.001&&Math.abs(s.lat-(pick?.lat??999))<.001)?.name??''} onChange={e=>{const site=SITES.find(s=>s.name===e.target.value);if(site)choose.current(site.lon,site.lat)}}>
+          <option value="">{pick?'Punto seleccionado en el mapa':'Elegí una región o un punto'}</option>
+          {SITES.map(s=><option key={s.name} value={s.name}>{s.name}</option>)}
+        </select>
+        <span className="text-xs text-body">Objetivos de exploración para este análisis; no son ubicaciones aprobadas de bases.</span>
+      </label>
+      <AnalogyScope value={experiment} onChange={setExperiment} disabled={false}/>
       <div className="flex flex-wrap gap-1.5">{SITES.map(s=><button key={s.name} className="h-7 rounded-full bg-canvas-soft px-3 font-mono text-xs text-body transition-colors hover:bg-ink hover:text-canvas" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
       <form className="flex items-center gap-2 rounded-2xl bg-canvas-softer p-3" onSubmit={e=>{e.preventDefault();choose.current(Number(coordinates.lon),Number(coordinates.lat))}}>
         <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-body">Longitud</span><input aria-label="Longitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/></label>
@@ -222,15 +235,15 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:(id:strin
         <input className="accent-ink w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/>
         <span className="flex justify-between text-[10px] text-body"><span>1× (real)</span><span>3×</span></span>
       </label>
-      {pick&&<>{onAnalyze&&<button className="btn-primary" onClick={()=>onAnalyze({name:pick.name,body:"marte",lat:pick.lat,lon:pick.lon,features:pick,source:pick.source,cell_m:2000,window_km:20})}>Buscar análogos de esta región</button>}
+      {pick&&<>{onAnalyze&&canRank&&<button className="btn-primary" onClick={()=>onAnalyze({experiment,name:pick.name,body:"marte",lat:pick.lat,lon:pick.lon,features:pick,source:pick.source,cell_m:2000,window_km:20})}>Buscar análogos de esta región</button>}
         <p className="metric text-xs text-body">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · ventana de 20 × 20 km</p>
         {Math.abs(pick.lat)>85&&<p className="text-xs text-body">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
         <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4"><dt className="text-[13px] text-body">{label}</dt><dd className="metric text-[22px] leading-7 font-semibold">{pick[k].toLocaleString('es-AR',{maximumFractionDigits:1,minimumFractionDigits:1})} {unit}</dd><span className="label-mono text-[10px] text-body">MOLA MEGDR</span></div>)}</dl>
         <section className="flex flex-col gap-2">
-          <h3 className="flex items-center justify-between gap-2"><span className="text-lg leading-7 font-bold tracking-tight">Lugares parecidos en la Tierra</span><span className="label-mono text-[10px] text-body">relieve /100</span></h3>
-          <ol className="flex flex-col gap-2">{matches.slice(0,6).map(({e,score},i)=><li key={e.id} className="flex flex-col gap-2.5 rounded-2xl bg-canvas-softer p-4 transition-colors hover:bg-canvas-soft">
+          <h3 className="flex items-center justify-between gap-2"><span className="text-lg leading-7 font-bold tracking-tight">Paisajes terrestres de contexto</span><span className="label-mono text-[10px] text-body">relieve /100</span></h3>
+          <ol className="flex flex-col gap-2">{(canRank?matches:[]).slice(0,6).map(({e,score},i)=><li key={e.id} className="flex flex-col gap-2.5 rounded-2xl bg-canvas-softer p-4 transition-colors hover:bg-canvas-soft">
             <div className="flex items-center gap-3"><span className="min-w-0 flex-1 truncate font-bold">{e.name}</span><span className={`metric rounded-full px-2.5 py-1 text-xs font-bold ${i===0?'bg-ink text-canvas':'bg-pressed text-ink'}`}>{Math.round(score*100)}</span></div>
-            <div className="flex flex-wrap gap-2"><button className="btn-primary h-8 px-4 text-xs" onClick={()=>setCompare(e.id)}>Comparar relieve 3D</button><button className="btn-secondary h-8 px-4 text-xs" onClick={()=>onPickEarth(e.id)}>Ver en la Tierra</button></div>
+            <div className="flex flex-wrap gap-2"><button className="btn-primary h-8 px-4 text-xs" onClick={()=>setCompare(e.id)}>Comparar relieve 3D</button><button className="btn-secondary h-8 px-4 text-xs" onClick={()=>onPickEarth(e.id, earthPatchZone(e), score*100)}>Ver en la Tierra</button></div>
           </li>)}</ol>
         </section>
         <button className="self-start text-sm font-medium underline underline-offset-2" onClick={exportJson}>Exportar comparación JSON</button>

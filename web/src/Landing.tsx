@@ -8,9 +8,9 @@ export type LandingChoice = 'luna' | 'marte' | 'personalizado'
 const TITLE = 'TerraLunar'
 
 const OPTIONS: { id: LandingChoice; key: string; title: string; tag: string; text: string }[] = [
-  { id: 'luna', key: '1', title: 'Luna', tag: 'Principal', text: 'Lugares de la Tierra parecidos al polo sur lunar, donde irán las bases.' },
+  { id: 'luna', key: '1', title: 'Luna', tag: 'Principal', text: 'Elegí una región del polo sur lunar y buscá entornos terrestres comparables.' },
   { id: 'marte', key: '2', title: 'Marte', tag: 'Exploratorio', text: 'Explorá el relieve de Marte y compará con lugares de la Tierra.' },
-  { id: 'personalizado', key: '3', title: 'Personalizado', tag: 'A medida', text: 'Elegí vos qué variables comparar y cuánto importa cada una.' },
+  { id: 'personalizado', key: '3', title: 'Búsqueda global', tag: 'Datos reales', text: 'Compará el catálogo mundial y las regiones procesadas; elegí el ensayo y sus pesos.' },
 ]
 
 const STEPS = ['Destino', 'Variables', 'Mapa'] as const

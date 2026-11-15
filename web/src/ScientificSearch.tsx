@@ -1,86 +1,80 @@
-import {validateRegions,withinBounds,type Region} from './regions.ts'
-import {geologyAt,type GeologyFeature} from './geologyContext.ts'
-import type {SearchTarget} from './searchTarget.ts'
-import {DEFAULT_MASK,maskDecision,type Cover} from './coverageMask.ts'
+import {useEffect,useRef,useState} from 'react'
 import AnalogyScope from './AnalogyScope.tsx'
-import { profileScope } from './analogyScope.ts'
-import { classify, type TerrainModel } from './terrainML.ts'
-import { discover, pilotZone, type PilotItem } from './discovery.ts'
-import type { Zone } from './score.ts'
-import { useEffect, useRef, useState } from 'react'
-import { earthPatches, marsSitePatch, MARS_SITES, metrics, TOLERANCES, type Relief } from './marsData.ts'
-import { combine, targetMatch, ENGINE_VERSION, MONS_WEIGHTS } from './scientificEngine.ts'
-type Result = { id:string; name:string; source:string; score:number; geology?:Record<string,unknown>[]; cover?:Cover; ml?:ReturnType<typeof classify>; zone?:Zone; contributions:ReturnType<typeof combine>['contributions'] }
-export default function ScientificSearch({onClose,onSelect,selectedTarget}:{selectedTarget?:SearchTarget|null;onClose:()=>void;onSelect:(id:string,zone?:Zone,score?:number)=>void}) {
- const [completed,setCompleted]=useState(false)
- const [regions,setRegions]=useState<Region[]>([])
- const [restrictArea,setRestrictArea]=useState(false)
- const [bounds,setBounds]=useState({west:-180,south:-90,east:180,north:90})
- const [recent,setRecent]=useState(true)
- const [mask,setMask]=useState(DEFAULT_MASK)
- const [coverageNote,setCoverageNote]=useState('')
- const coverRef=useRef<unknown>(null)
- const [experiment,setExperiment]=useState('regional')
- const [mlInfo,setMlInfo]=useState(''),[group,setGroup]=useState(0)
- const [activeModel,setActiveModel]=useState<TerrainModel | null>(null)
- const [scope,setScope]=useState('pilot'),[report,setReport]=useState('')
- const region=regions.find(r=>r.id===scope)
- const manifestRef=useRef<unknown>(null)
- const dialog=useRef<HTMLDialogElement>(null)
- const [target,setTarget]=useState(selectedTarget?'selected':'luna-mons-mouton'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[rows,setRows]=useState<Result[]>([])
- const [weights,setWeights]=useState<Record<string,number>>({pendiente_mediana:25,pendiente_p90:25,rugosidad_m:25,desnivel_m:25})
- const [elapsed,setElapsed]=useState(0)
- useEffect(()=>{dialog.current?.showModal();fetch('/discovery/regions.json').then(r=>{if(!r.ok)throw Error('Registro no disponible');return r.json()}).then(v=>setRegions(validateRegions(v))).catch(e=>setError(String(e)))},[])
- async function run(){if(!profileScope(experiment).canRank){setError('Este ensayo requiere datos adicionales.');return}setBusy(true);setError('');setCoverageNote('');coverRef.current=null;manifestRef.current=null;setRows([]);setCompleted(false);setMlInfo('');setGroup(0);setActiveModel(null);const start=performance.now();try{
- let reference:Relief
- if(target==='selected'&&selectedTarget){if(selectedTarget.cell_m!==2000||selectedTarget.window_km!==20)throw Error('Escala incompatible');reference=selectedTarget.features}
- else if(target.startsWith('mars-')) reference=await marsSitePatch(MARS_SITES[Number(target.slice(5))])
- else {
- const response=await fetch('/compare/index.json');if(!response.ok)throw Error('Índice lunar no disponible')
- const index=await response.json();if(index.n!==250||index.res_m!==80)throw Error('Escala lunar incompatible')
- const item=index.items.find((i:{id:string})=>i.id===target);if(!item)throw Error('Objetivo no disponible')
- const res=await fetch('/compare/'+item.file);if(!res.ok)throw Error('Recorte no disponible')
- const buffer=await res.arrayBuffer();if(buffer.byteLength!==125000)throw Error('Recorte incompleto')
- const view=new DataView(buffer), h=new Float32Array(100)
+import {experimentPlan,profileScope,RELIEF_LABELS} from './analogyScope.ts'
+import {validateRegions,type Region,type SearchBounds} from './regions.ts'
+import {DEFAULT_MASK,type MaskPolicy} from './coverageMask.ts'
+import {loadCandidates,rankCandidates,type CoverageReport,type SearchResult} from './globalSearch.ts'
+import {marsSitePatch,MARS_SITES,metrics,TOLERANCES,type Relief} from './marsData.ts'
+import {ENGINE_VERSION} from './scientificEngine.ts'
+import type {SearchTarget} from './searchTarget.ts'
+import type {Zone} from './score.ts'
+
+type Mapped={zone:Zone;score:number}
+type Props={selectedTarget?:SearchTarget|null;onClose:()=>void;onSelect:(id:string,zone?:Zone,score?:number)=>void;onShowMap?:(results:Mapped[])=>void}
+type Run={rows:SearchResult[];reports:CoverageReport[];counts:ReturnType<typeof rankCandidates>['counts'];elapsed:number;reference:Relief;target:string;experiment:string;weights:Record<string,number>;scope:string;recent:boolean;mask:MaskPolicy;bounds:SearchBounds|null;selectedTarget?:SearchTarget|null;generated:string}
+async function referenceFor(target:string,selected?:SearchTarget|null):Promise<Relief>{
+ if(target==='selected'&&selected){if(selected.cell_m!==2000||selected.window_km!==20)throw Error('Escala incompatible');return selected.features}
+ if(target.startsWith('mars-')){const site=MARS_SITES[Number(target.slice(5))];if(!site)throw Error('Destino desconocido');return marsSitePatch(site)}
+ const r=await fetch('/compare/index.json');if(!r.ok)throw Error('Índice lunar no disponible');const index=await r.json()
+ if(index.n!==250||index.res_m!==80||index.size_km!==20)throw Error('Escala lunar incompatible')
+ const item=index.items.find((p:{id:string;body:string})=>p.id===target&&p.body==='luna');if(!item)throw Error('Objetivo no disponible')
+ const res=await fetch('/compare/'+item.file);if(!res.ok)throw Error('Recorte lunar no disponible');const buffer=await res.arrayBuffer();if(buffer.byteLength!==125000)throw Error('Recorte lunar incompleto')
+ const view=new DataView(buffer),h=new Float32Array(100)
  for(let y=0;y<10;y++)for(let x=0;x<10;x++){let sum=0;for(let j=0;j<25;j++)for(let i=0;i<25;i++)sum+=view.getUint16(((y*25+j)*250+x*25+i)*2,true);h[y*10+x]=sum/625}
- reference=metrics(h)
+ return metrics(h)
+}
+function download(name:string,value:unknown){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+
+export default function ScientificSearch({onClose,onSelect,onShowMap,selectedTarget}:Props){
+ const dialog=useRef<HTMLDialogElement>(null),controller=useRef<AbortController|null>(null)
+ const [regions,setRegions]=useState<Region[]>([]),[loading,setLoading]=useState(true)
+ const [experiment,setExperiment]=useState(selectedTarget?.experiment??'regional')
+ const [weights,setWeights]=useState(()=>experimentPlan(selectedTarget?.experiment??'regional').weights)
+ const [scope,setScope]=useState('global'),[target,setTarget]=useState(selectedTarget?'selected':'luna-mons-mouton')
+ const [mask,setMask]=useState(DEFAULT_MASK),[recent,setRecent]=useState(true)
+ const [restrict,setRestrict]=useState(false),[bounds,setBounds]=useState<SearchBounds>({west:-180,east:180,south:-90,north:90})
+ const [busy,setBusy]=useState(false),[error,setError]=useState(''),[result,setResult]=useState<Run|null>(null)
+ const [origin,setOrigin]=useState('all')
+ const plan=experimentPlan(experiment)
+ useEffect(()=>{let alive=true;dialog.current?.showModal();fetch('/discovery/regions.json').then(r=>{if(!r.ok)throw Error('Registro de cobertura no disponible');return r.json()}).then(v=>{if(alive)setRegions(validateRegions(v))}).catch(e=>{if(alive)setError(String(e))}).finally(()=>{if(alive)setLoading(false)});return()=>{alive=false;controller.current?.abort()}},[])
+ function reset(){setResult(null);setError('');setOrigin('all')}
+ async function run(){
+  setBusy(true);reset();const abort=new AbortController();controller.current=abort;const start=performance.now()
+  try{
+   const [reference,loaded]=await Promise.all([referenceFor(target,selectedTarget),loadCandidates(regions,scope,recent,abort.signal)])
+   if(abort.signal.aborted)return
+   const ranked=rankCandidates(loaded.candidates,reference,weights,mask,restrict?bounds:undefined)
+   setResult({...ranked,reports:loaded.reports,elapsed:performance.now()-start,reference,target,experiment,weights:{...weights},scope,recent,mask:{...mask},bounds:restrict?{...bounds}:null,selectedTarget:target==='selected'?selectedTarget:null,generated:new Date().toISOString()})
+  }catch(e){if(!abort.signal.aborted)setError(String(e))}finally{if(!abort.signal.aborted)setBusy(false)}
  }
- if(scope!=='catalogue'){
- if(!region)throw Error('Región no disponible')
- if(restrictArea)withinBounds(0,0,bounds)
- const response=await fetch(region.base+'pilot.json');if(!response.ok)throw Error('Piloto aún no disponible');const manifestText=await response.text();const manifest=JSON.parse(manifestText)
- manifestRef.current=manifest
- if(manifest.cell_m!==2000||manifest.window_km!==20)throw Error('Escala incompatible')
- const catResponse=await fetch('/compare/index.json');if(!catResponse.ok)throw Error('Catálogo de exclusión no disponible');const catalog=await catResponse.json()
- const known=catalog.items.filter((p:{body:string})=>p.body==='tierra')
- let covers:Cover[]=[];let coverInfo='Cobertura no disponible'
- try{const cr=await fetch(region.base+'coverage.json');if(!cr.ok)throw Error('No disponible');const cm=await cr.json();const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(manifestText));const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');if(cm.pilot_sha256!==hash)throw Error('Cobertura desactualizada');covers=cm.items;coverRef.current=cm;coverInfo=cm.product+' · muestreo aproximado de 200 m; puede omitir elementos pequeños. No es NDVI.'}catch(e){coverRef.current=null;coverInfo=String(e)}
- if(recent){
- try{const rr=await fetch(region.base+'recent-2026.json');if(!rr.ok)throw Error('2026 no procesado');const obs=await rr.json();const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(manifestText))),b=>b.toString(16).padStart(2,'0')).join('');if(obs.pilot_sha256!==hash)throw Error('Observaciones desactualizadas');covers=obs.items.map((c:Cover)=>({...c,built:covers.find(old=>old.id===c.id)?.built??null}));coverRef.current={recent:obs,built_source:'WorldCover 2021'};coverInfo='Agua/vegetación SCL y NDVI p90: Sentinel-2 2026. Construido: WorldCover 2021. Muestreo aproximado 200m; no estado actual garantizado.'}catch(e){covers=[];coverInfo='Sin evidencia reciente: '+String(e)}
- }
- let geological:GeologyFeature[]=[]
- if(region.geology){try{const gr=await fetch(region.base+'geology.geojson');if(gr.ok)geological=(await gr.json()).features}catch{/* Optional context does not affect score. */}}
- const decisions=(manifest.items as PilotItem[]).filter(p=>!restrictArea||withinBounds(p.lon,p.lat,bounds)).map(p=>({p,decision:maskDecision(covers.find(c=>c.id===p.id),mask)}))
- const eligible=decisions.filter(d=>d.decision.status==='pass'||d.decision.status==='off').map(d=>d.p)
- setCoverageNote(`${decisions.length} ventanas dentro del área solicitada. `+coverInfo+` · Excluidas: ${decisions.filter(d=>d.decision.status==='excluded').length}; sin evidencia suficiente: ${decisions.filter(d=>d.decision.status==='unknown').length}.`)
- const result=discover(eligible,reference,weights,known)
- let model:TerrainModel|null=null
- try {
- if(!region.model)throw Error('Sin modelo entrenado en esta región');const mr=await fetch(region.base+'model.json');if(!mr.ok)throw Error('Modelo no disponible');const candidate:TerrainModel=await mr.json()
- const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(manifestText));const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('')
- if(candidate.data_sha256!==hash)throw Error('Modelo desactualizado para esta región; requiere reentrenamiento')
- const targetClass=classify(candidate,reference);model=candidate;setActiveModel(model)
- setMlInfo(`ML experimental · K-means · ${model.training_ids.length} ventanas de entrenamiento · objetivo en grupo ${targetClass.group}${targetClass.outsideTrainingRange?' · objetivo fuera del rango de entrenamiento':''}. Los grupos describen relieve; no son clases geológicas ni predicen aptitud. El ranking conserva el cálculo físico.`)
- }catch(e){setMlInfo('Agrupamiento no disponible: '+String(e)+'. Se conserva el comparador físico.')}
- setRows(result.diverse.map(p=>({...p,zone:pilotZone(p),cover:covers.find(c=>c.id===p.id),geology:geologyAt(p.lon,p.lat,geological),ml:model?classify(model,p.features):undefined})))
- setReport(`${manifest.processed}/${manifest.requested} ventanas procesadas · ${manifest.area_nominal_km2} km² nominales · ${result.scored.length} fuera del radio de 30 km del catálogo · ${result.diverse.length} representantes separados ≥30 km. Extensión: ${JSON.stringify(manifest.extent)}. Filtro de cobertura exploratorio configurable; no implica aptitud operativa.`)
- setElapsed(performance.now()-start);setCompleted(true);return
- }
- setReport('Catálogo existente; no es descubrimiento.')
- const candidates=await earthPatches()
- const results=candidates.map(p=>{const result=combine(Object.entries(TOLERANCES).map(([id,tolerance])=>({id,weight:weights[id],value:targetMatch(p[id as keyof Relief],reference[id as keyof Relief],tolerance)})));return {id:p.id,name:p.name,source:p.source,score:result.score!,contributions:result.contributions}}).sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id))
- setRows(results);setElapsed(performance.now()-start);setCompleted(true)
- }catch(e){setError(String(e))}finally{setBusy(false)}}
- function exportResults(){const blob=new Blob([JSON.stringify({version:ENGINE_VERSION,analogy:profileScope(experiment),target,selectedTarget:target==='selected'?selectedTarget:null,weights,tolerances:TOLERANCES,cell_m:2000,window_km:20,scope,report,mask,recent,area:restrictArea?bounds:null,region,coverage:coverRef.current,ml_model:activeModel,manifest:scope!=='catalogue'?manifestRef.current:null,elapsed_ms:elapsed,results:rows},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='terralunar-physical-comparison.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
- return <dialog ref={dialog} onCancel={onClose} style={{padding:28,maxWidth:900,width:'90vw',maxHeight:'85vh',overflow:'auto',background:'#fff',color:'#141414',border:'1px solid #ccc',borderRadius:12}}><button onClick={onClose} style={{float:'right'}}>Cerrar</button><h2>Comparación científica · piloto</h2><p>Relieve real a escala regional. Exploración de ventanas nuevas fuera del catálogo. Candidatos para investigar, no sitios validados.</p>{target==="selected"&&selectedTarget&&<p>Objetivo: {selectedTarget.source} · {selectedTarget.lat.toFixed(3)}°, {selectedTarget.lon.toFixed(3)}°.</p>}<AnalogyScope value={experiment} disabled={busy} onChange={id=>{setExperiment(id);setRows([]);setCompleted(false);setMlInfo('')}}/><fieldset style={{border:'1px solid #ccc',padding:12}}><legend>Filtro de cobertura terrestre · exploratorio</legend><label><input type="checkbox" checked={recent} disabled={busy} onChange={e=>{setRecent(e.target.checked);setRows([])}}/> Usar observaciones Sentinel-2 de 2026 cuando estén procesadas (construido sigue en 2021)</label><label><input type="checkbox" checked={mask.enabled} disabled={busy} onChange={e=>{setMask({...mask,enabled:e.target.checked});setRows([])}}/> Aplicar filtro para terreno despejado</label>{(['waterMax','builtMax','vegetationMax'] as const).map((key,i)=><label key={key} style={{display:'block'}}>{['Agua máxima (%)','Construido máximo (%)','Vegetación máxima (%)'][i]} <input type="number" min="0" max="100" disabled={busy} value={mask[key]*100} onChange={e=>{setMask({...mask,[key]:Number(e.target.value)/100});setRows([])}}/></label>)}<label><input type="checkbox" checked={mask.ndviMax!==null} disabled={busy} onChange={e=>{setMask({...mask,ndviMax:e.target.checked?.1:null});setRows([])}}/> Exigir NDVI &lt; 0,1 (percentil 90 del recorte; sin medición no es evaluable)</label><p>No certifica ausencia de agua, asentamientos ni vegetación. No usar como regla universal para hielo, biología o subsuelo.</p></fieldset><p role="status">{coverageNote}</p><details><summary>Contexto geológico regional · solo piloto Atacama/Argentina</summary><p>SEGEMAR SIGAM · unidades del NOA a escala 1:1.000.000. Cobertura argentina; no asigna litología a todo el recorte ni equivale a composición lunar/marciana.</p><a href="/discovery/geology.geojson" download>Descargar unidades regionales</a> · <a href="/discovery/geology-source.json" target="_blank" rel="noreferrer">Procedencia y escala</a></details><label>Área de búsqueda <select disabled={busy} value={scope} onChange={e=>{setScope(e.target.value);setRows([])}}>{regions.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}<option value="catalogue">Catálogo de referencia</option></select></label><fieldset><legend>Área terrestre dentro de la región procesada</legend><label><input type="checkbox" disabled={busy} checked={restrictArea} onChange={e=>{setRestrictArea(e.target.checked);setRows([])}}/> Limitar por coordenadas del centro de las ventanas</label>{restrictArea&&(['west','south','east','north'] as const).map((key,i)=><label key={key}>{['Oeste','Sur','Este','Norte'][i]}<input type="number" step="0.01" disabled={busy} value={bounds[key]} onChange={e=>{setBounds({...bounds,[key]:Number(e.target.value)});setRows([])}}/></label>)}<p>Solo se analizan ventanas ya procesadas. No descarga una región nueva ni recorta ventanas en el límite.</p></fieldset><label>Objetivo <select disabled={busy} value={target} onChange={e=>{setTarget(e.target.value);setRows([])}}>{selectedTarget&&<option value="selected">{selectedTarget.name} · {selectedTarget.lat.toFixed(3)}, {selectedTarget.lon.toFixed(3)}</option>}<option value="luna-mons-mouton">Luna · Mons Mouton</option><option value="luna-mons-malapert">Luna · Mons Malapert</option>{MARS_SITES.map((s,i)=><option key={s.name} value={'mars-'+i}>Marte · {s.name}</option>)}</select></label><p>Ventanas de 20 × 20 km · celdas de 2 km · pendientes en grados y relieve en metros. Tolerancias exploratorias sin calibración experimental.</p>{Object.entries(weights).map(([key,value])=><label key={key} style={{display:'block'}}>{key} · peso {value} <input type="range" min="0" max="100" disabled={busy} value={value} onChange={e=>{setWeights({...weights,[key]:Number(e.target.value)});setRows([])}}/></label>)}<button disabled={busy || !profileScope(experiment).canRank} onClick={run}>{busy?'Procesando datos…':'Calcular similitud física'}</button>{error&&<p role="alert">{error}</p>}{completed&&<>{rows.length===0&&<p role="status">No hay candidatos con esta área y política. Revisá la cobertura disponible y las exclusiones; no implica que no existan análogos.</p>}<p>{report}</p>{mlInfo&&<section aria-label="Aprendizaje automático"><h3>Grupos aprendidos de terreno</h3><p>{mlInfo}</p>{activeModel&&<label>Explorar grupo <select value={group} onChange={e=>setGroup(Number(e.target.value))}><option value={0}>Todos los grupos</option>{activeModel.centers.map((_,i)=><option key={i} value={i+1}>Grupo {i+1}</option>)}</select></label>}</section>}<p>{rows.length} recortes · {(elapsed/1000).toFixed(2)} s · índice de ajuste, no probabilidad de éxito.</p><button onClick={exportResults}>Exportar cálculo y contribuciones</button><ol>{rows.filter(r=>group===0||r.ml?.group===group).map(r=><li key={r.id} style={{margin:'12px 0'}}><button onClick={()=>{onSelect(r.id,r.zone,r.score);onClose()}}>{r.name} · {r.score.toFixed(1)}/100 · Ver en Tierra</button><p>{r.ml?`Grupo ML ${r.ml.group} · distancia al centro ${r.ml.distance.toFixed(2)}${r.ml.outsideTrainingRange?" · fuera del rango de entrenamiento":""}`:""}</p><details><summary>Evidencia y aportes al puntaje</summary><p>{r.source}</p><p>Geología del centro (SIGAM 1:1M, no del recorte completo): {r.geology?.length?r.geology.map(g=>[g.unidad,g.edad,g.tipoderoca].filter(Boolean).join(' · ')).join('; '):'Sin unidad cartográfica asignada; no implica ausencia de roca.'}</p>{r.cover&&<p>Cobertura muestreada ({recent?'S2 2026 + construido 2021':'WorldCover 2021'}): agua {r.cover.water===null?'sin medición':(r.cover.water*100).toFixed(2)+'%'}; construido {r.cover.built===null?'sin medición':(r.cover.built*100).toFixed(2)+'%'}; vegetación {r.cover.vegetation===null?'sin medición':(r.cover.vegetation*100).toFixed(2)+'%'}. Muestras válidas: {(r.cover.valid_fraction*100).toFixed(1)}%. Fechas: {r.cover.dates?.join(', ')||'2021 (producto anual)'}. NDVI p90: {r.cover.ndvi===null?'sin medición':r.cover.ndvi.toFixed(3)}.</p>}{r.contributions.map(c=><p key={c.id}>{c.id}: {((c.contribution??0)*100).toFixed(2)} puntos</p>)}</details></li>)}</ol></> }<hr/><h3>Perfil integral propuesto · pendiente de datos</h3><p>Los pesos siguientes no se mezclan con el ranking topográfico ni se consideran validados.</p>{Object.entries(MONS_WEIGHTS).map(([k,w])=><p key={k}>{k}: {w*100}% · {k==='topografia'?'relieve disponible; requiere definir la función de aptitud':'sin medición integrada'}</p>)}<p>SVF no mide dosis de radiación. La cartografía geológica no determina por sí sola resistencia del suelo ni granulometría. No se emite un puntaje integral con datos faltantes.</p></dialog>
+ function exportResults(){if(!result)return;download('terralunar-comparacion-y-plan.json',{version:ENGINE_VERSION,cell_m:2000,window_km:20,tolerances:TOLERANCES,analogy:profileScope(result.experiment),...result})}
+ const visible=result?.rows.filter(r=>origin==='all'||r.origin===origin)??[]
+ const input='rounded-lg border border-pressed bg-canvas-soft px-3 py-2 text-ink'
+ return <dialog ref={dialog} onCancel={onClose} className="m-auto max-h-[92vh] w-[min(1100px,96vw)] overflow-y-auto rounded-2xl border border-pressed bg-canvas p-5 text-ink shadow-card md:p-8">
+  <header className="mb-5 flex items-start justify-between gap-4"><div><p className="label-mono text-body">TerraLunar · análisis reproducible</p><h2 className="text-2xl font-bold">Comparar entornos de misión</h2><p className="mt-2 text-sm">Elegí destino, ensayo y área. Compará datos reales y llevá los candidatos al globo terrestre.</p></div><button className="btn-secondary" onClick={onClose}>Cerrar</button></header>
+  <fieldset disabled={busy} className="grid gap-5 md:grid-cols-2">
+   <div className="flex flex-col gap-3"><label className="flex flex-col gap-2 font-semibold">1 · Destino de misión<select className={input} value={target} onChange={e=>{setTarget(e.target.value);reset()}}>{selectedTarget&&<option value="selected">{selectedTarget.body==='luna'?'Luna':'Marte'} · punto {selectedTarget.lat.toFixed(3)}, {selectedTarget.lon.toFixed(3)}</option>}<optgroup label="Luna · recortes LOLA"><option value="luna-mons-mouton">Mons Mouton</option><option value="luna-mons-malapert">Mons Malapert</option><option value="luna-nobile-rim-2">Nobile Rim 2</option></optgroup><optgroup label="Marte · recortes MOLA">{MARS_SITES.map((s,i)=><option key={s.name} value={'mars-'+i}>{s.name}</option>)}</optgroup></select></label>
+    <AnalogyScope value={experiment} disabled={busy} onChange={id=>{setExperiment(id);setWeights(experimentPlan(id).weights);reset()}}/>
+   </div>
+   <div className="flex flex-col gap-4"><label className="flex flex-col gap-2 font-semibold">2 · Cobertura de búsqueda<select className={input} value={scope} onChange={e=>{setScope(e.target.value);reset()}}><option value="global">Todas las regiones + catálogo mundial</option>{regions.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}<option value="catalogue">Solo catálogo mundial de referencia</option></select></label>
+    <p className="text-sm">Cobertura discontinua: se buscan ventanas ya procesadas, no cada punto del planeta. El catálogo de referencia se distingue de las ventanas exploratorias.</p>
+    <details className="rounded-xl border border-pressed p-3"><summary className="cursor-pointer font-semibold">Limitar el área terrestre</summary><label className="mt-3 block"><input type="checkbox" checked={restrict} onChange={e=>{setRestrict(e.target.checked);reset()}}/> Filtrar por coordenadas del centro</label>{restrict&&<div className="mt-2 grid grid-cols-2 gap-2">{(['west','south','east','north'] as const).map((k,i)=><label key={k}>{['Oeste','Sur','Este','Norte'][i]}<input className={'w-full '+input} type="number" step="any" value={bounds[k]} onChange={e=>{setBounds({...bounds,[k]:Number(e.target.value)});reset()}}/></label>)}</div>}<p className="mt-2 text-xs">Oeste debe ser menor que este; para cruzar el antimeridiano realizá dos búsquedas.</p></details>
+    <details className="rounded-xl border border-pressed p-3"><summary className="cursor-pointer font-semibold">Filtros de cobertura y observaciones</summary><label className="mt-3 block"><input type="checkbox" checked={recent} onChange={e=>{setRecent(e.target.checked);reset()}}/> Consultar observaciones Sentinel-2 de 2026 procesadas</label><label className="mt-2 block"><input type="checkbox" checked={mask.enabled} onChange={e=>{setMask({...mask,enabled:e.target.checked});reset()}}/> Exigir terreno despejado</label><p className="my-2 text-xs">Si activás el filtro, los recortes sin mediciones suficientes quedan fuera. Desactivado, no se certifica ausencia de agua, vegetación o construcciones.</p>{(['waterMax','builtMax','vegetationMax'] as const).map((k,i)=><label key={k} className="my-2 flex items-center justify-between gap-2">{['Agua máxima (%)','Construido máximo (%)','Vegetación máxima (%)'][i]}<input className={'w-20 '+input} type="number" min="0" max="100" value={mask[k]*100} onChange={e=>{setMask({...mask,[k]:Number(e.target.value)/100});reset()}}/></label>)}<label><input type="checkbox" checked={mask.ndviMax!==null} onChange={e=>{setMask({...mask,ndviMax:e.target.checked?.1:null});reset()}}/> Exigir NDVI p90 &lt; 0,1</label></details>
+    <section className="rounded-xl bg-canvas-soft p-4"><h3 className="font-semibold">3 · Pesos del contexto topográfico</h3><p className="mb-3 text-xs">{plan.calibration} No miden aptitud integral.</p>{Object.entries(weights).map(([k,v])=><label key={k} className="my-2 block text-sm"><span className="flex justify-between"><span>{RELIEF_LABELS[k]}</span><span>{v}</span></span><input className="w-full accent-ink" type="range" min="0" max="100" value={v} onChange={e=>{setWeights({...weights,[k]:Number(e.target.value)});reset()}}/></label>)}</section>
+   </div>
+  </fieldset>
+  <p className="my-4 text-xs">Escala común: ventanas de 20 × 20 km, celdas de 2 km. Rugosidad sobre vecindario de 6 km. No resuelve bloques ni obstáculos a escala del vehículo.</p>
+  <button className="btn-primary" disabled={busy||loading} onClick={run}>{busy?'Calculando con datos reales…':loading?'Cargando cobertura…':experiment==='regional'?'Buscar análogos topográficos':'Preseleccionar entornos para este ensayo'}</button>
+  {error&&<p role="alert" className="my-4 rounded-lg border border-red-400 p-3">{error}</p>}
+  {result&&<section className="mt-6 border-t border-pressed pt-5" aria-label="Resultados científicos">
+   <h3 className="text-xl font-bold">{experimentPlan(result.experiment).scoreLabel} · {result.rows.length} candidatos</h3>
+   <p className="my-2 text-sm">{result.counts.loaded} ventanas cargadas · {result.counts.inArea} dentro del área · {result.counts.excluded} excluidas por cobertura · {result.counts.unknown} sin evidencia para el filtro · {result.counts.nearReference} ventanas cerca del catálogo excluidas · {(result.elapsed/1000).toFixed(1)} s.</p>
+   <p className="text-sm">Índice de semejanza al destino, no probabilidad de éxito. Ventanas exploratorias separadas al menos 30 km entre sí.</p>
+   <details className="my-3"><summary className="cursor-pointer font-semibold">Cobertura y procedencia de esta ejecución</summary>{result.reports.map(r=><p className="my-2 text-xs" key={r.name}><strong>{r.name}</strong> · {r.count} recortes · {r.status}{r.extent?' · extensión '+JSON.stringify(r.extent):''}</p>)}</details>
+   <div className="my-4 flex flex-wrap gap-2"><button className="btn-secondary" onClick={exportResults}>Descargar análisis + plan de ensayo</button><button className="btn-secondary" disabled={!visible.length} onClick={()=>download('terralunar-candidatos.geojson',{type:'FeatureCollection',features:visible.map(r=>({type:'Feature',geometry:r.zone.polygon,properties:{id:r.id,name:r.name,score:r.score,score_kind:'topographic-context',origin:r.origin,source:r.source,cell_m:2000,window_km:20}}))})}>Exportar GeoJSON</button>{onShowMap&&<button className="btn-primary" disabled={!visible.length} onClick={()=>{onShowMap(visible.map(r=>({zone:{...r.zone,notes:`${experimentPlan(result.experiment).scoreLabel}. ${r.zone.notes}`},score:r.score})));onClose()}}>Ver {visible.length} candidatos en el globo</button>}</div>
+   <label className="text-sm">Mostrar <select className={input} value={origin} onChange={e=>setOrigin(e.target.value)}><option value="all">Todos</option><option value="sampled">Ventanas exploratorias</option><option value="catalogue">Catálogo de referencia</option></select></label>
+   {!visible.length&&<p role="status" className="my-4">No hay candidatos con estos filtros. Revisá área, cobertura o tipo de resultado; no implica que no existan análogos.</p>}
+   <ol className="mt-4 grid gap-3 md:grid-cols-2">{visible.map(r=><li key={r.id} className="rounded-xl border border-pressed p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs text-body">{r.origin==='catalogue'?'CATÁLOGO DE REFERENCIA':'VENTANA EXPLORATORIA'}</p><h4 className="font-bold">{r.name}</h4></div><strong className="metric text-xl">{r.score.toFixed(1)}<span className="text-xs">/100</span></strong></div><p className="my-2 text-xs">{r.zone.centroid[1].toFixed(3)}°, {r.zone.centroid[0].toFixed(3)}° · 20 × 20 km</p><button className="btn-secondary" onClick={()=>{onSelect(r.id,r.zone,r.score);onClose()}}>Ver recorte exacto en Tierra</button><details className="mt-3 text-sm"><summary className="cursor-pointer">Mediciones, aportes y evidencia</summary>{r.contributions.map(c=><p className="my-1" key={c.id}>{RELIEF_LABELS[c.id]}: {r.features[c.id as keyof Relief].toFixed(2)} · aporte {((c.contribution??0)*100).toFixed(1)} puntos</p>)}<p className="my-2 text-xs">{r.source}</p><p className="text-xs">{r.coverSource}</p>{r.cover&&<p className="my-2 text-xs">Muestras válidas: {(r.cover.valid_fraction*100).toFixed(1)}%. Agua: {r.cover.water===null?'sin medición':(r.cover.water*100).toFixed(1)+'%'}. Vegetación: {r.cover.vegetation===null?'sin medición':(r.cover.vegetation*100).toFixed(1)+'%'}. NDVI p90: {r.cover.ndvi?.toFixed(2)??'sin medición'}. Fechas: {r.cover.dates?.join(', ')||'2021 (producto anual)'}.</p>}<p className="my-2 text-xs">Geología del centro, no de todo el recorte: {r.geology.length?r.geology.map(g=>[g.unidad,g.edad,g.tipoderoca].filter(Boolean).join(' · ')).join('; '):'sin unidad cartográfica integrada'}. No determina resistencia del suelo.</p>{r.ml&&<p className="text-xs">Agrupamiento experimental {r.modelId}: grupo {r.ml.group}{r.ml.outsideTrainingRange?' · fuera del rango de entrenamiento':''}. Describe relieve; no modifica el puntaje ni predice aptitud.</p>}</details></li>)}</ol>
+  </section>}
+ </dialog>
 }

@@ -2,3 +2,5 @@ pipeline/raw/
 __pycache__/
 /data/explorador/global-terreno.js
 pipeline/.deps/
+
+pipeline/.runtime/
