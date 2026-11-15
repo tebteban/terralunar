@@ -20,6 +20,6 @@ test('Lunar and Martian scores use target similarity, with scale-specific roughn
  const b={...a,pendiente_mediana:9}
  assert.equal(similarity(a,b),.75);assert.equal(moonSimilarity(a,b),.75)
  const c={...a,rugosidad_m:5}
- assert.equal(moonSimilarity(a,c),.75);assert.ok(similarity(a,c)>.99)
+ assert.equal(moonSimilarity(a,c),.75);assert.ok(similarity(a,c)>.95) // 2 km: tolerancia de rugosidad calibrada (32,8 m, D-030), más permisiva que la lunar a 80 m
  assert.throws(()=>similarity(a,{...a,desnivel_m:NaN}))
 })

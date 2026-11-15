@@ -9,6 +9,27 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-030 — Tolerancias del ranking calibradas con datos reales
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Matías: "que la implementación de los parámetros sea real").
+- **Qué:** `pipeline/13_calibrate_tolerances.ts`. Escala de cada medida = rango intercuartil en las 300 ventanas de
+  tierra al azar (cuánto varía en la Tierra); tolerancia = c × escala con c ∈ {0,25; 0,5; 1; 2; 4}, elegido con los
+  análogos USGS **fit** (Mons Mouton, pesos iguales; empate → c más cercano a 1). Reglas escritas en el script antes
+  de correrlo. Resultado en `data/validation/calibration.json`.
+- **Resultado:**
+  | | pendiente mediana | pendiente p90 | rugosidad | desnivel |
+  |---|---|---|---|---|
+  | a mano (antes) | 5° | 8° | 200 m | 1000 m |
+  | calibrada (ahora) | 1,34° | 3,23° | 32,8 m | 463 m |
+  - **fit no discrimina:** los 5 multiplicadores dan 3/133, así que gana ×1 por la regla de empate. Las tolerancias
+    quedan iguales a la variación real de la Tierra.
+  - **test (una sola vez):** Mons Mouton 2/54 (antes 3/54); ambos al nivel del azar. Malapert y Nobile Rim 2: la
+    validación pasa a "no informativa" (más del 90 % de la Tierra tiene semejanza 0 con esos macizos).
+  - **Ranking:** los tres mejores candidatos para Mons Mouton son los mismos (ventanas de Atacama). La rugosidad a
+    mano (200 m) era ~6 veces la variación terrestre y no filtraba nada; ahora sí.
+- **Corrección de regla:** al calibrar apareció un caso degenerado (umbral 0 ⇒ todo "acierto"). Se corrigió para
+  que una semejanza 0 nunca sea acierto y el panel declare "no informativa"; el arreglo solo puede bajar el número.
+- **Límite:** Marte usa las mismas tolerancias (escala terrestre); no se calibró con análogos marcianos.
+
 ## D-029 — Fuera los datos de prueba (mock)
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Matías).
 - **Qué:** se borran `data/zones.json` (20 zonas con puntajes inventados), `data/zones.schema.json`,

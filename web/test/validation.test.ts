@@ -39,3 +39,13 @@ test('test sites that resemble the target beat the random background', () => {
 test('unknown manifest version is rejected', () => {
   assert.throws(() => evaluateHoldout({...base, version: 'x', background: [], sites: []}, metrics(Float32Array.from(wavy)), weights))
 })
+
+test('a zero threshold is declared non-informative and zero scores never count as hits', () => {
+  const steep = Array.from({length: 100}, (_, i) => (i * 7919) % 5000 + (i % 10) * 3000)
+  const m = {...base, background: Array.from({length: 20}, () => ({lon: 0, lat: 0, heights: flat})),
+    sites: Array.from({length: 4}, (_, i) => ({name: 't' + i, split: 'test' as const, type: '', lon: 0, lat: 0, land: 1, heights: flat}))}
+  const v = evaluateHoldout(m, metrics(Float32Array.from(steep)), weights)
+  assert.equal(v.threshold, 0)
+  assert.equal(v.informative, false)
+  assert.equal(v.test.hits, 0)
+})

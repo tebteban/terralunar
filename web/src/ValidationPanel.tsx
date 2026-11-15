@@ -17,6 +17,12 @@ export default function ValidationPanel({target, reference, weights}: {target: s
   try { v = evaluateHoldout(manifest, reference, weights) } catch (e) { return <p className="my-3 text-xs">Validación no disponible: {String(e)}</p> }
   const pct = (x: number) => num(x * 100, 0) + ' %'
   const t = v.test
+  if (!v.informative) return (
+    <section className="my-4 rounded-xl border border-pressed p-4" aria-label="Validación con sitios reservados">
+      <p className="label-mono text-body">Validación con sitios reservados</p>
+      <p className="mt-1 text-sm">No informativa para {target}: con estas tolerancias, más del 90 % de las ventanas de tierra al azar tienen semejanza 0, así que no hay un "10 % superior" contra el cual medir a los {t.used} análogos USGS reservados.</p>
+    </section>
+  )
   return (
     <section className="my-4 rounded-xl border border-pressed p-4" aria-label="Validación con sitios reservados">
       <p className="label-mono text-body">Validación con sitios reservados</p>

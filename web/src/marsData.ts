@@ -93,7 +93,10 @@ export async function earthPatch(item: Patch): Promise<Patch> {
     }
     return {...item,heights,...metrics(heights),source:item.source+'; promedio de celdas de 80 m a 2 km'}
 }
-export const TOLERANCES: Relief = {pendiente_mediana:5,pendiente_p90:8,rugosidad_m:200,desnivel_m:1000}
+// Tolerancias calibradas con datos reales (D-030, pipeline/13_calibrate_tolerances.ts → data/validation/calibration.json):
+// rango intercuartil de cada medida en 300 ventanas de tierra al azar; multiplicador elegido con los análogos USGS fit.
+// Antes (a mano): pendiente 5°, p90 8°, rugosidad 200 m, desnivel 1000 m.
+export const TOLERANCES: Relief = {pendiente_mediana:1.34,pendiente_p90:3.23,rugosidad_m:32.8,desnivel_m:463}
 export function similarity(a: Relief,b: Relief) {
   return combine(Object.entries(TOLERANCES).map(([k,t])=>({id:k,weight:1,value:targetMatch(a[k as keyof Relief],b[k as keyof Relief],t)}))).score! / 100
 }

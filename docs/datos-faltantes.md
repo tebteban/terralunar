@@ -14,7 +14,7 @@ Cosas que la app necesita y todavía no existen. Se anotan acá en vez de invent
 - **NASADEM no cubre más allá de 56° S / 60° N:** McMurdo, Haughton, Svalbard, Axel Heiberg y Holuhraun (Islandia) necesitan Copernicus GLO-30 para pendiente.
 - **Comparador 3D, lado Tierra:** usa AWS Terrain Tiles; pasar a NASADEM (o Copernicus fuera de 56° S–60° N) para que el número sea 100 % NASA. Las zonas costeras tienen el mar aplanado a 0.
 - **Polígonos de aterrizaje Artemis III:** el comparador usa centros IAU de los accidentes (Mons Mouton, Mons Malapert) y un punto de un estudio (Nobile Rim 2). Si aparece la fuente oficial, reemplazar.
-- **Búsqueda desde la Luna:** compara solo contra las zonas de `zones.json` (hoy 20 mock). Cuando el pipeline extraiga ~200 candidatas, correr `02_compare_patches.py` para sus métricas. Tolerancias del parecido (pendiente 5°, p90 8°, rugosidad 3 m, desnivel 1000 m) son provisorias: validar con Civil.
+- **Búsqueda desde la Luna:** compara solo contra las zonas de `zones.json` (hoy 20 mock). Cuando el pipeline extraiga ~200 candidatas, correr `02_compare_patches.py` para sus métricas. Tolerancias del parecido: calibradas con datos reales (D-030); los análogos fit no discriminan, falta la lista curada de análogos de ensayo para afinarlas.
 - **Perfil Marte:** no existe (es lo primero que se recorta).
 
 ## Consideraciones geomecánicas (D-024, documento de Civil `docs/consideraciones-geomecanicas.md`)
