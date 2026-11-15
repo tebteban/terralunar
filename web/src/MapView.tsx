@@ -20,8 +20,8 @@ const DEM = {
   maxzoom: 14,
   attribution: 'Relieve: <a href="https://registry.opendata.aws/terrain-tiles/">AWS Terrain Tiles</a> (Mapzen; incl. NASA SRTM)',
 }
-// Color por similitud S (0..1): gris → ámbar → crema
-const COLOR = ['interpolate', ['linear'], ['get', 'score'], 0.4, '#475569', 0.7, '#f59e0b', 0.9, '#fde68a'] as const
+// Escala de similitud de DESIGN.md (S 0..1): pizarra → ámbar → crema
+const COLOR = ['interpolate', ['linear'], ['get', 'score'], 0.4, '#1e293b', 0.7, '#d97706', 0.9, '#fef3c7'] as const
 
 function toGeoJSON(ranked: Ranked[], selectedId: string | null, kind: 'polygon' | 'point') {
   return {
@@ -42,6 +42,7 @@ interface Props {
 }
 
 export default function MapView({ ranked, selectedId, onSelect }: Props) {
+  // De Eze (c891b87): lectura de cámara y aviso si falla una capa
   const [cameraInfo, setCameraInfo] = useState('')
   const [mapError, setMapError] = useState('')
   const container = useRef<HTMLDivElement>(null)
@@ -67,7 +68,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
     m.addControl(new NavigationControl(), 'bottom-right')
     m.addControl(new ScaleControl({ unit: 'metric' }), 'bottom-left')
     m.on('error', () => setMapError('No se pudo cargar una capa. Revisá la conexión.'))
-    m.on('moveend', () => { const c=m.getCenter(); setCameraInfo(`${c.lat.toFixed(2)}°, ${c.lng.toFixed(2)}° · zoom ${m.getZoom().toFixed(1)}`) })
+    m.on('moveend', () => { const c = m.getCenter(); setCameraInfo(`${c.lat.toFixed(2)}°, ${c.lng.toFixed(2)}° · zoom ${m.getZoom().toFixed(1)}`) })
     const updateSpace = () => {
       const opacity = Math.max(0, Math.min(1, (3 - m.getZoom()) / 1.6))
       scene.current?.style.setProperty('--space-opacity', String(opacity))
@@ -128,7 +129,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
           'circle-opacity': ['case', ['get', 'selected'], 0, 1], // no tapar el relieve de la zona elegida
           'circle-stroke-opacity': ['case', ['get', 'selected'], 0, 1],
           'circle-radius': ['interpolate', ['linear'], ['get', 'score'], 0.3, 4, 0.9, 10],
-          'circle-stroke-color': ['case', ['get', 'selected'], '#ffffff', ['get', 'known'], '#38bdf8', '#0f172a'],
+          'circle-stroke-color': ['case', ['get', 'selected'], '#ffffff', ['get', 'known'], '#ffffff', '#afafaf'],
           'circle-stroke-width': ['case', ['get', 'selected'], 3, ['get', 'known'], 2, 1],
         },
       })
@@ -143,6 +144,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
         m.on('mouseleave', layer, () => (m.getCanvas().style.cursor = ''))
       }
     })
+    // reajustar el lienzo cuando cambia el tamaño del contenedor (barra lateral, ventana)
     const resize = new ResizeObserver(() => { if (container.current?.offsetWidth) m.resize() })
     resize.observe(container.current!)
     return () => { resize.disconnect(); stopRotation?.(); m.remove() }
@@ -152,16 +154,19 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
 
   useEffect(focus, [selectedId]) // solo mover la cámara al cambiar la selección, no al mover sliders
 
-  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-slate-950">
+  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-space">
     <SpaceBackdrop />
     <div ref={container} className="relative h-full w-full" role="region" aria-label="Globo 3D de la Tierra y mapa de zonas análogas" />
-    <button type="button" className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft"
+    <button type="button" className="chip-dark absolute left-4 top-4"
       onClick={() => map.current?.flyTo({ center: [-30, 15], zoom: 1.4, pitch: 0, bearing: 0, duration: 1800 })}>
       Ver planeta
     </button>
-    <div className="map-extra-controls"><button onClick={focus} disabled={!selectedId}>Centrar selección</button><button onClick={() => {const m=map.current;if(m)m.easeTo({pitch:m.getPitch()>5?0:60,duration:650})}}>Cenital / oblicua</button></div>
-    <output className="camera-info">{cameraInfo}</output>
-    {mapError && <button className="map-error" onClick={() => setMapError('')}>{mapError} · Cerrar</button>}
+    <div className="absolute bottom-10 left-4 z-[1] hidden items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float md:flex">
+      <button type="button" onClick={focus} disabled={!selectedId} className="rounded-full px-3.5 py-1.5 text-xs text-canvas hover:bg-elevated disabled:opacity-40">Centrar selección</button>
+      <button type="button" onClick={() => { const m = map.current; if (m) m.easeTo({ pitch: m.getPitch() > 5 ? 0 : 60, duration: 650 }) }} className="rounded-full px-3.5 py-1.5 text-xs text-canvas hover:bg-elevated">Cenital / oblicua</button>
+    </div>
+    {cameraInfo && <output className="metric pointer-events-none absolute bottom-3 left-28 z-[1] hidden text-[11px] text-mute md:block">{cameraInfo}</output>}
+    {mapError && <button type="button" className="chip-dark absolute left-4 top-28 z-[1] text-xs" onClick={() => setMapError('')}>{mapError} · Cerrar</button>}
   </div>
 
   // Al elegir zona: relieve 3D y cámara inclinada sobre ella (dejando lugar a la ficha a la derecha).
@@ -180,7 +185,7 @@ export default function MapView({ ranked, selectedId, onSelect }: Props) {
     const bounds = new LngLatBounds()
     for (const c of zone.polygon.coordinates[0]) bounds.extend(c as [number, number])
     const cam = m.cameraForBounds(bounds, {
-      padding: { top: 60, bottom: 60, left: 60, right: 40 },
+      padding: { top: 60, bottom: 60, left: 60, right: window.innerWidth >= 768 ? 480 : 60 },
     })
     m.flyTo({ ...cam, pitch: 60, bearing: -20, speed: 1.4 })
   }

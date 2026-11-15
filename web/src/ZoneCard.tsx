@@ -1,5 +1,6 @@
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts'
 import { LIMITS } from './limits.ts'
+import LimitsCard from './LimitsCard.tsx'
 import type { Profile, Ranked, Weights } from './score.ts'
 
 
@@ -31,9 +32,10 @@ interface Props {
   weights: Weights
   onClose: () => void
   onCompare: () => void
+  mock?: boolean
 }
 
-export default function ZoneCard({ ranked: { zone, score }, position, profile, weights, onClose, onCompare }: Props) {
+export default function ZoneCard({ ranked: { zone, score }, position, profile, weights, onClose, onCompare, mock = false }: Props) {
   const total = Object.values(weights).reduce((a, b) => a + b, 0) || 1
   const dims = Object.entries(profile.dimensions).map(([k, d]) => {
     const s = zone.scores[k] ?? 0
@@ -42,77 +44,75 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
   const datasets = [...new Set([...zone.sources, ...dims.map((d) => d.dataset)])]
 
   return (
-    <article className="site-card">
-      <header className="flex items-start justify-between gap-3">
-        <div>
-          <p className="flex flex-wrap items-center gap-2 text-sm text-body">
-            #{position} · {zone.country} · {zone.area_km2.toLocaleString('es-AR')} km²
-            {zone.known && <span className="rounded-full bg-canvas-soft px-2 py-0.5 text-xs font-medium text-ink">análogo conocido</span>}
-          </p>
-          <h2 className="mt-1 text-2xl font-bold leading-8">{zone.name}</h2>
+    <article className="absolute inset-x-2 top-2 bottom-2 z-10 flex flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:right-6 md:top-6 md:bottom-6 md:w-[420px]">
+      <header className="flex flex-col gap-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="label-mono text-body">#{String(position).padStart(2, '0')} · {zone.country} · <span className="metric">{zone.area_km2.toLocaleString('es-AR')}</span> km²</p>
+          {zone.known && <span className="rounded-full bg-canvas-soft px-2.5 py-0.5 font-mono text-[11px] font-semibold text-ink">Análogo conocido</span>}
         </div>
+        <h2 className="text-2xl leading-8 font-bold tracking-tight">{zone.name}</h2>
+        <p className="metric text-xs text-body">{zone.centroid[1].toFixed(4)}°, {zone.centroid[0].toFixed(4)}°{mock && <span className="font-sans"> · puntaje de demostración</span>}</p>
       </header>
 
-      <p className="text-sm text-body">{zone.centroid[1].toFixed(4)}°, {zone.centroid[0].toFixed(4)}° · Puntaje de demostración</p>
-      <div className="weighted-index"><div><span>ÍNDICE PONDERADO</span><p>Ajuste del catálogo de prueba</p></div><strong>{(score*100).toFixed(0)}<small> / 100</small></strong></div>
-      <button type="button" onClick={onCompare}
-        className="rounded-full bg-ink px-4 py-3 text-base font-medium text-canvas hover:bg-elevated">
+      <div className="flex items-center justify-between gap-4 rounded-2xl bg-canvas-softer p-4">
+        <div className="flex flex-col">
+          <span className="label-mono text-body">Índice ponderado</span>
+          <span className="text-[13px] text-body">Similitud con el sitio lunar</span>
+        </div>
+        <p className="flex items-baseline gap-1">
+          <span className="metric text-[42px] leading-none font-bold">{(score * 100).toFixed(0)}</span>
+          <span className="metric text-sm text-body">/ 100</span>
+        </p>
+      </div>
+
+      <button type="button" onClick={onCompare} className="btn-primary h-11 w-full">
         Comparar relieve 3D con la Luna o Marte
       </button>
 
-      <section aria-label="Puntaje por variable"><div className="signature-heading"><span>FIRMA MULTIDIMENSIONAL</span><span>{dims.length} VARIABLES</span></div>
-        <ResponsiveContainer width="100%" height={240}>
-          <RadarChart data={dims} outerRadius="60%">
-            <PolarGrid stroke="#d7d1d1" />
-            <PolarAngleAxis dataKey="short" tick={{ fill: '#746e6e', fontSize: 11 }} />
+      <section aria-label="Puntaje por variable" className="flex flex-col gap-1">
+        <h3 className="flex items-center justify-between">
+          <span className="label-mono text-body">Firma de la zona</span>
+          <span className="label-mono text-body">{dims.length} variables</span>
+        </h3>
+        <ResponsiveContainer width="100%" height={230}>
+          <RadarChart data={dims} outerRadius="55%">
+            <PolarGrid stroke="#ddd9d1" />
+            <PolarAngleAxis dataKey="name" tick={{ fill: '#615e58', fontSize: 10.5, fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }} />
             <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
-            <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} isAnimationActive={false} />
+            <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} dot={{ r: 3, fill: '#000' }} isAnimationActive={false} />
           </RadarChart>
         </ResponsiveContainer>
       </section>
 
-      <section>
-        <h3 className="mb-3 text-xl font-bold leading-7">Aporte al puntaje</h3>
-        <ul className="flex flex-col gap-2 text-sm">
+      <section className="flex flex-col gap-2">
+        <h3 className="label-mono text-body">Aporte al puntaje</h3>
+        <ul className="flex flex-col gap-2.5">
           {[...dims].sort((a, b) => b.contribution - a.contribution).map((d) => (
-            <li key={d.key} className="grid grid-cols-[1fr_6rem_2.5rem] items-center gap-2">
-              <span className="truncate" title={d.dataset}>{d.name}</span>
-              <span className="h-2 rounded-full bg-canvas-soft">
+            <li key={d.key} className="flex flex-col gap-1">
+              <span className="flex justify-between gap-2 font-mono text-[11px]">
+                <span className="truncate" title={d.dataset}>{d.name}</span>
+                <span className="metric shrink-0 font-bold">+{(d.contribution * 100).toFixed(1)} ptos</span>
+              </span>
+              <span className="h-1.5 rounded-full bg-pressed">
                 <span className="block h-full rounded-full bg-ink" style={{ width: `${(d.contribution / (score || 1)) * 100}%` }} />
               </span>
-              <span className="text-right font-medium tabular-nums">+{(d.contribution * 100).toFixed(1)}</span>
             </li>
           ))}
         </ul>
       </section>
 
-      <details className="method-details limits-card" open>
-        <summary>Límites de la analogía</summary>
-        <ul className="flex flex-col gap-2 text-sm text-pressed">
-          {LIMITS.map(([title, text]) => (
-            <li key={title}><strong className="font-medium text-canvas">{title}:</strong> {text}</li>
-          ))}
-        </ul>
-      </details>
+      <LimitsCard items={LIMITS} />
 
-      <details className="method-details text-sm text-body">
-        <summary>Fuentes</summary>
-        <ul className="list-inside list-disc">
-          {datasets.map((s) => <li key={s}>{s}</li>)}
-        </ul>
-        {zone.notes && <p className="mt-2 italic">{zone.notes}</p>}
-      </details>
+      <section className="flex flex-col gap-1 font-mono text-[11px] text-body">
+        <h3 className="label-mono text-ink">Fuentes</h3>
+        <p className="uppercase">{datasets.join(' · ')}</p>
+        {zone.notes && <p className="mt-1 font-sans text-[13px] italic">{zone.notes}</p>}
+      </section>
 
-      <a
-        href={worldviewUrl(zone.polygon.coordinates[0])}
-        target="_blank"
-        rel="noreferrer"
-        className="rounded-full bg-canvas-soft px-4 py-3 text-center text-base font-medium hover:bg-pressed"
-      >
-        Abrir en Worldview (imágenes satelitales de la zona) ↗
+      <a href={worldviewUrl(zone.polygon.coordinates[0])} target="_blank" rel="noreferrer" className="btn-secondary w-full">
+        Abrir en Worldview (imágenes satelitales) ↗
       </a>
-
-      <button type="button" onClick={onClose} className="mt-auto rounded-full bg-canvas-soft px-4 py-3 text-base font-medium hover:bg-pressed">
+      <button type="button" onClick={onClose} className="btn-secondary mt-auto w-full">
         Cerrar ficha
       </button>
     </article>

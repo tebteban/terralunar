@@ -1,9 +1,9 @@
-import PanelOutlet from './PanelOutlet.tsx'
 import { startGlobeRotation } from './globeRotation.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapLibre, NavigationControl, Marker, addProtocol, removeProtocol, type GeoJSONSource } from 'maplibre-gl'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
+import LimitsCard from './LimitsCard.tsx'
 import { MARS_LIMITS } from './limits.ts'
 import { MARS_SITES, elevation, earthPatches, loadMars, marsPatch, offset, similarity, type Patch } from './marsData.ts'
 
@@ -28,7 +28,7 @@ let protocolCount = 0
 export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void}) {
   const container=useRef<HTMLDivElement>(null), scene=useRef<HTMLDivElement>(null), map=useRef<MapLibre|null>(null)
   const choose=useRef<(lon:number,lat:number)=>void>(()=>{})
-  const [cameraInfo,setCameraInfo]=useState('')
+  const [cameraInfo,setCameraInfo]=useState('') // de Eze (c891b87)
   const [status,setStatus]=useState('Cargando topografía NASA MOLA…'),[error,setError]=useState('')
   const [pick,setPick]=useState<Patch|null>(null),[earth,setEarth]=useState<Patch[]>([])
   const [compare,setCompare]=useState<string|null>(null),[flat,setFlat]=useState(false)
@@ -114,7 +114,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
       m=new MapLibre({container:container.current,center:[0,10],zoom:1.95,maxZoom:10,canvasContextAttributes:{antialias:true},style:{version:8,sources:{},layers:[{id:'base',type:'background',paint:{'background-color':'#9d6046'}}]}})
       m.on('moveend',()=>{if(m){const c=m.getCenter();setCameraInfo(`${c.lat.toFixed(2)}°, ${c.lng.toFixed(2)}° · zoom ${m.getZoom().toFixed(1)}`)}})
       map.current=m
-      resize = new ResizeObserver(() => m?.resize())
+      resize=new ResizeObserver(()=>m?.resize())
       resize.observe(container.current)
       m.addControl(new NavigationControl(),'bottom-right')
       m.on('error',(event)=>{if(!disposed && !(event.error instanceof DOMException && event.error.name === 'AbortError'))setError('No se pudo cargar una capa del mapa. Revisá tu conexión y volvé a intentar.')})
@@ -134,7 +134,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         // Keep the ring continuous at ±180°.
         const ring=corners.map(([l,p])=>[wrapped+((l-wrapped+540)%360)-180,p]);ring.push(ring[0])
         ;(m.getSource('selection') as GeoJSONSource).setData({type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[ring]}})
-        m.flyTo({center:[wrapped,Math.max(-85,Math.min(85,lat))],zoom:7.5,pitch:flatRef.current?0:60,bearing:m.getBearing(),speed:1.4,padding:{top:60,bottom:60,left:40,right:40}})
+        m.flyTo({center:[wrapped,Math.max(-85,Math.min(85,lat))],zoom:7.5,pitch:flatRef.current?0:60,bearing:m.getBearing(),speed:1.4,padding:{top:60,bottom:60,left:40,right:window.innerWidth>=1100?400:40}})
       }
       choose.current=pickAt
       m.on('load',()=>{
@@ -185,54 +185,63 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
   },[])
   const matches=useMemo(()=>pick?earth.map(e=>({e,score:similarity(pick,e)})).sort((a,b)=>b.score-a.score):[],[pick,earth])
   const supplied=useMemo<CompareIndex|undefined>(()=>pick?{size_km:20,res_m:2000,n:10,items:[pick,...earth]}:undefined,[pick,earth])
-  const control='rounded-full bg-canvas px-4 py-2 text-sm text-ink shadow-float hover:bg-canvas-soft'
-  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-slate-950">
+  const control='flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm transition-colors'
+  const exportJson=()=>{if(!pick)return;const blob=new Blob([JSON.stringify({region:{lat:pick.lat,lon:pick.lon,size_km:20,res_m:2000},source:pick.source,metrics:Object.fromEntries(labels.map(([k])=>[k,pick[k]])),matches:matches.map(({e,score})=>({id:e.id,name:e.name,score}))},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='terralunar-marte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+  return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-space">
     <SpaceBackdrop/><div ref={container} className="relative h-full w-full" aria-label="Marte 3D, topografía NASA MOLA"/>
-    <div className="absolute left-4 top-4 flex gap-2">
-      <button className={control} onClick={()=>{setPick(null);map.current?.flyTo({center:[0,10],zoom:1.95,pitch:0,bearing:0,duration:1800,padding:0})}}>Ver planeta</button>
-      <button className={control} onClick={()=>{const next=!flat;setFlat(next);flatRef.current=next;map.current?.easeTo({pitch:next?0:60,duration:800})}}>{flat?'Vista 3D':'Vista cenital'}</button>
+    <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float">
+      <button className={`${control} text-canvas hover:bg-elevated`} onClick={()=>{setPick(null);map.current?.flyTo({center:[0,10],zoom:1.4,pitch:0,bearing:0,duration:1800,padding:0})}}>Ver planeta</button>
+      {pick&&<button className={`${control} text-canvas hover:bg-elevated`} onClick={()=>choose.current(pick.lon,pick.lat)}>Centrar selección</button>}
+      <button aria-pressed={flat} className={`${control} ${flat?'bg-canvas font-bold text-ink':'text-mute hover:text-canvas'}`} onClick={()=>{const next=!flat;setFlat(next);flatRef.current=next;map.current?.easeTo({pitch:next?0:60,duration:800})}}>Vista cenital</button>
     </div>
-    <output className="camera-info">{cameraInfo}</output>
-    {pick && <button className="center-mars" onClick={()=>choose.current(pick.lon,pick.lat)}>Centrar selección</button>}
-    {(status||error)&&<p role="status" className="absolute left-4 top-28 max-w-sm rounded-xl bg-canvas p-4 text-sm text-ink">{error||status}</p>}
-    <PanelOutlet><aside className="planet-panel">
-      <h2 className="text-2xl font-bold leading-8">{pick?'Punto elegido en Marte':'Elegí un lugar en Marte'}</h2>
-      <p className="text-base text-body">Elegí un punto para extraer 20 × 20 km y comparar su relieve con el catálogo terrestre.</p>
-      <div className="flex flex-wrap gap-2">{SITES.map(s=><button key={s.name} className="rounded-full bg-canvas-soft px-4 py-2 text-sm font-medium hover:bg-pressed" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
-      <form className="flex gap-2" onSubmit={e=>{e.preventDefault();choose.current(Number(coordinates.lon),Number(coordinates.lat))}}>
-        <input aria-label="Longitud marciana" className="w-28 rounded-lg bg-canvas-soft px-3 py-2" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/>
-        <input aria-label="Latitud marciana" className="w-28 rounded-lg bg-canvas-soft px-3 py-2" type="number" min="-90" max="90" step="any" required value={coordinates.lat} onChange={e=>setCoordinates({...coordinates,lat:e.target.value})}/>
-        <button className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-canvas hover:bg-elevated">Ir</button>
+    {cameraInfo&&<output className="metric pointer-events-none absolute bottom-2 left-6 z-[1] hidden text-[11px] text-mute md:block">{cameraInfo}</output>}
+    {(status||error)&&<p role="status" className="chip-dark absolute bottom-6 left-6 z-[1] max-w-sm font-mono text-xs font-normal"><span className="size-2 shrink-0 rounded-full bg-mars" aria-hidden="true"/>{error||status}</p>}
+    <aside className="absolute inset-x-2 bottom-2 z-10 flex max-h-[60%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card md:inset-x-auto md:bottom-6 md:right-6 md:top-6 md:max-h-none md:w-[420px]">
+      <header className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <span className="label-mono text-body">Cuerpo seleccionado · exploratorio</span>
+          <span className="rounded-full bg-mars/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold text-mars">MOLA</span>
+        </div>
+        <h2 className="text-2xl leading-8 font-bold tracking-tight">{pick?'Punto elegido en Marte':'Elegí un lugar en Marte'}</h2>
+        <p className="text-sm leading-5 text-body">Elegí un punto para extraer <span className="metric">20 × 20</span> km y comparar su relieve con el catálogo terrestre.</p>
+      </header>
+      <div className="flex flex-wrap gap-1.5">{SITES.map(s=><button key={s.name} className="h-7 rounded-full bg-canvas-soft px-3 font-mono text-xs text-body transition-colors hover:bg-ink hover:text-canvas" onClick={()=>choose.current(s.lon,s.lat)}>{s.name}</button>)}</div>
+      <form className="flex items-center gap-2 rounded-2xl bg-canvas-softer p-3" onSubmit={e=>{e.preventDefault();choose.current(Number(coordinates.lon),Number(coordinates.lat))}}>
+        <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-body">Longitud</span><input aria-label="Longitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" step="any" required value={coordinates.lon} onChange={e=>setCoordinates({...coordinates,lon:e.target.value})}/></label>
+        <label className="flex min-w-0 flex-1 flex-col rounded-xl bg-canvas px-3 py-1.5"><span className="label-mono text-[10px] text-body">Latitud</span><input aria-label="Latitud marciana" className="metric w-full bg-transparent text-[13px] font-bold outline-none" type="number" min="-90" max="90" step="any" required value={coordinates.lat} onChange={e=>setCoordinates({...coordinates,lat:e.target.value})}/></label>
+        <button className="btn-primary h-11 px-5">Ir</button>
       </form>
-      <label className="block text-sm font-medium">Capa de superficie
-        <select value={imagery} className="mt-2 w-full rounded-lg bg-canvas-soft px-4 py-2 text-sm" onChange={e=>{const v=e.target.value as typeof imagery;imageryRef.current=v;setImagery(v);setError('');const m=map.current;if(m?.getLayer('viking')&&m.getLayer('themis')){m.setLayoutProperty(v==='viking'?'themis':'viking','visibility','none');m.setLayoutProperty(v,'visibility','visible');for(const id of ['viking','themis'])m.setLayoutProperty(`${id}-preview`,'visibility',id===v?'visible':'none')}}}>
+      <label className="flex flex-col gap-1.5"><span className="label-mono text-body">Capa de superficie</span>
+        <select value={imagery} className="h-10 w-full rounded-full border border-pressed bg-canvas-softer px-4 text-sm" onChange={e=>{const v=e.target.value as typeof imagery;imageryRef.current=v;setImagery(v);setError('');const m=map.current;if(m?.getLayer('viking')&&m.getLayer('themis')){m.setLayoutProperty(v==='viking'?'themis':'viking','visibility','none');m.setLayoutProperty(v,'visibility','visible');for(const id of ['viking','themis'])m.setLayoutProperty(`${id}-preview`,'visibility',id===v?'visible':'none')}}}>
           <option value="viking">Viking · mosaico en color</option><option value="themis">THEMIS · infrarrojo diurno</option>
         </select>
       </label>
-      <label className="block text-sm font-medium">Exageración visual ×{exaggeration}<input className="mt-2 w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/></label>
+      <label className="flex flex-col gap-1.5">
+        <span className="flex justify-between"><span className="label-mono text-body">Exageración visual</span><span className="metric text-sm font-bold">{exaggeration.toLocaleString('es-AR')}×</span></span>
+        <input className="accent-ink w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/>
+        <span className="flex justify-between text-[10px] text-body"><span>1× (real)</span><span>3×</span></span>
+      </label>
       {pick&&<>
-        <p className="text-sm text-body">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · ventana de 20 × 20 km</p>
-        {Math.abs(pick.lat)>85&&<p className="my-2 text-xs">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
-        <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="rounded-xl bg-canvas-soft p-3"><dt className="text-xs text-body">{label}</dt><dd className="text-xl font-bold tabular-nums">{pick[k].toFixed(1)} {unit}</dd></div>)}</dl>
-        <section>
-          <h3 className="mb-3 text-xl font-bold leading-7">Lugares parecidos en la Tierra</h3>
-          <ol className="flex flex-col gap-1">{matches.slice(0,6).map(({e,score})=><li key={e.id} className="rounded-xl px-3 py-2 hover:bg-canvas-soft">
-            <div className="flex items-center gap-3"><span className="min-w-0 flex-1 truncate font-medium">{e.name}</span><span className="text-lg font-bold tabular-nums">{Math.round(score*100)}</span></div>
-            <div className="mt-2 flex gap-2"><button className="rounded-full bg-ink px-3 py-1 text-xs font-medium text-canvas" onClick={()=>setCompare(e.id)}>Comparar relieve 3D</button><button className="rounded-full bg-canvas-soft px-3 py-1 text-xs font-medium" onClick={()=>onPickEarth(e.id)}>Ver en la Tierra</button></div>
+        <p className="metric text-xs text-body">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · ventana de 20 × 20 km</p>
+        {Math.abs(pick.lat)>85&&<p className="text-xs text-body">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
+        <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4"><dt className="text-[13px] text-body">{label}</dt><dd className="metric text-[22px] leading-7 font-semibold">{pick[k].toLocaleString('es-AR',{maximumFractionDigits:1,minimumFractionDigits:1})} {unit}</dd><span className="label-mono text-[10px] text-body">MOLA MEGDR</span></div>)}</dl>
+        <section className="flex flex-col gap-2">
+          <h3 className="flex items-center justify-between gap-2"><span className="text-lg leading-7 font-bold tracking-tight">Lugares parecidos en la Tierra</span><span className="label-mono text-[10px] text-body">relieve /100</span></h3>
+          <ol className="flex flex-col gap-2">{matches.slice(0,6).map(({e,score},i)=><li key={e.id} className="flex flex-col gap-2.5 rounded-2xl bg-canvas-softer p-4 transition-colors hover:bg-canvas-soft">
+            <div className="flex items-center gap-3"><span className="min-w-0 flex-1 truncate font-bold">{e.name}</span><span className={`metric rounded-full px-2.5 py-1 text-xs font-bold ${i===0?'bg-ink text-canvas':'bg-pressed text-ink'}`}>{Math.round(score*100)}</span></div>
+            <div className="flex flex-wrap gap-2"><button className="btn-primary h-8 px-4 text-xs" onClick={()=>setCompare(e.id)}>Comparar relieve 3D</button><button className="btn-secondary h-8 px-4 text-xs" onClick={()=>onPickEarth(e.id)}>Ver en la Tierra</button></div>
           </li>)}</ol>
         </section>
-        <button className="self-start text-sm font-medium underline" onClick={()=>{const blob=new Blob([JSON.stringify({region:{lat:pick.lat,lon:pick.lon,size_km:20,res_m:2000},source:pick.source,metrics:Object.fromEntries(labels.map(([k])=>[k,pick[k]])),matches:matches.map(({e,score})=>({id:e.id,name:e.name,score}))},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='terralunar-marte.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}}>Exportar comparación JSON</button>
+        <button className="self-start text-sm font-medium underline underline-offset-2" onClick={exportJson}>Exportar comparación JSON</button>
       </>}
-      <details className="method-details limits-card">
-        <summary>Límites de la analogía</summary>
-        <ul className="flex flex-col gap-2 text-sm text-pressed">{MARS_LIMITS.map(([title,text])=><li key={title}><strong className="font-medium text-canvas">{title}:</strong> {text}</li>)}</ul>
+      <LimitsCard items={MARS_LIMITS} title="Límites de la analogía (Marte)"/>
+      <details className="group flex flex-col gap-2 border-t border-pressed pt-3 font-mono text-[11px] leading-relaxed text-body">
+        <summary className="label-mono cursor-pointer list-none text-ink">Fuentes y método <span className="text-body group-open:hidden">+</span><span className="hidden text-body group-open:inline">−</span></summary>
+        <p>Las imágenes Viking o THEMIS son capas visuales de NASA Mars Trek. La topografía y las métricas provienen de MOLA. Muestreo nominal 1,85 km; hay interpolación y huecos de observación en el producto original. Comparación regional a 2 km por celda: no resuelve rocas, suelo ni transitabilidad de rovers. Ambas maquetas usan la misma escala.</p>
+        <p>Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
+        <a className="underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA ↗</a>
       </details>
-      <details className="method-details"><summary>Fuentes y método</summary>
-      <p className="text-xs leading-5 text-body">Las imágenes Viking o THEMIS son capas visuales de NASA Mars Trek. La topografía y las métricas provienen de MOLA. Muestreo nominal 1,85 km; hay interpolación y huecos de observación en el producto original. Comparación regional a 2 km por celda: no resuelve rocas, suelo ni transitabilidad de rovers. Ambas maquetas usan la misma escala.</p>
-      <p className="text-xs leading-5 text-body">Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
-      <a className="block text-xs underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA</a>
-      </details>
-    </aside></PanelOutlet>
+    </aside>
     {compare&&supplied&&<Compare3D zoneId={compare} supplied={supplied} onClose={()=>setCompare(null)}/>}
   </div>
 }

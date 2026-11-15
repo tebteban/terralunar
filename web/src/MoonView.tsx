@@ -193,11 +193,11 @@ export default function MoonView({ onPick, onUnavailable, mars = false }: { onPi
     }).catch(() => { clearTimeout(timeout); if (!cancelled) { setStatus('Abriendo superficie lunar local…'); unavailableRef.current?.() } })
     return () => { cancelled = true; clearTimeout(timeout); resetCamera.current = () => {}; cancelAnimationFrame(zoomFrame); removeWheel(); handler?.destroy(); if (viewer && !viewer.isDestroyed()) viewer.destroy() }
   }, [token, mars])
-  return <div className="relative h-full w-full bg-slate-950">
+  return <div className="relative h-full w-full bg-space">
     <div ref={target} className="h-full w-full" aria-label="Visor planetario tridimensional" />
-    {status && <div role="status" className="absolute left-4 top-40 max-w-md rounded-2xl bg-canvas p-4 text-sm text-ink shadow-card">{status}</div>}
-    <button type="button" onClick={() => resetCamera.current()} className="absolute left-4 top-4 rounded-full bg-canvas px-4 py-2 text-sm font-medium text-ink shadow-float hover:bg-canvas-soft">Ver planeta</button>
-    <div className="pointer-events-none absolute left-4 top-28 rounded-full bg-canvas px-4 py-2 text-xs font-medium text-ink shadow-float">{mars ? 'Rueda para acercar · doble clic para volar a un punto' : 'Rueda para acercar · doble clic para volar · clic en el polo sur para analizar'}</div>
-    <div className="absolute bottom-5 left-4 rounded-full bg-canvas px-3 py-1 text-xs text-body shadow-float">{mars ? 'NASA MOLA / ESA HRSC · Viking · Cesium Mars' : 'NASA LRO / USGS · Cesium Moon'}</div>
+    {status && <div role="status" className="absolute left-6 top-56 max-w-md rounded-2xl border border-pressed bg-canvas p-4 text-sm text-ink shadow-card">{status}</div>}
+    <button type="button" onClick={() => resetCamera.current()} className="chip-dark absolute left-4 top-4">Ver planeta</button>
+    <div className="chip-dark pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs font-normal">{mars ? 'Rueda para acercar · doble clic para volar a un punto' : 'Rueda para acercar · doble clic para volar · clic en el polo sur para analizar'}</div>
+    <div className="label-mono absolute bottom-16 left-1/2 -translate-x-1/2 text-[10px] text-mute">{mars ? 'NASA MOLA / ESA HRSC · Viking · Cesium Mars' : 'NASA LRO / USGS · Cesium Moon'}</div>
   </div>
 }

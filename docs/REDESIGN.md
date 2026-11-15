@@ -14,6 +14,8 @@ Validación: build y TypeScript; lint; pruebas de cálculo; Chrome automatizado 
 
 ## Historial: primera propuesta reemplazada
 
+> **Nota (D-016):** este rediseño se mezcló con `develop`. Se conservó el sistema de `docs/DESIGN.md` y se integraron sus funciones (método, pantalla completa, controles de cámara, resumen de cuerpo). Ver `docs/decisiones.md`, D-016.
+
 # TerraLunar — interfaz científica
 
 Implementación sobre la aplicación existente, 2026-11-14. La especificación del usuario de dashboard científico prevalece sobre la guía anterior Uber y sobre los componentes de marketing de Linear. No se sustituyen mapas ni datos por imágenes estáticas.

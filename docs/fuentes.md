@@ -101,3 +101,12 @@ Desde la red de la sede, algunos sitios dan error de certificado SSL (`spaceapps
 2. Info 2: `earthaccess.login()` con su cuenta Earthdata y bajar **un mes** de MOD11C3 para probar (Fase 0).
 3. Mientras tanto, NASADEM desde Planetary Computer no necesita login: se puede empezar ya con pendiente/rugosidad de 2–3 zonas.
 4. Bajar a mano la capa USGS y hacer la división fit/test.
+
+## Diseño y tipografías (no son datos)
+
+| Recurso | Uso | Licencia |
+|---|---|---|
+| Sistema "TerraLunar Science Console" (equipo) | `docs/DESIGN.md` (D-014) | propio |
+| [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — análisis de estilo aeroespacial | Sistema anterior, D-012 (reemplazado) | MIT |
+| [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) (Google Fonts) | Letra de toda la app (D-017; antes Inter + JetBrains Mono) | SIL Open Font License |
+| NASA SVS CGI Moon Kit (`data/moon/globe_color.jpg`) | Luna en puntos de la portada (`web/src/HalftoneMoon.tsx`) | Dominio público NASA |
