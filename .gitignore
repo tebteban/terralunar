@@ -9,3 +9,9 @@ web/playwright-report/
 pipeline/.deps/
 
 pipeline/.runtime/
+
+# Claude & Impeccable local artifacts
+.impeccable/
+.claude/agents/
+.claude/skills/
+

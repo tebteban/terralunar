@@ -8,7 +8,7 @@ import MethodDialog from './MethodDialog.tsx'
 import CustomSearch, { type Selection } from './CustomSearch.tsx'
 import Landing, { type LandingChoice } from './Landing.tsx'
 import MapView from './MapView.tsx'
-import { presetWeights, rank, type Preset, type Profile, type Weights, type Zone } from './score.ts'
+import { presetWeights, rank, SHORT, target, type Preset, type Profile, type Weights, type Zone } from './score.ts'
 
 // Los visores pesados (three.js, Recharts, geotiff) se bajan solo cuando se abren: la portada y el mapa cargan antes.
 const ZoneCard = lazy(() => import('./ZoneCard.tsx'))
@@ -81,6 +81,8 @@ export default function App() {
   const [notice, setNotice] = useState('')
   const [panel, setPanel] = useState<Panel>('mapa')
   const [attempt, setAttempt] = useState(0)
+  const [filter, setFilter] = useState<'todos' | 'conocidos' | 'nuevos' | 'argentina'>('todos')
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     Promise.all([getJSON<Zone[]>('/zones.json'), getJSON<Record<string, Profile>>('/profiles.json')])
@@ -116,6 +118,14 @@ export default function App() {
   const isCustom = custom !== null || (profile ? !sameWeights(weights, presetWeights(profile, preset)) : false)
   const selectedIndex = ranked.findIndex((r) => r.zone.id === selectedId)
   const topScore = ranked[0]?.score || 1
+  const maxWeight = Math.max(0, ...Object.values(weights))
+  const filtered = ranked.map((r, i) => ({ ...r, i })).filter(({ zone }) =>
+    filter === 'todos' || (filter === 'conocidos' ? zone.known : filter === 'nuevos' ? !zone.known : zone.country === 'Argentina'))
+  // shortcut: cuenta todos los conocidos del mock; con datos reales usar solo los de split "test"
+  const validation = (() => {
+    const top = Math.max(1, Math.ceil(ranked.length * 0.1))
+    return { top, hit: ranked.slice(0, top).filter((r) => r.zone.known).length, known: ranked.filter((r) => r.zone.known).length }
+  })()
 
   const choosePreset = (p: Preset) => {
     setPreset(p)
@@ -140,6 +150,7 @@ export default function App() {
     setSelectedId(null)
     setComparing(false)
     if (c === 'personalizado') {setScientificOpen(true);return go('explorar')}
+    if (c === 'ejemplo') { go('explorar', 'tierra'); setSelectedId('mcmurdo-dry-valleys'); setComparing(true); return } // abre el comparador con Mons Mouton
     if (c === 'luna') choosePreset(preset)
     go('explorar', c === 'marte' ? 'marte' : 'luna')
   }
@@ -235,28 +246,41 @@ export default function App() {
         ) : (
           <>
             <div className={section('ajustes')}>
-        <label className="flex flex-col gap-2">
-          <span className="label-mono text-mute">Destino de misión</span>
-          <select className="h-11 rounded-full border border-hairline bg-white/5 px-4 text-sm text-canvas focus:outline-2 focus:outline-canvas">
-            <option value="luna" className="bg-rail">{profile.name}</option>
-            <option disabled className="bg-rail">Marte: solo relieve, en la pestaña Marte</option>
-          </select>
-        </label>
+        <section className="flex flex-col gap-3 rounded-2xl border border-hairline bg-white/[0.04] p-4" aria-label="Objetivo de la comparación">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <span className="label-mono text-mute">Objetivo</span>
+              <p className="mt-1 font-semibold leading-5">Luna · polo sur</p>
+              <p className="text-[13px] text-mute">Candidatos Artemis III</p>
+            </div>
+            <button type="button" onClick={() => go('explorar', 'marte')} className="shrink-0 text-[13px] font-medium text-canvas underline underline-offset-2">Ver Marte →</button>
+          </div>
+          <div>
+            <span className="label-mono text-[10px] text-mute">Lo que pide la Luna</span>
+            <ul className="mt-1.5 flex flex-wrap gap-1.5">
+              {visibleDims.map(([k, d]) => (
+                <li key={k} title={`${d.name} · ${d.dataset}`} className="rounded-full bg-white/[0.07] px-2 py-0.5 font-mono text-[11px] text-pressed">
+                  {SHORT[k] ?? d.name} <span className="text-canvas">{target(d)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
         <fieldset className="flex flex-col gap-2">
           <legend className="label-mono mb-2 text-mute">Tipo de prueba · simulación</legend>
-          <div className="flex flex-wrap gap-1.5 rounded-[22px] bg-white/5 p-1">
+          <div className="grid grid-cols-3 gap-1 rounded-full bg-white/5 p-1">
             {PRESETS.map((p) => (
               <button
                 key={p.id}
                 type="button"
                 aria-pressed={preset === p.id && !isCustom}
                 onClick={() => choosePreset(p.id)}
-                className={`min-h-10 rounded-full px-3.5 text-sm transition-colors ${
+                className={`min-h-9 rounded-full px-2 text-[13px] transition-colors ${
                   preset === p.id && !isCustom ? 'bg-canvas font-semibold text-ink' : 'text-mute hover:text-canvas'
                 }`}
               >
-                {p.label}
+                {{ movilidad: 'Movilidad', excavacion: 'Excavación', habitat: 'Hábitat' }[p.id]}
               </button>
             ))}
           </div>
@@ -281,22 +305,35 @@ export default function App() {
         <section className="flex flex-col gap-3">
           <h2 className="flex flex-col gap-1">
             <span className="label-mono text-mute">Pesos de similitud</span>
-            <span className="text-[13px] leading-[18px] text-mute/80">El ranking se recalcula al mover cada control.</span>
+            <span className="text-[13px] leading-[18px] text-mute/80">Tocá los puntos para darle más o menos importancia a cada variable.</span>
           </h2>
-          {visibleDims.map(([k, d]) => (
-            <label key={k} className="flex flex-col gap-1.5">
-              <span className="flex items-baseline justify-between gap-2 text-[13px]">
-                <span className="text-pressed" title={d.dataset}>{d.name} <span className="hud text-mute">{d.unit}</span></span>
-                <span className="metric text-[13px] font-semibold">
-                  {totalWeight > 0 ? Math.round(((weights[k] ?? 0) / totalWeight) * 100) : 0}%
-                </span>
-              </span>
-              <input
-                type="range" min={0} max={1} step={0.05} value={weights[k] ?? 0} aria-label={`Peso de ${d.name}`}
-                onChange={(e) => setWeights({ ...weights, [k]: Number(e.target.value) })}
-              />
-            </label>
-          ))}
+          {/* reparto del 100 %: un segmento por variable, mismo tono que su fila */}
+          <div className="flex h-2.5 w-full gap-px overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+            {visibleDims.map(([k], i) => (weights[k] ?? 0) > 0 && (
+              <span key={k} title={SHORT[k]} style={{ flexGrow: weights[k], opacity: 1 - i * 0.11 }} className="h-full bg-canvas" />
+            ))}
+          </div>
+          <ul className="flex flex-col gap-1">
+            {visibleDims.map(([k, d], i) => {
+              // 5 niveles relativos al peso más alto: nada · baja · media · alta · máxima
+              const level = maxWeight > 0 ? Math.round(((weights[k] ?? 0) / maxWeight) * 4) : 0
+              return (
+                <li key={k} className="flex items-center gap-2.5">
+                  <span className="size-2 shrink-0 rounded-full bg-canvas" style={{ opacity: 1 - i * 0.11 }} aria-hidden="true" />
+                  <span className="min-w-0 flex-1 truncate text-[13px] text-pressed" title={`${d.name} (${d.unit}) · ${d.dataset}`}>{d.name}</span>
+                  <span className="flex gap-1" role="radiogroup" aria-label={`Importancia de ${d.name}`}>
+                    {[0, 1, 2, 3, 4].map((n) => (
+                      <button key={n} type="button" role="radio" aria-checked={level === n}
+                        aria-label={['Nada', 'Baja', 'Media', 'Alta', 'Máxima'][n]}
+                        onClick={() => setWeights({ ...weights, [k]: (n / 4) * (maxWeight || 1) })}
+                        className={`size-3.5 rounded-full border transition-colors ${n === 0 ? 'border-dashed' : ''} ${n > 0 && n <= level ? 'border-canvas bg-canvas' : 'border-white/30 hover:border-canvas'}`} />
+                    ))}
+                  </span>
+                  <span className="metric w-9 text-right text-[12px] font-semibold">{totalWeight > 0 ? Math.round(((weights[k] ?? 0) / totalWeight) * 100) : 0}%</span>
+                </li>
+              )
+            })}
+          </ul>
           {totalWeight === 0 && (
             <p role="alert" className="rounded-2xl border border-canvas p-3 text-sm font-medium text-canvas">Todos los pesos están en 0: el ranking no tiene sentido. Subí al menos uno.</p>
           )}
@@ -307,10 +344,18 @@ export default function App() {
         <section className="flex flex-col gap-2">
           <h2 className="flex items-center justify-between">
             <span className="label-mono text-mute">Ranking de sitios terrestres</span>
-            <span className="metric text-[13px] font-medium text-pressed">{ranked.length} sitios</span>
+            <span className="metric text-[13px] font-medium text-pressed">{filtered.length} sitios</span>
           </h2>
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filtrar ranking">
+            {(['todos', 'conocidos', 'nuevos', 'argentina'] as const).map((f) => (
+              <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}
+                className={`rounded-full px-3 py-1 text-[12px] ${filter === f ? 'bg-canvas font-semibold text-ink' : 'bg-white/[0.06] text-mute hover:text-canvas'}`}>
+                {{ todos: 'Todos', conocidos: 'Conocidos', nuevos: 'Nuevos', argentina: 'Argentina' }[f]}
+              </button>
+            ))}
+          </div>
           <ol className="flex flex-col gap-1">
-            {ranked.map(({ zone, score }, i) => {
+            {(showAll ? filtered : filtered.slice(0, 5)).map(({ zone, score, i }) => {
               const on = zone.id === selectedId
               return (
                 <li key={zone.id}>
@@ -341,11 +386,21 @@ export default function App() {
               )
             })}
           </ol>
+          {filtered.length === 0 && <p className="text-[13px] text-mute">Ningún sitio cumple este filtro.</p>}
+          {filtered.length > 5 && (
+            <button type="button" onClick={() => setShowAll(!showAll)} className="btn-ghost h-9 w-full text-[13px]">
+              {showAll ? 'Ver solo los 5 primeros' : `Ver los ${filtered.length}`}
+            </button>
+          )}
         </section>
         </div>
         <div className="flex flex-col gap-2 rounded-2xl border border-hairline bg-white/[0.03] p-4 text-[13px] leading-[18px] text-mute">
-          <strong className="text-canvas">Catálogo en preparación</strong>
-          <p>Estos pesos modifican solo el ranking terrestre de demostración. Luna y Marte usan comparaciones de relieve independientes.</p>
+          <span className="flex items-center justify-between gap-2">
+            <strong className="text-canvas">Validación</strong>
+            <span className="rounded-full bg-white/10 px-2 font-mono text-[10px] text-pressed">demostración</span>
+          </span>
+          <p><span className="metric text-[20px] font-semibold text-canvas">{validation.hit} de {validation.known}</span> análogos conocidos quedan en el 10 % superior ({validation.top} sitios).</p>
+          <p>Con datos reales se mide solo con los sitios reservados para prueba. Luna y Marte usan comparaciones de relieve independientes.</p>
         </div>
         <button type="button" onClick={() => setMethodOpen(true)} className="btn-ghost h-10 w-full">Fuentes y método <ConsoleIcon name="external" /></button>
         </>)}

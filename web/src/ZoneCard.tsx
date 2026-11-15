@@ -4,7 +4,7 @@ import ConsoleIcon from './ConsoleIcon.tsx'
 import { coord, num } from './fmt.ts'
 import { LIMITS } from './limits.ts'
 import LimitsCard from './LimitsCard.tsx'
-import { target, type Profile, type Ranked, type Weights } from './score.ts'
+import { target, type Profile, type Ranked, type Weights, SHORT } from './score.ts'
 
 
 // Capas de Worldview equivalentes a nuestras dimensiones. La 1ª queda arriba; "(hidden)" = cargada pero apagada.
@@ -28,7 +28,6 @@ function worldviewUrl(ring: number[][]) {
   return `https://worldview.earthdata.nasa.gov/?v=${v.map((n) => n.toFixed(3)).join(',')}&l=${WORLDVIEW_LAYERS}&t=${fecha}`
 }
 
-const SHORT: Record<string, string> = { lst: 'TEMP', ndvi: 'VEG', nieve: 'HIELO', lluvia: 'ARIDEZ', cobertura: 'SUELO', pendiente: 'PEND', rugosidad: 'RUG' }
 
 interface Props {
   ranked: Ranked

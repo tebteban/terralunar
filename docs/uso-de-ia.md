@@ -62,3 +62,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-15 | OpenAI Codex | Auditoría de navegación Luna/Marte, destinos, perfiles de ensayo, huellas de recortes terrestres y pruebas de regresión | — |
 
 | 2026-11-15 | OpenAI Codex | Revisión de merge c396da6 en develop, SurfacePanel compartido, Luna local sin token, formato y caché del comparador |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel lateral de Tierra rediseñado: tarjeta Objetivo con lo que pide la Luna, pesos con barra apilada y 5 niveles, ranking top 5 con filtros (Todos/Conocidos/Nuevos/Argentina) y tarjeta de Validación (`web/src/App.tsx`, `SHORT` en `score.ts`) | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Portada: íconos de Luna y Marte renderizados con datos reales (`pipeline/06_landing_icons.py`: LRO LROC y MOLA), globo de líneas, secciones Cómo funciona, cifras (calculadas de los datos), ejemplo Mons Mouton ↔ McMurdo con botón al comparador y pie con el equipo | — |
