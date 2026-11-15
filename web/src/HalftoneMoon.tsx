@@ -1,3 +1,4 @@
+import { getLang } from './i18n.ts'
 import { useEffect, useRef } from 'react'
 
 // Luna en trama de puntos (halftone) para la portada.
@@ -151,7 +152,9 @@ export default function HalftoneMoon({ className = '', annotate = true }: { clas
         const visibleLeft = Math.max(0, -rect.left + 16)
         const dir = ax + 230 < visibleRight || ax - 230 < visibleLeft ? 1 : -1
         const ex = ax + dir * 40, ey = ay + 64
-        const l1 = 'POLO SUR · 82°–90° S', l2 = `${sites.length} SITIOS DE REFERENCIA`
+        // Texto dibujado en canvas: la capa de traducción del DOM no lo ve, se traduce acá (D-031)
+        const en = getLang() === 'en'
+        const l1 = en ? 'SOUTH POLE · 82°–90° S' : 'POLO SUR · 82°–90° S', l2 = `${sites.length} ${en ? 'REFERENCE SITES' : 'SITIOS DE REFERENCIA'}`
         ctx.font = '600 12px "Barlow", Arial, sans-serif'
         if ('letterSpacing' in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '1px'
         const tw = Math.max(ctx.measureText(l1).width, ctx.measureText(l2).width) + 20
