@@ -42,8 +42,9 @@ export default function App(){
  const [lastEarthSignal,setLastEarthSignal]=useState(earthSignal)
  if(earthSignal!==lastEarthSignal){setLastEarthSignal(earthSignal);if(run||selectedId)setEarthPanelOpen(true)}
  const comparison=useMemo(()=>run&&row?comparisonFor(run,row):null,[run,row])
- const mapped=useMemo(()=>run?.rows.map(r=>({zone:r.zone,score:r.score/100}))??[],[run])
- const visible=run?.rows.filter(r=>filter==='all'||r.origin===filter)??[]
+ const visible=useMemo(()=>run?.rows.filter(r=>filter==='all'||r.origin===filter)??[],[run,filter])
+ // el mapa muestra el mismo conjunto filtrado que el ranking
+ const mapped=useMemo(()=>visible.map(r=>({zone:r.zone,score:r.score/100})),[visible])
  function visit(b:Body,custom=personalized){setBody(b);setVisited(v=>v.includes(b)?v:[...v,b]);setStarted(true);setPanel('mapa');setComparing(false);history.pushState(null,'',b==='tierra'?(custom?'#personalizado':'#explorar'):'#'+b)}
  useEffect(()=>{const pop=()=>{const r=route();setStarted(r.started);if(r.body==='tierra')setPersonalized(location.hash==='#personalizado');setBody(r.body);setVisited(v=>v.includes(r.body)?v:[...v,r.body]);setComparing(false)};addEventListener('popstate',pop);return()=>removeEventListener('popstate',pop)},[])
  function analyze(t:SearchTarget){setDraftTarget(t);setScientificOpen(true)}
@@ -95,7 +96,7 @@ export default function App(){
     {body==='tierra'&&<SurfacePanel label="Ficha y candidatos terrestres" collapsible open={earthPanelOpen} onOpenChange={setEarthPanelOpen}>{run&&row?<Suspense fallback={<p>Cargando ficha…</p>}><EvidenceCard run={run} row={row} onCompare={()=>setComparing(true)} onClose={()=>setSelectedId(null)}/></Suspense>:<><h2 className="font-bold">Límites de la analogía</h2><p className="text-sm">El relieve regional no determina composición, temperatura, recursos ni seguridad operativa.</p></>}{ranking}</SurfacePanel>}
    </main>
   </div>
-  {scientificOpen&&<ScientificSearch initialRun={draftTarget?null:run} selectedTarget={draftTarget??run?.selectedTarget} onRun={accept} onClose={()=>{setScientificOpen(false);setDraftTarget(null)}} onSelect={select} onShowMap={()=>visit('tierra')}/>}
+  {scientificOpen&&<ScientificSearch initialRun={draftTarget?null:run} selectedTarget={draftTarget??run?.selectedTarget} onRun={accept} onClose={()=>{setScientificOpen(false);setDraftTarget(null)}} onSelect={select} onShowMap={o=>{setFilter(o);visit('tierra')}}/>}
   {comparing&&comparison&&row&&run&&<Suspense fallback={<Loading/>}><Compare3D key={run.id+row.id} supplied={comparison} analysisScore={row.score} analysisId={run.id} zoneId={row.id} onClose={()=>setComparing(false)}/></Suspense>}
   {exampleView}<MethodDialog open={methodOpen} onClose={()=>setMethodOpen(false)}/>
   {notice&&<button onClick={()=>setNotice('')} className="chip-dark fixed bottom-4 left-4 z-50">{notice} · Cerrar</button>}
