@@ -8,15 +8,20 @@ export function watchConsole(page: Page) {
   page.on('response', (r) => { if (r.status() >= 400) errors.push(`[http ${r.status()}] ${r.url()}`) })
   return {
     errors,
-    // Avisos de terceros que no controlamos (MapLibre con proyección globo) se toleran; todo lo nuestro debe estar limpio.
-    expectClean: () => expect(errors.filter((e) => !/calculateFogMatrix|Deprecated API for given entry type/.test(e))).toEqual([]),
+    // Avisos de terceros que no controlamos (MapLibre con proyección globo, driver GL del headless) se toleran; todo lo nuestro debe estar limpio.
+    expectClean: () => expect(errors.filter((e) => !/calculateFogMatrix|Deprecated API for given entry type|GL Driver Message/.test(e))).toEqual([]),
   }
 }
 
 export async function gotoExplore(page: Page) {
   await page.goto('/#explorar')
-  await expect(page.getByRole('heading', { name: 'TerraLunar' })).toBeVisible()
-  await expect(page.getByRole('button', { name: /#01/ })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: 'Cuerpo visualizado' })).toBeVisible()
+}
+
+// En pantallas angostas el ranking vive en la pestaña "Ranking"; en desktop siempre está a la vista.
+export async function openRanking(page: Page) {
+  const tab = page.getByRole('navigation', { name: 'Paneles' }).getByRole('button', { name: /^Ranking/ })
+  if (await tab.isVisible()) await tab.click()
 }
 
 export async function noHorizontalScroll(page: Page) {

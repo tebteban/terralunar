@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { gotoExplore, watchConsole } from './helpers'
+import { gotoExplore, openRanking, watchConsole } from './helpers'
 
 test.describe('Explorar: ranking, pesos y ficha', () => {
   test('ranking de 20 zonas con puntajes 0–100 y pesos que suman ~100 %', async ({ page }) => {
@@ -36,16 +36,18 @@ test.describe('Explorar: ranking, pesos y ficha', () => {
   })
 
   test('la ficha muestra datos con formato, límites de la analogía y enlace a Worldview', async ({ page }) => {
+    test.slow() // terreno 3D en software GL + Recharts: con dos workers puede pasar de 60 s
     const con = watchConsole(page)
     await gotoExplore(page)
+    await openRanking(page)
     await page.getByRole('button', { name: /#01/ }).click()
     const ficha = page.getByRole('article')
     await expect(ficha).toBeVisible()
     await expect(ficha.getByText(/^#01 · .+ · [\d.]+ km²$/)).toBeVisible()
-    await expect(ficha.getByText(/^-?\d+\.\d{4}°, -?\d+\.\d{4}°/)).toBeVisible() // coordenadas con 4 decimales
+    await expect(ficha.getByText(/^\d+,\d{4}° [NS] · \d+,\d{4}° [EO]/)).toBeVisible() // coordenadas es-AR con hemisferio
     await expect(ficha.getByText('/ 100')).toBeVisible()
     await expect(ficha.getByText('Firma de la zona')).toBeVisible()
-    await expect(ficha.getByText(/\+\d+\.\d ptos/)).toHaveCount(7)
+    await expect(ficha.getByText(/\+\d+,\d ptos/)).toHaveCount(7)
     const limites = ficha.getByRole('heading', { name: 'Límites de la analogía' })
     await expect(limites).toBeVisible()
     for (const l of ['Gravedad', 'Vacío', 'Radiación', 'Comunicaciones']) await expect(ficha.getByText(`${l}:`)).toBeVisible()

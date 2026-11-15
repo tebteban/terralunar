@@ -322,7 +322,7 @@ export default function App() {
             </button>
           ))}
           <span className="h-5 w-px shrink-0 bg-hairline" aria-hidden="true" />
-          <button type="button" disabled={!selectedId} aria-pressed={comparing} onClick={() => setComparing(true)}
+          <button type="button" disabled={!selectedId} aria-pressed={comparing} onClick={() => setComparing(true)} aria-label="Comparador 3D"
             title={selectedId ? 'Comparar el relieve del candidato elegido' : 'Elegí un lugar del ranking para comparar'}
             className="min-h-10 shrink-0 rounded-full px-3.5 text-sm whitespace-nowrap text-mute transition-colors hover:text-canvas disabled:opacity-40 disabled:hover:text-mute aria-pressed:bg-canvas aria-pressed:font-bold aria-pressed:text-ink sm:px-4">
             <span className="hidden xl:inline">Comparador </span>3D

@@ -11,7 +11,7 @@ test.describe('Luna y Marte', () => {
     const dl = page.locator('dl').filter({ hasText: 'Pendiente mediana' })
     await expect(dl.getByRole('definition')).toHaveCount(4)
     await expect(dl.getByText(/^\d+,\d°$/)).toHaveCount(2) // pendientes con coma decimal (es-AR)
-    await expect(dl.getByText(/^[\d.]+,\d m$/)).toHaveCount(2)
+    await expect(dl.getByText(/^[\d.]+(,\d)? m$/)).toHaveCount(2) // metros: 3,3 m o 1.513 m
     const lista = page.getByRole('list').filter({ has: page.getByRole('button', { name: 'Comparar relieve 3D' }) })
     await expect(lista.getByRole('listitem')).toHaveCount(6)
     await lista.getByRole('button', { name: 'Comparar relieve 3D' }).first().click()
@@ -32,8 +32,11 @@ test.describe('Luna y Marte', () => {
     const lat = page.getByLabel('Latitud marciana')
     await lat.fill('120')
     await page.getByRole('button', { name: 'Ir' }).click()
-    await expect(page.getByRole('status')).toContainText('latitud entre')
-    await page.getByRole('button', { name: 'Jezero' }).click()
+    // el formulario nativo (min/max) frena el envío: el campo queda inválido y no se calcula nada
+    expect(await lat.evaluate((el: HTMLInputElement) => el.validity.rangeOverflow)).toBe(true)
+    await expect(page.getByRole('heading', { name: 'Elegí un lugar en Marte' })).toBeVisible()
+    await lat.fill('18.44')
+    await page.getByRole('button', { name: 'Jezero', exact: true }).click()
     await expect(page.getByRole('heading', { name: 'Punto elegido en Marte' })).toBeVisible({ timeout: 90_000 })
     const dl = page.locator('dl').filter({ hasText: 'Pendiente mediana' })
     await expect(dl.getByRole('definition')).toHaveCount(4)

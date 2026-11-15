@@ -1,0 +1,59 @@
+
+Running 33 tests using 2 workers
+
+  ok  2 [desktop] › e2e\custom.spec.ts:4:3 › Búsqueda personalizada (formulario) › vacío: el CTA está deshabilitado y la vista previa lo explica (1.0s)
+  ok  1 [desktop] › e2e\a11y.spec.ts:11:1 › portada sin violaciones WCAG AA (2.0s)
+  ok  3 [desktop] › e2e\custom.spec.ts:12:3 › Búsqueda personalizada (formulario) › válido: elegir variables arma pesos que suman 100 % y muestra 5 mejores (1.4s)
+  ok  5 [desktop] › e2e\custom.spec.ts:28:3 › Búsqueda personalizada (formulario) › cambiar importancia y limpiar (1.2s)
+  ok  4 [desktop] › e2e\a11y.spec.ts:16:1 › personalizado sin violaciones WCAG AA (2.3s)
+  ok  6 [desktop] › e2e\explore.spec.ts:5:3 › Explorar: ranking, pesos y ficha › ranking de 20 zonas con puntajes 0–100 y pesos que suman ~100 % (1.4s)
+  ok  8 [desktop] › e2e\explore.spec.ts:21:3 › Explorar: ranking, pesos y ficha › mover un slider marca "Personalizado" y Restaurar vuelve al preset (4.0s)
+  ok  9 [desktop] › e2e\explore.spec.ts:31:3 › Explorar: ranking, pesos y ficha › todos los pesos en 0 muestra un aviso (estado inválido) (6.2s)
+  ok  7 [desktop] › e2e\a11y.spec.ts:22:1 › explorar con ficha abierta sin violaciones WCAG AA (1.0m)
+  x  10 [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview (1.1m)
+  ok 11 [desktop] › e2e\a11y.spec.ts:30:1 › Marte sin violaciones WCAG AA (18.1s)
+  ok 12 [desktop] › e2e\landing.spec.ts:5:3 › Portada › muestra las tres opciones y datos NASA, sin errores de consola (2.4s)
+  ok 13 [desktop] › e2e\explore.spec.ts:62:3 › Explorar: ranking, pesos y ficha › el diálogo Fuentes y método abre y cierra con Escape (1.8s)
+  ok 14 [desktop] › e2e\landing.spec.ts:19:3 › Portada › atajos de teclado 1/2/3 y botón atrás del navegador (1.6s)
+  ok 16 [desktop] › e2e\landing.spec.ts:32:3 › Portada › navegación por teclado: Tab llega a las opciones y Enter las activa (10.8s)
+  ok 17 [desktop] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (21.2s)
+  ok 18 [desktop] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (6.1s)
+  ok 15 [desktop] › e2e\moon-mars.spec.ts:5:3 › Luna y Marte › Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D (41.7s)
+  ok 19 [desktop] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (2.8s)
+  ok 21 [desktop] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.8s)
+  ok 20 [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA (21.7s)
+  ok 22 [desktop] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (48.4s)
+  ok 24 [tablet] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (1.8s)
+  ok 25 [tablet] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.8s)
+  ok 23 [tablet] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (30.4s)
+  ok 27 [tablet] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (4.6s)
+  ok 26 [tablet] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (31.6s)
+  ok 29 [mobile] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (1.4s)
+  ok 30 [mobile] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.7s)
+  ok 28 [mobile] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (51.5s)
+  ok 32 [mobile] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (8.5s)
+  ok 31 [mobile] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (24.8s)
+  ok 33 [sin-webgl] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía (1.6s)
+
+
+  1) [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview 
+
+    Test timeout of 60000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview 
+  32 passed (4.5m)

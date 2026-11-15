@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { gotoExplore } from './helpers'
+import { gotoExplore, openRanking } from './helpers'
 
 // axe-core sobre cada pantalla. Se excluyen los lienzos WebGL (MapLibre/three) y la atribución de MapLibre, que no controlamos.
 const audit = (page: Parameters<typeof AxeBuilder>[0]['page']) =>
@@ -21,6 +21,7 @@ test('personalizado sin violaciones WCAG AA', async ({ page }) => {
 
 test('explorar con ficha abierta sin violaciones WCAG AA', async ({ page }) => {
   await gotoExplore(page)
+  await openRanking(page)
   await page.getByRole('button', { name: /#01/ }).click()
   await expect(page.getByRole('article')).toBeVisible()
   expect(resumen(await audit(page))).toEqual([])
