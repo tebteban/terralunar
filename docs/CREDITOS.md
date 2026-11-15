@@ -16,7 +16,7 @@ Elevation data support the topographic comparison. Temperature observations, geo
 | [MODIS MOD11A1 Version 6.1 — Land surface temperature](https://doi.org/10.5067/MODIS/MOD11A1.061) | Terrestrial surface temperature observations, with quality filtering. | [Granule, quality criteria and hash](../data/thermal/modis-observations.json) |
 | [NASA Mars Trek — Viking and THEMIS imagery](https://trek.nasa.gov/mars/) | Imagery layers in the Mars viewer. | [Mars viewer](../web/src/MarsView.tsx) |
 | [NASA SVS CGI Moon Kit](https://svs.gsfc.nasa.gov/4720) | Lunar imagery and elevation for visualization. | [Lunar globe processing](../pipeline/05_moon_globe.py) |
-| [NASA Worldview](https://worldview.earthdata.nasa.gov/) | External visual exploration of Earth observation imagery. | [Candidate card and Worldview links](../web/src/ZoneCard.tsx) |
+| [NASA Worldview](https://worldview.earthdata.nasa.gov/) | External visual exploration of Earth observation imagery. | [Sources dialog and Worldview link](../web/src/MethodDialog.tsx) |
 
 ## Space Agency Partners & Other Data
 
@@ -77,3 +77,4 @@ The video preview was composed from real application recordings using [Playwrigh
 RCM, RADARSAT, JAXA/ALOS, and other explored products are not claimed here as calculation inputs without integration evidence. Downloading or consulting a resource does not establish that it contributes to a result.
 
 Citing commercial music does not grant permission to use it. Any public release must use audio with the appropriate permissions.
+
