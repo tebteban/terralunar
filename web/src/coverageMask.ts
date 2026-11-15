@@ -1,4 +1,4 @@
-export type Cover={id:string;valid_fraction:number;water:number|null;built:number|null;vegetation:number|null;ndvi:number|null}
+export type Cover={id:string;valid_fraction:number;water:number|null;built:number|null;vegetation:number|null;ndvi:number|null;dates?:string[]}
 export type MaskPolicy={enabled:boolean;waterMax:number;builtMax:number;vegetationMax:number;ndviMax:number|null}
 export const DEFAULT_MASK:MaskPolicy={enabled:false,waterMax:.01,builtMax:.01,vegetationMax:.1,ndviMax:null}
 export function maskDecision(c:Cover|undefined,p:MaskPolicy){

@@ -11,9 +11,10 @@ ROOT=Path(__file__).resolve().parents[1]
 R=6371008.8
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--lat',type=float,default=-24);p.add_argument('--lon',type=float,default=-68);p.add_argument('--cells',type=int,default=6);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--lat',type=float,default=-24);p.add_argument('--lon',type=float,default=-68);p.add_argument('--cells',type=int,default=6);p.add_argument('--region',default='pilot');a=p.parse_args()
  if not (-60<a.lat<60 and -170<a.lon<170 and 2<=a.cells<=12):raise ValueError('Piloto: latitud ±60°, longitud ±170°, 2–12 ventanas por lado')
- out=ROOT/'data/discovery';out.mkdir(exist_ok=True);cache=ROOT/'pipeline/raw/discovery';cache.mkdir(parents=True,exist_ok=True)
+ if not a.region.replace('-','').replace('_','').isalnum():raise ValueError('ID de región inválido')
+ out=ROOT/'data/discovery' if a.region=='pilot' else ROOT/'data/discovery'/a.region;out.mkdir(parents=True,exist_ok=True);cache=ROOT/'pipeline/raw/discovery';cache.mkdir(parents=True,exist_ok=True)
  start=time.time();tiles={};provenance={};items=[];failures=[];z=10
  def coords(x,y):return a.lon+np.degrees(x/(R*math.cos(math.radians(a.lat)))),a.lat+np.degrees(y/R)
  def tile(tx,ty):
@@ -45,7 +46,7 @@ def main():
   return at(x,y)*(1-fx)*(1-fy)+at(x+1,y)*fx*(1-fy)+at(x,y+1)*(1-fx)*fy+at(x+1,y+1)*fx*fy
  for row in range(a.cells):
   for col in range(a.cells):
-   ident=f'pilot-{row}-{col}';x0=(col-a.cells/2)*20000;y0=(row-a.cells/2)*20000
+   ident=f'{a.region}-{row}-{col}';x0=(col-a.cells/2)*20000;y0=(row-a.cells/2)*20000
    try:
     xx,yy=np.meshgrid(x0+(np.arange(100)+.5)*200,y0+20000-(np.arange(100)+.5)*200);lon,lat=coords(xx,yy);h=sample(lon,lat)
     if not np.isfinite(h).all() or np.any(h<=-32767):raise ValueError('NoData o elevación inválida')

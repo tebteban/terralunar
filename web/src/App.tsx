@@ -1,3 +1,4 @@
+import type {SearchTarget} from './searchTarget.ts'
 import ScientificSearch from './ScientificSearch.tsx'
 import { useEffect, useMemo, useState } from 'react'
 import Compare3D from './Compare3D.tsx'
@@ -43,6 +44,8 @@ function fromHash(): { screen: Screen; body: Body } {
 }
 
 export default function App() {
+  const [searchTarget,setSearchTarget]=useState<SearchTarget|null>(null)
+  const analyze=(target:SearchTarget)=>{setSearchTarget(target);setScientificOpen(true)}
   const [scientificOpen,setScientificOpen]=useState(false)
   const [discovery,setDiscovery]=useState<{zone:Zone;score:number}|null>(null)
   const [zones, setZones] = useState<Zone[]>([])
@@ -261,8 +264,8 @@ export default function App() {
 
       <main className="relative min-h-[60vh] flex-1 bg-space">
         <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={discovery?[{zone:discovery.zone,score:discovery.score/100}]:ranked} selectedId={selectedId} onSelect={pickEarth} /></div>
-        {body === 'luna' && <MoonMap onPickEarth={pickEarth} />}
-        {body === 'marte' && <MarsView onPickEarth={pickEarth} />}
+        {body === 'luna' && <MoonMap onAnalyze={analyze} onPickEarth={pickEarth} />}
+        {body === 'marte' && <MarsView onAnalyze={analyze} onPickEarth={pickEarth} />}
         <nav className="absolute left-4 top-16 z-10 flex items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float" aria-label="Cuerpo visualizado">
           <button type="button" onClick={() => go('inicio')} className="rounded-full px-3.5 py-1.5 text-sm text-mute hover:text-canvas" aria-label="Volver al inicio">← Inicio</button>
           <span className="h-5 w-px bg-hairline" aria-hidden="true" />
@@ -294,7 +297,7 @@ export default function App() {
         {comparing && selectedId && !discovery && <Compare3D zoneId={selectedId} onClose={() => setComparing(false)} />}
       </main>
       </div>
-      {scientificOpen&&<ScientificSearch onClose={()=>setScientificOpen(false)} onSelect={(id,zone,score)=>{pickEarth(id);if(zone)setDiscovery({zone,score:score??0})}}/>}
+      {scientificOpen&&<ScientificSearch selectedTarget={searchTarget} onClose={()=>setScientificOpen(false)} onSelect={(id,zone,score)=>{pickEarth(id);if(zone)setDiscovery({zone,score:score??0})}}/>}
       {discovery&&body==='tierra'&&<aside className="fixed right-6 bottom-6 z-20 max-w-sm rounded-2xl bg-white p-6 text-black"><h2>{discovery.zone.name}</h2><p>{discovery.score.toFixed(1)}/100 · similitud topográfica</p><p>{discovery.zone.centroid.join(', ')} · 20 × 20 km</p><p>{discovery.zone.notes}</p><button onClick={()=>setScientificOpen(true)}>Volver a búsqueda</button><button onClick={()=>{setDiscovery(null);setSelectedId(null)}}>Cerrar candidato</button></aside>}
       <MethodDialog open={methodOpen} onClose={() => setMethodOpen(false)} />
       {notice && <button type="button" className="chip-dark fixed bottom-4 left-1/2 z-50 -translate-x-1/2 text-xs" onClick={() => setNotice('')}>{notice} · Cerrar</button>}

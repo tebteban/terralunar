@@ -1,3 +1,4 @@
+import type {SearchTarget} from './searchTarget.ts'
 import { startGlobeRotation } from './globeRotation.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapLibre, NavigationControl, Marker, addProtocol, removeProtocol, type GeoJSONSource } from 'maplibre-gl'
@@ -25,7 +26,7 @@ function imageBlob(url: string) {
   return request
 }
 let protocolCount = 0
-export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void}) {
+export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:(id:string)=>void;onAnalyze?:(target:SearchTarget)=>void}) {
   const container=useRef<HTMLDivElement>(null), scene=useRef<HTMLDivElement>(null), map=useRef<MapLibre|null>(null)
   const choose=useRef<(lon:number,lat:number)=>void>(()=>{})
   const [cameraInfo,setCameraInfo]=useState('') // de Eze (c891b87)
@@ -221,7 +222,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         <input className="accent-ink w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/>
         <span className="flex justify-between text-[10px] text-body"><span>1× (real)</span><span>3×</span></span>
       </label>
-      {pick&&<>
+      {pick&&<>{onAnalyze&&<button className="btn-primary" onClick={()=>onAnalyze({name:pick.name,body:"marte",lat:pick.lat,lon:pick.lon,features:pick,source:pick.source,cell_m:2000,window_km:20})}>Buscar análogos de esta región</button>}
         <p className="metric text-xs text-body">{pick.lat.toFixed(3)}°, {pick.lon.toFixed(3)}° · ventana de 20 × 20 km</p>
         {Math.abs(pick.lat)>85&&<p className="text-xs text-body">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
         <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4"><dt className="text-[13px] text-body">{label}</dt><dd className="metric text-[22px] leading-7 font-semibold">{pick[k].toLocaleString('es-AR',{maximumFractionDigits:1,minimumFractionDigits:1})} {unit}</dd><span className="label-mono text-[10px] text-body">MOLA MEGDR</span></div>)}</dl>

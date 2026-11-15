@@ -1,3 +1,4 @@
+import {lunarTarget,type SearchTarget} from './searchTarget.ts'
 import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useState } from 'react'
 import Compare3D, { type CompareIndex } from './Compare3D.tsx'
@@ -26,7 +27,7 @@ const similarity = moonSimilarity
 
 interface Pick { line: number; sample: number; lat: number; lon: number; m: Metrics }
 
-export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string) => void }) {
+export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: (zoneId: string) => void;onAnalyze?:(target:SearchTarget)=>void }) {
   const [index, setIndex] = useState<MoonIndex | null>(null)
   const [grid, setGrid] = useState<Uint16Array | null>(null)
   const [earth, setEarth] = useState<EarthItem[]>([])
@@ -104,10 +105,12 @@ export default function MoonMap({ onPickEarth }: { onPickEarth: (zoneId: string)
     setCompareId(e.id)
   }
 
+  const analyze=async()=>{if(!pick||!onAnalyze)return;try{onAnalyze(await lunarTarget(pick.line,pick.sample,pick.lat,pick.lon))}catch(e){setNotice(String(e))}}
   const outside = (lat: number) => setNotice(`Tocaste ${lat.toFixed(0)}°: por ahora analizamos el relieve del polo sur (80°–90° S), donde están los sitios de Artemis III. Girá la Luna hacia abajo.`)
 
   return (
     <div className="relative h-full w-full bg-space">
+      {pick&&onAnalyze&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
       {index && hiRes && <MoonView onUnavailable={() => setHiRes(false)} onPick={(lat, lon) => {
         if (lat > -80) return outside(lat)
         const p = latLonToPx(index, lat, lon)
