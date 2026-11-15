@@ -17,8 +17,10 @@ async function sha(text:string){return Array.from(new Uint8Array(await crypto.su
 
 export async function loadCandidates(regions:Region[],scope:string,recent:boolean,signal?:AbortSignal){
  const candidates:Candidate[]=[],reports:CoverageReport[]=[]
+ const references=await earthPatches().catch(()=>{throw Error('No se pudo cargar el catálogo para comprobar qué candidatos quedan fuera de los sitios de referencia.')})
+ const referencePoints=references.map(({lon,lat})=>({lon,lat}))
  if(scope==='global'||scope==='catalogue'){
-  try{const patches=await earthPatches();for(const p of patches)candidates.push({...p,zone:earthPatchZone(p),features:p,origin:'catalogue',region:'Catálogo mundial',coverSource:'Sin cobertura terrestre integrada para este recorte',geology:[]});reports.push({name:'Catálogo mundial de referencia',count:patches.length,status:'DEM real; sin máscara de cobertura integrada'})}
+  try{const patches=references;for(const p of patches)candidates.push({...p,zone:earthPatchZone(p),features:p,origin:'catalogue',region:'Catálogo mundial',coverSource:'Sin cobertura terrestre integrada para este recorte',geology:[]});reports.push({name:'Catálogo mundial de referencia',count:patches.length,status:'DEM real; sin máscara de cobertura integrada'})}
   catch(e){if(signal?.aborted)throw e;reports.push({name:'Catálogo mundial',count:0,status:String(e)})}
  }
  const requested=scope==='global'?regions:regions.filter(r=>r.id===scope)
@@ -56,16 +58,16 @@ export async function loadCandidates(regions:Region[],scope:string,recent:boolea
  }catch(e){if(signal?.aborted)throw e;reports.push({name:'Temperatura superficial MODIS',count:0,status:'Sin observaciones disponibles: '+String(e)})}
  if(signal?.aborted)throw new DOMException('Cancelado','AbortError')
  if(!candidates.length)throw Error('No hay recortes válidos disponibles en esta búsqueda.')
- return {candidates,reports}
+ return {candidates,reports,referencePoints}
 }
 
-export function rankCandidates(candidates:Candidate[],reference:Relief,weights:Record<string,number>,policy:MaskPolicy,bounds?:SearchBounds){
+export function rankCandidates(candidates:Candidate[],reference:Relief,weights:Record<string,number>,policy:MaskPolicy,bounds?:SearchBounds,referencePoints: {lon:number;lat:number}[]=[]){
  // Validate even when no candidate survives the filters.
  combine(Object.entries(TOLERANCES).map(([id,t])=>({id,weight:weights[id],value:targetMatch(reference[id as keyof Relief],reference[id as keyof Relief],t)})))
  if(bounds)withinBounds(0,0,bounds)
  const inArea=candidates.filter(c=>!bounds||withinBounds(c.zone.centroid[0],c.zone.centroid[1],bounds))
  const counts={loaded:candidates.length,inArea:inArea.length,excluded:0,unknown:0,nearReference:0,eligible:0}
- const known=candidates.filter(c=>c.origin==='catalogue').map(c=>({lon:c.zone.centroid[0],lat:c.zone.centroid[1]}))
+ const known=[...referencePoints,...candidates.filter(c=>c.origin==='catalogue').map(c=>({lon:c.zone.centroid[0],lat:c.zone.centroid[1]}))]
  const rows:SearchResult[]=[]
  for(const c of inArea){
   const decision=maskDecision(c.cover,policy)

@@ -76,3 +76,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-15 | OpenAI Codex | Adaptación de D-020 y D-021 al flujo de ejecución científica y evidencia MODIS | — |
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel izquierdo ocultable y ficha flotante también en la Tierra, sobre el flujo unificado (`web/src/App.tsx`); D-020/D-021 | — |
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Fondo orgánico continuo de la portada con manchas difusas en movimiento, grano y viñeta (`web/src/OrganicBackdrop.tsx`, `Landing.tsx`, `index.css`); D-022 | — |
+| 2026-11-15 | OpenAI Codex | Ingestión de unidades USGS para nueve destinos y franjas térmicas LRO Diviner; cruce con MODIS por hora solar y evidencia en ficha y exportación. | — |
+| 2026-11-15 | OpenAI Codex | 75 ventanas DEM en Tassili, Lut y Chihuahua; vista inicial de candidatos fuera del catálogo y exclusión por proximidad también en búsquedas regionales. | — |

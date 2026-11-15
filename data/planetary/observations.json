@@ -1,0 +1,383 @@
+[
+  {
+    "name": "Mons Mouton (meseta)",
+    "lat": -84.6,
+    "lon": 31.0,
+    "body": "luna",
+    "units": [
+      {
+        "code": "pNb",
+        "age": "Pre-Nectarian",
+        "name": "Basin Undivided Unit"
+      }
+    ],
+    "thermal": [
+      {
+        "hourBin": 11,
+        "localHours": [
+          2.5,
+          2.75
+        ],
+        "count": 6020,
+        "kelvin": [
+          49.14,
+          62.81,
+          73.1
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim11_240.xml",
+        "sha256": "be1e413ea1d224a80b40a1dcf4d036cca2be42fce164c429cb8b9b758cc3a7a7"
+      },
+      {
+        "hourBin": 23,
+        "localHours": [
+          5.5,
+          5.75
+        ],
+        "count": 5736,
+        "kelvin": [
+          47.42,
+          61.08,
+          71.51
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim23_240.xml",
+        "sha256": "f23392e8ea66c1c6f7ead09b48976128a95f3fa9642bcc92a43eaa3a0da168e3"
+      },
+      {
+        "hourBin": 36,
+        "localHours": [
+          8.75,
+          9.0
+        ],
+        "count": 1654,
+        "kelvin": [
+          88.52,
+          192.87,
+          237.29
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim36_240.xml",
+        "sha256": "25e4d7b679696481a36e69da322b3e2761e62a9f7e52dc3041b44252ffdb2313"
+      },
+      {
+        "hourBin": 87,
+        "localHours": [
+          21.5,
+          21.75
+        ],
+        "count": 6969,
+        "kelvin": [
+          60.44,
+          73.73,
+          83.53
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim87_240.xml",
+        "sha256": "904fbef1da0a5c5131a21ef6bea8d31dbee634dd260579c7bd2534df2d817b19"
+      },
+      {
+        "hourBin": 88,
+        "localHours": [
+          21.75,
+          22.0
+        ],
+        "count": 6969,
+        "kelvin": [
+          56.47,
+          71.05,
+          80.88
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim88_240.xml",
+        "sha256": "4f0117f12ef6482444148ac498642d58423c8cfac61de3a6846ad8971f960bb1"
+      }
+    ],
+    "geologySource": "https://astrogeology.usgs.gov/search/map/Moon/Geology/Unified_Geologic_Map_of_the_Moon_GIS_v2/",
+    "geologyScale": 5000000
+  },
+  {
+    "name": "Mons Malapert (macizo)",
+    "lat": -85.98,
+    "lon": 358.33,
+    "body": "luna",
+    "units": [
+      {
+        "code": "pNbm",
+        "age": "Pre-Nectarian",
+        "name": "Basin Massif Unit"
+      }
+    ],
+    "thermal": [
+      {
+        "hourBin": 11,
+        "localHours": [
+          2.5,
+          2.75
+        ],
+        "count": 6729,
+        "kelvin": [
+          77.98,
+          86.51,
+          226.12
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim11_240.xml",
+        "sha256": "be1e413ea1d224a80b40a1dcf4d036cca2be42fce164c429cb8b9b758cc3a7a7"
+      },
+      {
+        "hourBin": 23,
+        "localHours": [
+          5.5,
+          5.75
+        ],
+        "count": 4968,
+        "kelvin": [
+          67.8,
+          79.05,
+          83.0
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim23_240.xml",
+        "sha256": "f23392e8ea66c1c6f7ead09b48976128a95f3fa9642bcc92a43eaa3a0da168e3"
+      },
+      {
+        "hourBin": 36,
+        "localHours": [
+          8.75,
+          9.0
+        ],
+        "count": 5914,
+        "kelvin": [
+          70.76,
+          96.3,
+          286.1
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim36_240.xml",
+        "sha256": "25e4d7b679696481a36e69da322b3e2761e62a9f7e52dc3041b44252ffdb2313"
+      },
+      {
+        "hourBin": 87,
+        "localHours": [
+          21.5,
+          21.75
+        ],
+        "count": 6954,
+        "kelvin": [
+          89.86,
+          141.57,
+          265.58
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim87_240.xml",
+        "sha256": "904fbef1da0a5c5131a21ef6bea8d31dbee634dd260579c7bd2534df2d817b19"
+      },
+      {
+        "hourBin": 88,
+        "localHours": [
+          21.75,
+          22.0
+        ],
+        "count": 6312,
+        "kelvin": [
+          88.78,
+          140.94,
+          264.11
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim88_240.xml",
+        "sha256": "4f0117f12ef6482444148ac498642d58423c8cfac61de3a6846ad8971f960bb1"
+      }
+    ],
+    "geologySource": "https://astrogeology.usgs.gov/search/map/Moon/Geology/Unified_Geologic_Map_of_the_Moon_GIS_v2/",
+    "geologyScale": 5000000
+  },
+  {
+    "name": "Nobile Rim 2 (punto óptimo de un estudio)",
+    "lat": -84.20156,
+    "lon": 60.69989,
+    "body": "luna",
+    "units": [
+      {
+        "code": "pNc",
+        "age": "Pre-Nectarian",
+        "name": "Crater Unit"
+      }
+    ],
+    "thermal": [
+      {
+        "hourBin": 11,
+        "localHours": [
+          2.5,
+          2.75
+        ],
+        "count": 6762,
+        "kelvin": [
+          43.55,
+          61.0,
+          75.89
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim11_240.xml",
+        "sha256": "be1e413ea1d224a80b40a1dcf4d036cca2be42fce164c429cb8b9b758cc3a7a7"
+      },
+      {
+        "hourBin": 23,
+        "localHours": [
+          5.5,
+          5.75
+        ],
+        "count": 4736,
+        "kelvin": [
+          70.93,
+          80.72,
+          222.84
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim23_240.xml",
+        "sha256": "f23392e8ea66c1c6f7ead09b48976128a95f3fa9642bcc92a43eaa3a0da168e3"
+      },
+      {
+        "hourBin": 35,
+        "localHours": [
+          8.5,
+          8.75
+        ],
+        "count": 5999,
+        "kelvin": [
+          91.59,
+          190.82,
+          287.61
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim35_240.xml",
+        "sha256": "a7b565aa45b6dd098fb5a3a40e06836b5bba77893412794e910d16da6abdbb21"
+      },
+      {
+        "hourBin": 36,
+        "localHours": [
+          8.75,
+          9.0
+        ],
+        "count": 2675,
+        "kelvin": [
+          93.13,
+          196.41,
+          291.14
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim36_240.xml",
+        "sha256": "25e4d7b679696481a36e69da322b3e2761e62a9f7e52dc3041b44252ffdb2313"
+      },
+      {
+        "hourBin": 87,
+        "localHours": [
+          21.5,
+          21.75
+        ],
+        "count": 2710,
+        "kelvin": [
+          41.99,
+          57.75,
+          80.27
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim87_240.xml",
+        "sha256": "904fbef1da0a5c5131a21ef6bea8d31dbee634dd260579c7bd2534df2d817b19"
+      },
+      {
+        "hourBin": 88,
+        "localHours": [
+          21.75,
+          22.0
+        ],
+        "count": 6692,
+        "kelvin": [
+          44.24,
+          67.29,
+          82.14
+        ],
+        "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_pcp/diurnal/ltim/pols/pcp_avg_tbol_pols_sum_ltim88_240.xml",
+        "sha256": "4f0117f12ef6482444148ac498642d58423c8cfac61de3a6846ad8971f960bb1"
+      }
+    ],
+    "geologySource": "https://astrogeology.usgs.gov/search/map/Moon/Geology/Unified_Geologic_Map_of_the_Moon_GIS_v2/",
+    "geologyScale": 5000000
+  },
+  {
+    "name": "Olympus Mons",
+    "lon": -133.8,
+    "lat": 18.65,
+    "body": "marte",
+    "thermal": [],
+    "geologySource": "https://pubs.usgs.gov/sim/3292/",
+    "geologyScale": 20000000,
+    "units": [
+      {
+        "code": "Ave",
+        "name": "Amazonian volcanic edifice"
+      }
+    ]
+  },
+  {
+    "name": "Valles Marineris",
+    "lon": -60.0,
+    "lat": -13.0,
+    "body": "marte",
+    "thermal": [],
+    "geologySource": "https://pubs.usgs.gov/sim/3292/",
+    "geologyScale": 20000000,
+    "units": [
+      {
+        "code": "Nhu",
+        "name": "Noachian highland undivided unit"
+      }
+    ]
+  },
+  {
+    "name": "Jezero",
+    "lon": 77.58,
+    "lat": 18.44,
+    "body": "marte",
+    "thermal": [],
+    "geologySource": "https://pubs.usgs.gov/sim/3292/",
+    "geologyScale": 20000000,
+    "units": [
+      {
+        "code": "HNt",
+        "name": "Hesperian and Noachian transition unit"
+      }
+    ]
+  },
+  {
+    "name": "Gale",
+    "lon": 137.4,
+    "lat": -4.6,
+    "body": "marte",
+    "thermal": [],
+    "geologySource": "https://pubs.usgs.gov/sim/3292/",
+    "geologyScale": 20000000,
+    "units": [
+      {
+        "code": "AHi",
+        "name": "Amazonian and Hesperian impact unit"
+      }
+    ]
+  },
+  {
+    "name": "Elysium Planitia",
+    "lon": 135.6,
+    "lat": 4.5,
+    "body": "marte",
+    "thermal": [],
+    "geologySource": "https://pubs.usgs.gov/sim/3292/",
+    "geologyScale": 20000000,
+    "units": [
+      {
+        "code": "eHt",
+        "name": "Early Hesperian transition unit"
+      }
+    ]
+  },
+  {
+    "name": "Hellas Planitia",
+    "lon": 70.0,
+    "lat": -42.4,
+    "body": "marte",
+    "thermal": [],
+    "geologySource": "https://pubs.usgs.gov/sim/3292/",
+    "geologyScale": 20000000,
+    "units": [
+      {
+        "code": "lHb",
+        "name": "Late Hesperian basin unit"
+      }
+    ]
+  }
+]

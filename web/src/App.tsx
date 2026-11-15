@@ -22,7 +22,7 @@ export default function App(){
  const [run,setRun]=useState<AnalysisRun|null>(null),[selectedId,setSelectedId]=useState<string|null>(null)
  const [draftTarget,setDraftTarget]=useState<SearchTarget|null>(null),[scientificOpen,setScientificOpen]=useState(location.hash==='#personalizado')
  const [comparing,setComparing]=useState(false),[example,setExample]=useState(false),[methodOpen,setMethodOpen]=useState(false)
- const [panel,setPanel]=useState<'ajustes'|'mapa'|'ranking'>('mapa'),[filter,setFilter]=useState('all')
+ const [panel,setPanel]=useState<'ajustes'|'mapa'|'ranking'>('mapa'),[filter,setFilter]=useState('sampled')
  const [notice,setNotice]=useState('')
  const [personalized,setPersonalized]=useState(location.hash==='#personalizado')
  const [panelHidden,setPanelHidden]=useState(()=>{
@@ -48,7 +48,7 @@ export default function App(){
  useEffect(()=>{const pop=()=>{const r=route();setStarted(r.started);if(r.body==='tierra')setPersonalized(location.hash==='#personalizado');setBody(r.body);setVisited(v=>v.includes(r.body)?v:[...v,r.body]);setComparing(false)};addEventListener('popstate',pop);return()=>removeEventListener('popstate',pop)},[])
  function analyze(t:SearchTarget){setDraftTarget(t);setScientificOpen(true)}
  function configure(){setDraftTarget(null);setScientificOpen(true)}
- function accept(next:AnalysisRun){setRun(next);if(run?.id!==next.id){setSelectedId(null);setComparing(false);setFilter('all')}}
+ function accept(next:AnalysisRun){setRun(next);if(run?.id!==next.id){setSelectedId(null);setComparing(false);setFilter(next.scope==='catalogue'?'catalogue':'sampled')}}
  function select(id:string){setSelectedId(id);visit('tierra')}
  function pick(c:LandingChoice){if(c==='ejemplo'){setExample(true);return}if(c==='personalizado'){setPersonalized(true);visit('tierra',true);configure();return}setPersonalized(false);visit(c,false)}
  const fullscreen=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}catch{setNotice('Pantalla completa no disponible')}}
@@ -56,7 +56,7 @@ export default function App(){
   <h2 className="text-lg font-bold">Candidatos terrestres {run&&<span className="metric">· {visible.length}</span>}</h2>
   {!run?<p className="text-sm">Elegí un destino y ejecutá la comparación para obtener resultados medidos.</p>:<>
    <p className="text-xs">Semejanza topográfica con {run.resolvedTarget.name} ({coord(run.resolvedTarget.lat,run.resolvedTarget.lon)}). No es compatibilidad integral del ensayo.</p>
-   <label className="text-sm">Mostrar<select aria-label="Filtrar candidatos" className="mt-1 min-h-11 w-full rounded-lg border border-pressed bg-canvas p-2 text-ink" value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">Todos</option><option value="sampled">Ventanas exploratorias</option><option value="catalogue">Catálogo de referencia</option></select></label>
+   <label className="text-sm">Mostrar<select aria-label="Filtrar candidatos" className="mt-1 min-h-11 w-full rounded-lg border border-pressed bg-canvas p-2 text-ink" value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">Todos</option><option value="sampled">Candidatos fuera del catálogo</option><option value="catalogue">Catálogo de referencia</option></select></label>
    {!visible.length&&<p role="status">No hay resultados con este filtro. No significa que no existan análogos.</p>}
    <ol className="flex flex-col gap-2">{visible.map(r=><li key={r.id}><button aria-pressed={selectedId===r.id} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border border-pressed p-3 text-left aria-pressed:bg-ink aria-pressed:text-canvas" onClick={()=>select(r.id)}><span className="min-w-0 text-sm font-semibold">{r.name}<small className="block font-normal">{r.origin==='sampled'?'Fuera del catálogo consultado':'Referencia del catálogo'}</small></span><strong className="metric">{num(r.score,1)}</strong></button></li>)}</ol>
   </>}

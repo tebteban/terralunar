@@ -13,6 +13,7 @@ const weights=experimentPlan('regional').weights
 test('búsqueda mundial mantiene destino, exclusiones, diversidad y origen',()=>{
  const list=[candidate('ref',0,'catalogue'),candidate('near',.1),candidate('new',2),candidate('adjacent',2.1),candidate('far',10)]
  const r=rankCandidates(list,features,weights,DEFAULT_MASK)
+ assert.equal(rankCandidates([candidate('near',.1)],features,weights,DEFAULT_MASK,undefined,[{lon:0,lat:0}]).counts.nearReference,1)
  assert.equal(r.counts.nearReference,1);assert.equal(r.rows.length,3);assert.ok(r.rows.every(p=>p.score===100));assert.equal(r.rows.filter(p=>p.origin==='catalogue').length,1)
  const area=rankCandidates(list,features,weights,DEFAULT_MASK,{west:1,east:3,south:-1,north:1});assert.equal(area.counts.inArea,2);assert.equal(area.rows.length,1)
  assert.throws(()=>rankCandidates([],features,{...weights,pendiente_mediana:NaN},DEFAULT_MASK))
