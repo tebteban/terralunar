@@ -39,7 +39,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
   const total = Object.values(weights).reduce((a, b) => a + b, 0) || 1
   const dims = Object.entries(profile.dimensions).map(([k, d]) => {
     const s = zone.scores[k] ?? 0
-    return { key: k, name: d.name, dataset: d.dataset, score: s, contribution: ((weights[k] ?? 0) * s) / total }
+    return { key: k, short: ({lst:"TEMP",ndvi:"VEG",nieve:"HIELO",lluvia:"ARIDEZ",cobertura:"SUELO",pendiente:"PEND",rugosidad:"RUG"} as Record<string,string>)[k] ?? d.name, name: d.name, dataset: d.dataset, score: s, contribution: ((weights[k] ?? 0) * s) / total }
   })
   const datasets = [...new Set([...zone.sources, ...dims.map((d) => d.dataset)])]
 
@@ -77,7 +77,7 @@ export default function ZoneCard({ ranked: { zone, score }, position, profile, w
         <ResponsiveContainer width="100%" height={230}>
           <RadarChart data={dims} outerRadius="55%">
             <PolarGrid stroke="#ddd9d1" />
-            <PolarAngleAxis dataKey="name" tick={{ fill: '#615e58', fontSize: 10.5, fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }} />
+            <PolarAngleAxis dataKey="short" tick={{ fill: '#615e58', fontSize: 10.5, fontFamily: 'Plus Jakarta Sans, Inter, sans-serif' }} />
             <PolarRadiusAxis domain={[0, 1]} tick={false} axisLine={false} />
             <Radar dataKey="score" stroke="#000000" strokeWidth={2} fill="#000000" fillOpacity={0.12} dot={{ r: 3, fill: '#000' }} isAnimationActive={false} />
           </RadarChart>

@@ -111,7 +111,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
         } finally { images.forEach(image=>image.close()) }
       })
       imageryInstalled=true
-      m=new MapLibre({container:container.current,center:[0,10],zoom:1.4,maxZoom:10,canvasContextAttributes:{antialias:true},style:{version:8,sources:{},layers:[{id:'base',type:'background',paint:{'background-color':'#9d6046'}}]}})
+      m=new MapLibre({container:container.current,center:[0,10],zoom:1.95,maxZoom:10,canvasContextAttributes:{antialias:true},style:{version:8,sources:{},layers:[{id:'base',type:'background',paint:{'background-color':'#9d6046'}}]}})
       m.on('moveend',()=>{if(m){const c=m.getCenter();setCameraInfo(`${c.lat.toFixed(2)}°, ${c.lng.toFixed(2)}° · zoom ${m.getZoom().toFixed(1)}`)}})
       map.current=m
       resize=new ResizeObserver(()=>m?.resize())
@@ -190,7 +190,7 @@ export default function MarsView({onPickEarth}: {onPickEarth:(id:string)=>void})
   return <div ref={scene} className="space-scene relative h-full w-full overflow-hidden bg-space">
     <SpaceBackdrop/><div ref={container} className="relative h-full w-full" aria-label="Marte 3D, topografía NASA MOLA"/>
     <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float">
-      <button className={`${control} text-canvas hover:bg-elevated`} onClick={()=>{setPick(null);map.current?.flyTo({center:[0,10],zoom:1.4,pitch:0,bearing:0,duration:1800,padding:0})}}>Ver planeta</button>
+      <button className={`${control} text-canvas hover:bg-elevated`} onClick={()=>{setPick(null);map.current?.flyTo({center:[0,10],zoom:1.95,pitch:0,bearing:0,duration:1800,padding:0})}}>Ver planeta</button>
       {pick&&<button className={`${control} text-canvas hover:bg-elevated`} onClick={()=>choose.current(pick.lon,pick.lat)}>Centrar selección</button>}
       <button aria-pressed={flat} className={`${control} ${flat?'bg-canvas font-bold text-ink':'text-mute hover:text-canvas'}`} onClick={()=>{const next=!flat;setFlat(next);flatRef.current=next;map.current?.easeTo({pitch:next?0:60,duration:800})}}>Vista cenital</button>
     </div>
