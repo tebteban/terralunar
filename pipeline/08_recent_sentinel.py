@@ -1,3 +1,4 @@
+from stac_catalogue import search_pages
 """Recent Sentinel-2 regional sampling, dated observations, not annual land-cover."""
 import argparse,re,sys,json,urllib.request,urllib.parse,urllib.error,hashlib,time
 from pathlib import Path
@@ -18,13 +19,16 @@ def request(url,data=None):
    if e.code!=429 or attempt==4:raise
    delay=min(55,max(5,int(e.headers.get('Retry-After','10'))));print('Rate limit: waiting',delay,flush=True);time.sleep(delay)
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('--region',default='pilot');parser.add_argument('--start',default='2026-10-01');parser.add_argument('--end',default='2026-11-14');parser.add_argument('--scenes-per-tile',type=int,default=3);args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('--region',default='pilot');parser.add_argument('--start',default='2026-10-01');parser.add_argument('--end',default='2026-11-14');parser.add_argument('--scenes-per-tile',type=int,default=3);parser.add_argument('--max-pages',type=int,default=10);parser.add_argument('--catalogue-only',action='store_true');args=parser.parse_args()
  if not re.fullmatch(r'[a-z0-9_-]+',args.region) or not 1<=args.scenes_per_tile<=5:raise ValueError('Invalid region or scene limit')
- datetime.fromisoformat(args.start);datetime.fromisoformat(args.end)
+ if datetime.fromisoformat(args.start)>datetime.fromisoformat(args.end):raise ValueError('Start must precede end')
  base=ROOT/'data/discovery' if args.region=='pilot' else ROOT/'data/discovery'/args.region
  raw=(base/'pilot.json').read_bytes();pilot=json.loads(raw);a,b=pilot['extent'];end=args.end+'T23:59:59Z'
  q={'collections':['sentinel-2-l2a'],'bbox':a+b,'datetime':args.start+'T00:00:00Z/'+end,'limit':100,'sortby':[{'field':'datetime','direction':'desc'}]}
- found=request('https://planetarycomputer.microsoft.com/api/stac/v1/search',q)['features'];chosen=[];tile_counts={}
+ found,catalogue=search_pages(request,'https://planetarycomputer.microsoft.com/api/stac/v1/search',q,args.max_pages)
+ if args.catalogue_only:
+  print(json.dumps(catalogue));return
+ chosen=[];tile_counts={}
  for f in found:
   tile=f['properties'].get('s2:mgrs_tile') or f['id'].split('_T')[1][:5]
   if tile_counts.get(tile,0)<args.scenes_per_tile and f['properties'].get('eo:cloud_cover',100)<60:
@@ -59,6 +63,6 @@ def main():
  items=[]
  for i,p in enumerate(pilot['items']):
   v=ndvi[i*10000:(i+1)*10000];c=scl[i*10000:(i+1)*10000];d=dates[i*10000:(i+1)*10000];ok=np.isfinite(v);count=int(ok.sum());items.append({'id':p['id'],'valid_fraction':count/10000,'ndvi':float(np.quantile(v[ok],.9)) if count else None,'ndvi_median':float(np.median(v[ok])) if count else None,'water':float((c[ok]==6).mean()) if count else None,'vegetation':float((c[ok]==4).mean()) if count else None,'built':None,'dates':sorted(set(d[ok]))})
- output={'version':'sentinel-recent-1','pilot_sha256':hashlib.sha256(raw).hexdigest(),'product':'Sentinel-2 L2A 2026; SCL and calibrated NDVI','method':'200m approximate nearest overview sampling; latest clear observation from selected tiles; SCL 4/5/6 only; NDVI filter uses window p90; built-up not measured','sources':sources,'failures':failures,'items':items,'requested_interval':[args.start,args.end],'max_scenes_per_tile':args.scenes_per_tile,'catalogue_limit':100,'catalogue_returned':len(found),'created':datetime.now(timezone.utc).isoformat()}
+ output={'version':'sentinel-recent-1','pilot_sha256':hashlib.sha256(raw).hexdigest(),'product':'Sentinel-2 L2A 2026; SCL and calibrated NDVI','method':'200m approximate nearest overview sampling; latest clear observation from selected tiles; SCL 4/5/6 only; NDVI filter uses window p90; built-up not measured','sources':sources,'failures':failures,'items':items,'requested_interval':[args.start,args.end],'max_scenes_per_tile':args.scenes_per_tile,'catalogue_page_size':100,'catalogue':catalogue,'catalogue_returned':len(found),'created':datetime.now(timezone.utc).isoformat()}
  (base/'recent-2026.json').write_text(json.dumps(output,indent=2,allow_nan=False),encoding='utf8');print('windows with observations',sum(i['ndvi'] is not None for i in items),flush=True)
 if __name__=='__main__':main()

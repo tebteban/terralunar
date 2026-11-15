@@ -53,3 +53,4 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Reparación de integración develop: seis conflictos resueltos, navegación/portada de develop conservadas, comparación científica, ML y cobertura reconectados; build/lint/22 pruebas y filtro Chrome verificados. |
 | 2026-11-14 | OpenAI Codex | Integración de selección planetaria, segunda región Hawái, Sentinel-2 reciente con calibración XML/QA, contexto geológico puntual y evaluación de transferencia del ML. Datos faltantes conservados explícitos; ver flujo-integrado.md. |
 | 2026-11-14 | OpenAI Codex | Registro extensible de regiones, filtro de área por coordenadas, WorldCover dinámico para Hawái, Sentinel multifecha regional y estado de consulta sin resultados exportable. |
+| 2026-11-14 | OpenAI Codex | Paginación STAC acotada y verificable, consulta sin descarga, pruebas de cursores, deduplicación y truncamiento; conserva datos procesados. |

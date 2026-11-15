@@ -9,4 +9,10 @@ Sentinel reciente: `python pipeline/08_recent_sentinel.py --region REGION --star
 Área terrestre por coordenadas en UI: filtra centros de ventanas dentro de bbox de la región procesada. No descarga AOI nueva, no recorta ventanas ni soporta bbox cruzando antimeridiano. Exportación conserva bbox y región. Cero resultados se informa y se puede exportar; no se interpreta como inexistencia de análogos. Las restricciones operativas están separadas del puntaje.
 
 ML no se aplica a otra región sin validación: Hawái continúa sin un modelo local. No se habilitan perfiles sin datos ni se inventa equivalencia geológica/térmica. Falta procesar más regiones, paginar catálogo, mapas globales de cobertura, recursos y mediciones especializadas.
-`nEjecución Hawái: seis escenas procesadas sin fallos de descarga; fechas válidas 10 y 12 noviembre 2026, nueve ventanas con alguna observación, cero con cobertura >=99%. Política inicial de terreno despejado: nueve excluidas por las fracciones muestreadas; no valida la totalidad de cada ventana ni descarta usos con otros perfiles. Chrome verificó consulta, filtro, área sin candidatos y exportación. Treinta pruebas pasan, build y lint.
+
+Ejecución Hawái: seis escenas procesadas sin fallos de descarga; fechas válidas 10 y 12 noviembre 2026, nueve ventanas con alguna observación, cero con cobertura >=99%. Política inicial de terreno despejado: nueve excluidas por las fracciones muestreadas; no valida la totalidad de cada ventana ni descarta usos con otros perfiles. Chrome verificó consulta, filtro, área sin candidatos y exportación. Treinta pruebas pasan, build y lint.
+
+
+## Paginación del catálogo
+
+El límite de 100 escenas ahora es por página. Se recorren enlaces STAC GET/POST, se combinan cuerpos cuando lo indica el servidor, se eliminan duplicados y se ordenan fechas. --max-pages limita consultas y registra truncated; --catalogue-only consulta sin sustituir observaciones. Cinco pruebas automatizadas y dos consultas reales: 45 escenas en una página (completa); 200 escenas en dos páginas (truncada). Esto no modifica datos ya procesados ni garantiza cobertura libre de nubes.
