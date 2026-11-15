@@ -1,3 +1,5 @@
+import SurfacePanel from './SurfacePanel.tsx'
+import {coord,num} from './fmt.ts'
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import type { SearchTarget } from './searchTarget.ts'
 import ScientificSearch from './ScientificSearch.tsx'
@@ -354,6 +356,7 @@ export default function App() {
         <div key={body} className="view-in h-full">
           <div className={body === 'tierra' ? 'h-full' : 'hidden'}>
             <MapView
+              active={body === 'tierra'}
               key={scientificMap.length ? 'scientific' : 'catalogue'}
               ranked={scientificMap.length ? scientificMap.map(r => ({ zone: r.zone, score: r.score / 100 })) : discovery ? [{ zone: discovery.zone, score: discovery.score / 100 }] : ranked}
               selectedId={selectedId}
@@ -400,10 +403,11 @@ export default function App() {
           </Suspense>
         )}
         {comparing && selectedId && !discovery && <Suspense fallback={<Loading what="el comparador 3D" />}><Compare3D zoneId={selectedId} onClose={() => setComparing(false)} /></Suspense>}
+        {discovery&&body==='tierra'&&<SurfacePanel label="Ficha del recorte terrestre"><header><p className="label-mono text-body">Tierra · recorte analizado</p><h2 className="text-2xl font-bold">{discovery.zone.name}</h2><p className="hud text-body">{coord(discovery.zone.centroid[1],discovery.zone.centroid[0])}</p></header><p className="metric text-3xl font-semibold">{num(discovery.score)}<span className="text-sm"> /100 · relieve</span></p><p className="text-sm">Ventana de 20 × 20 km · contorno blanco en el mapa.</p><p className="text-sm text-body">{discovery.zone.notes}</p><p className="hud text-body">{discovery.zone.sources.join(' · ')}</p><button className="btn-primary" onClick={()=>setScientificOpen(true)}>Volver a la comparación científica</button><button className="btn-secondary" onClick={()=>{setDiscovery(null);setSelectedId(null)}}>Cerrar candidato</button></SurfacePanel>}
       </main>
       </div>
-      {scientificOpen&&<ScientificSearch selectedTarget={searchTarget} onClose={()=>setScientificOpen(false)} onSelect={pickEarth} onShowMap={results=>{setScientificMap(results);setDiscovery(null);setSelectedId(null);setBody('tierra');setComparing(false)}}/>}
-      {discovery&&body==='tierra'&&<aside className="fixed right-6 bottom-6 z-20 max-w-sm rounded-2xl bg-white p-6 text-black"><h2>{discovery.zone.name}</h2><p>{discovery.score.toFixed(1)}/100 · similitud topográfica</p><p>{discovery.zone.centroid.join(', ')} · 20 × 20 km</p><p>{discovery.zone.notes}</p><button onClick={()=>setScientificOpen(true)}>Volver a búsqueda</button><button onClick={()=>{setDiscovery(null);setSelectedId(null)}}>Cerrar candidato</button></aside>}
+      {scientificOpen&&<ScientificSearch selectedTarget={searchTarget} onClose={()=>setScientificOpen(false)} onSelect={pickEarth} onShowMap={results=>{setPanel('mapa');setScientificMap(results);setDiscovery(null);setSelectedId(null);setBody('tierra');setComparing(false)}}/>}
+
       <MethodDialog open={methodOpen} onClose={() => setMethodOpen(false)} />
       {notice && <button type="button" className="chip-dark fixed bottom-4 left-1/2 z-50 -translate-x-1/2 text-xs" onClick={() => setNotice('')}>{notice} · Cerrar</button>}
     </div>

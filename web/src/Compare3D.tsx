@@ -1,3 +1,4 @@
+import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { fromUrl } from 'geotiff'
@@ -9,7 +10,7 @@ import { TOLERANCES as MARS_TOL } from './marsData.ts'
 import ConsoleIcon from './ConsoleIcon.tsx'
 import NoWebGL from './NoWebGL.tsx'
 import { hasWebGL } from './webgl.ts'
-import { coord, degrees, meters } from './fmt.ts'
+import { coord, degrees, meters, num } from './fmt.ts'
 
 // Comparador Luna vs Tierra: dos maquetas del MISMO tamaño (20 x 20 km), misma resolución (80 m),
 // misma exageración vertical y misma luz. Girar una gira la otra.
@@ -23,9 +24,7 @@ export interface CompareIndex { size_km: number; res_m: number; n: number; items
 const EXAGGERATION = 2
 
 async function loadHeights(file: string) {
-  const res = await fetch(`/compare/${file}`)
-  if (!res.ok) throw new Error(`${file}: ${res.status}`)
-  return new Uint16Array(await res.arrayBuffer())
+  return new Uint16Array(await localBuffer(`/compare/${file}`))
 }
 
 type Shared = { cams: THREE.PerspectiveCamera[]; controls: OrbitControls[]; syncing: boolean }
@@ -263,8 +262,8 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
             {moons.map((m) => <option key={m.id} value={m.id} className="bg-obsidian">{m.name}</option>)}
           </select>
         </label>}
-        {(supplied || planet === 'marte') && <label className={toolbar}>
-          <span className="label-mono whitespace-nowrap text-mute">Exageración vertical: <span className="metric font-bold text-canvas">×{exaggeration}</span></span>
+        {<label className={toolbar}>
+          <span className="label-mono whitespace-nowrap text-mute">Exageración vertical: <span className="metric font-bold text-canvas">×{num(exaggeration)}</span></span>
           <input aria-label="Exageración vertical" className="w-28" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
         </label>}
         <button type="button" onClick={onClose} className="btn-ghost ml-auto h-10">Cerrar <ConsoleIcon name="close" /></button>
@@ -279,7 +278,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
           <span className="hidden shrink-0 gap-5 md:flex">
             <span>GRILLA: {index.size_km} × {index.size_km} km</span>
             <span>CELDA: {cell} m</span>
-            <span className="text-canvas">RELIEVE ×{exaggeration}</span>
+            <span className="text-canvas">RELIEVE ×{num(exaggeration)}</span>
           </span>
         </div>
       )}
@@ -314,8 +313,8 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                   </div>
                   <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 font-mono text-[11px] text-mute">
                     <div className="flex justify-between">
-                      <span>{Math.abs(it.lat).toFixed(2)}° {it.lat < 0 ? 'S' : 'N'}</span>
-                      <span>{Math.abs(it.lon).toFixed(2)}° {it.lon < 0 ? 'O' : 'E'}</span>
+                      <span>{coord(it.lat,it.lon)}</span>
+
                     </div>
                     <svg className="mx-auto size-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 48 48" aria-hidden="true">
                       <circle cx="24" cy="24" r="16" strokeDasharray="2 2" strokeWidth="0.75" />
