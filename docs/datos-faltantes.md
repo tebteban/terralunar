@@ -18,7 +18,7 @@ Cosas que la app necesita y todavía no existen. Se anotan acá en vez de invent
 - **Perfil Marte:** no existe (es lo primero que se recorta).
 
 ## Consideraciones geomecánicas (D-024, documento de Civil `docs/consideraciones-geomecanicas.md`)
-**Actualizado 2026-11-15 (D-025):** `pipeline/11_geomechanics.py` consiguió datos reales para casi todo lo que
+**Actualizado 2026-11-15 (D-027):** `pipeline/11_geomechanics.py` consiguió datos reales para casi todo lo que
 faltaba. Estado por ítem:
 - ✅ **Granulometría y composición:** NIR (B08) y NDVI de Sentinel-2 L2A por ventana. **Sigue faltando:** la
   mineralogía (anortosita / basalto); el NIR no la identifica. Dato posible: ASTER (índices de sílice y máficos).
@@ -40,9 +40,9 @@ faltaba. Estado por ítem:
   para Arcadia: dice que en el depósito grueso (15 a >100 m) "any ice must be at a low overall fraction", aunque
   infiere hielo cerca de la superficie. La dosis lunar medida (Chang'e-4, Zhang et al. 2020, *Science Advances*)
   es 1369 µSv/día ≈ 0,50 Sv/año, más que los 0,32–0,40 Sv/año del documento. Revisar con Civil.
-- **Tramos intermedios de las reglas:** siguen provisorios (D-025 detalla cada uno). Validar con Civil.
+- **Tramos intermedios de las reglas:** siguen provisorios (D-027 detalla cada uno). Validar con Civil.
 
-## Validación (D-026)
+## Validación (D-028)
 - **Resultado actual:** con relieve solo, los análogos USGS `test` no superan al azar (6 % contra 10 % esperado para
   Mons Mouton). Para una validación con sentido falta la **lista curada de análogos de ensayo** (movilidad,
   excavación, hábitat) con cita por sitio, dividida fit/test antes de calcular. Le toca a Civil.

@@ -9,7 +9,7 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
-## D-026 — Panel de validación con análogos USGS reservados
+## D-028 — Panel de validación con análogos USGS reservados
 - **Fecha:** 2026-11-15 · **Estado:** vigente (CLAUDE.md: la validación "nunca se recorta").
 - **Qué:** `pipeline/12_validation.py` mide el relieve de los 192 análogos USGS (división fit 137 / test 55 hecha
   por hash del nombre antes de calcular, sin tocar) y de 300 ventanas de tierra al azar (semilla 20261115, entre
@@ -27,7 +27,7 @@ borra: se marca como **Reemplazada por D-XXX**.
 - **Límite declarado:** la lista USGS es casi toda de cráteres de impacto: valida "parecido a un análogo planetario
   conocido", no aptitud para un ensayo concreto. Falta la lista curada de análogos de ensayo (datos faltantes).
 
-## D-025 — Datos terrestres reales para los criterios geomecánicos pendientes
+## D-027 — Datos terrestres reales para los criterios geomecánicos pendientes
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: completar `docs/datos-faltantes.md` con datos reales).
 - **Qué:** `pipeline/11_geomechanics.py` mide, para las 176 ventanas de 20 km que usa la app, seis capas reales
   y las deja en `data/geomechanics/earth.json` (~0,5 MB):
@@ -51,6 +51,26 @@ borra: se marca como **Reemplazada por D-XXX**.
 - **Qué no se hizo:** índice UV (NASA OMI requiere login Earthdata; la regla ya usa la altitud), inventarios de
   glaciares de escombros, contenido de hielo y profundidad del permafrost (no existen como capa global).
 
+## D-026 — El atlas auxiliar vuelve a la entrega pública (reemplaza D-023)
+
+**Qué:** `atlas.html`, `atlas.js` y su README vuelven a `data/explorador/`, junto a `global-terreno.js`,
+que el equipo subió a Git. **Por qué:** con el archivo de datos versionado, un clon limpio ya puede
+publicar el atlas completo; separados, no funcionaba en ningún lado. **Costo:** suma 33 MB al deploy
+(la salida pasa de ~137 MB a ~170 MB). **Cómo:** `git mv` y se quita la entrada de `.gitignore`.
+
+---
+
+## D-025 — La búsqueda de análogos se cierra sola y se rediseña en papel limpio
+
+**Qué:** al terminar «Buscar análogos», la ventana se cierra y lleva al globo terrestre con el ranking.
+La ventana pasa a pasos numerados en una columna (destino, ensayo, cobertura, pesos), con selectores,
+casillas y plegables propios y un único «Opciones avanzadas». **Por qué:** el equipo esperaba ver los
+candidatos al buscar, y el formulario anterior (controles nativos, cajas anidadas) se veía sin terminar.
+**Cómo:** `ScientificSearch.tsx`, `AnalogyScope.tsx` y clases `.field`, `.step-num`, `.check` en `index.css`.
+El detalle de resultados y el GeoJSON siguen en «Editar análisis». **Descartado:** estilo oscuro de
+consola y panel lateral (el equipo eligió papel claro).
+
+---
 ## D-024 — Consideraciones geomecánicas de Civil, aplicadas solo con datos medidos
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban; documento del equipo de Civil).
 - **Qué:** `docs/consideraciones-geomecanicas.md` define 7 criterios con pesos (morfología 20 %, volátiles
@@ -68,7 +88,7 @@ borra: se marca como **Reemplazada por D-XXX**.
   tienen perfil. Arcadia Planitia queda cargado pero inactivo hasta tener coordenadas y recorte MOLA.
 - **Pruebas:** `web/test/geomechanics.test.ts` (5 casos); la suite unitaria completa pasa (46).
 
-## D-023 — El atlas auxiliar sale de la entrega pública
+## D-023 — El atlas auxiliar sale de la entrega pública · **Reemplazada por D-026**
 
 **Qué:** `data/explorador/` (atlas.html + atlas.js) se movió a `docs/explorador/`.
 **Por qué:** Vite publica todo `data/`, pero el atlas depende de `global-terreno.js` (33 MB, ignorado por

@@ -93,7 +93,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 - ⬜ Auditoría 15/11: revisar 2–3 candidatos fuera del catálogo con imágenes y cartografía (Civil) (Validez)
 
 ### Siguientes
-- ✅ **Panel de validación** (D-026): % de los análogos `test` en el 10 % superior frente a un fondo de tierra
+- ✅ **Panel de validación** (D-028): % de los análogos `test` en el 10 % superior frente a un fondo de tierra
   al azar, en vivo con destino y pesos. Falta: mostrar esos sitios en el mapa. (Validez)
 - ⬜ **Advertencia de tipo de roca por zona**: el polo sur lunar es anortosita (tierras altas), no
   basalto. Holuhraun, Craters of the Moon, Black Point y Timanfaya son basalto. Necesita un campo

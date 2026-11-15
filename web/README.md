@@ -18,6 +18,8 @@ npm run build      # salida estática en dist/
 
 Vite publica la carpeta `../data` tal cual (`publicDir`). Todo lo que la app necesita está en Git;
 un clon limpio compila y funciona sin archivos extra.
+También publica el atlas auxiliar en `/explorador/atlas.html` (D-026). La salida pesa unos 170 MB:
+sobre todo franjas MOLA de Marte (92 MB), música (35 MB) y el atlas (33 MB).
 
 ## Desplegar
 

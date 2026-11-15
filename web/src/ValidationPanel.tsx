@@ -3,7 +3,7 @@ import {CHANCE, MIN_LAND, evaluateHoldout, type HoldoutManifest} from './validat
 import type {Relief} from './marsData.ts'
 import {num} from './fmt.ts'
 
-// Panel de validación con análogos USGS reservados (D-026). Se recalcula con el destino y los pesos de la búsqueda.
+// Panel de validación con análogos USGS reservados (D-028). Se recalcula con el destino y los pesos de la búsqueda.
 export default function ValidationPanel({target, reference, weights}: {target: string; reference: Relief; weights: Record<string, number>}) {
   const [manifest, setManifest] = useState<HoldoutManifest | null>(null)
   const [error, setError] = useState('')

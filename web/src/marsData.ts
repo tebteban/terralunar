@@ -1,3 +1,4 @@
+import { localBuffer } from './localData.ts'
 import { combine, targetMatch } from './scientificEngine.ts'
 // NASA MOLA MEGDR 32 px/degree. Signed big-endian metres above the areoid.
 export const MARS_RADIUS = 3396000
@@ -79,10 +80,10 @@ export async function earthIndex(): Promise<Patch[]> {
   return index.items.filter((i: {body:string;agua?:number})=>i.body==='tierra' && !i.agua)
 }
 export async function earthPatches(): Promise<Patch[]> {
-  return Promise.all((await earthIndex()).map(async (item: Patch)=>{
-    const r=await fetch(`/compare/${item.file}`)
-    if(!r.ok) throw new Error(`Falta el recorte ${item.name}`)
-    const buffer=await r.arrayBuffer()
+  return Promise.all((await earthIndex()).map(earthPatch))
+}
+export async function earthPatch(item: Patch): Promise<Patch> {
+    const buffer=await localBuffer(`/compare/${item.file}`).catch(()=>{throw new Error(`Falta el recorte ${item.name}`)})
     if(buffer.byteLength!==250*250*2) throw new Error('Recorte terrestre incompleto')
     const source=new DataView(buffer), heights=new Float32Array(100)
     for(let y=0;y<10;y++) for(let x=0;x<10;x++) {
@@ -91,7 +92,6 @@ export async function earthPatches(): Promise<Patch[]> {
       heights[y*10+x]=sum/625
     }
     return {...item,heights,...metrics(heights),source:item.source+'; promedio de celdas de 80 m a 2 km'}
-  }))
 }
 export const TOLERANCES: Relief = {pendiente_mediana:5,pendiente_p90:8,rugosidad_m:200,desnivel_m:1000}
 export function similarity(a: Relief,b: Relief) {

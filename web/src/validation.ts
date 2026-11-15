@@ -1,5 +1,5 @@
 // Validación con sitios reservados (CLAUDE.md: "nunca se recorta"). Datos: pipeline/12_validation.py.
-// Reglas fijadas ANTES de ver resultados (D-026):
+// Reglas fijadas ANTES de ver resultados (D-028):
 //  1. Solo cuenta la división `test` de los análogos USGS; `fit` se muestra aparte y no es la métrica.
 //  2. Se descartan ventanas con menos del 50 % de tierra (el relieve sería fondo marino).
 //  3. Umbral = percentil 90 de la semejanza de 300 ventanas de tierra al azar, medidas igual que los candidatos.

@@ -18,7 +18,7 @@ test.describe('Luna y Marte', () => {
     await page.getByRole('button', { name: 'Buscar análogos de esta región' }).click()
     const dialog = page.locator('dialog[open]')
     await expect(dialog.getByRole('heading', { name: 'Comparar entornos de misión' })).toBeVisible()
-    await expect(dialog.getByLabel('1 · Destino de misión')).toHaveValue('selected')
+    await expect(dialog.getByLabel('Destino de misión')).toHaveValue('selected')
     await expect(dialog.getByRole('option', { name: /Luna · punto/ })).toBeAttached()
   })
 
