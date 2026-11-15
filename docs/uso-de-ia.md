@@ -46,3 +46,4 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 
 | 2026-11-14 | OpenAI Codex | Implementación visual basada en las cuatro pantallas y DESIGN.md del ZIP Stitch del usuario; navegación negra, fichas blancas, Inter/JetBrains Mono, radar y comparador. Conserva datos y motores, sin copiar cifras ficticias de la maqueta. Ver docs/REDESIGN.md. |
 | 2026-11-14 | OpenAI Codex | Primera fase de motor científico: comparación topográfica real a 2 km, WLC con cobertura y restricciones, corrección de fórmula, perfil integral pendiente, documentación geológica y 5 nuevas pruebas. No hay modelo ML entrenado ni descubrimiento mundial. |
+| 2026-11-14 | OpenAI Codex | Piloto de descubrimiento fuera de catálogo: 36 ventanas Terrain Tiles, manifiesto y hashes, diversidad espacial, sensibilidad a pesos, selección geográfica y exportación. Sin IA entrenada ni validación geotécnica. |

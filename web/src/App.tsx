@@ -22,6 +22,8 @@ async function getJSON<T>(path: string): Promise<T> {
 }
 
 export default function App() {
+  const [discoveryScore,setDiscoveryScore] = useState(0)
+  const [discoveryZone,setDiscoveryZone] = useState<Zone | null>(null)
   const [scientificOpen, setScientificOpen] = useState(false)
   const [zones, setZones] = useState<Zone[]>([])
   const [profiles, setProfiles] = useState<Record<string, Profile> | null>(null)
@@ -42,7 +44,7 @@ export default function App() {
     if (methodOpen) methodDialog.current?.showModal()
     else methodDialog.current?.close()
   }, [methodOpen])
-  const pickEarth = (id: string) => { setBody('tierra'); setSelectedId(id); setRightOpen(true) }
+  const pickEarth = (id: string) => { setDiscoveryZone(null); setBody('tierra'); setSelectedId(id); setRightOpen(true) }
   const fullscreen = async () => {
     try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen() }
     catch { setFullscreenError('La pantalla completa no está disponible en este navegador.') }
@@ -72,14 +74,14 @@ export default function App() {
   if (!profile) return <p className="p-6 text-body">Cargando datos…</p>
 
   return (
-    <ResultsTarget.Provider value={resultsTarget}>{scientificOpen && <ScientificSearch onClose={() => setScientificOpen(false)} onSelect={pickEarth}/>}
+    <ResultsTarget.Provider value={resultsTarget}>{scientificOpen && <ScientificSearch onClose={() => setScientificOpen(false)} onSelect={(id,zone,score)=>{pickEarth(id);if(zone){setDiscoveryZone(zone);setDiscoveryScore(score??0)}}}/>}
     <div className={`app-shell stitch-shell body-${body} ${showTelemetry ? '' : 'telemetry-hidden'} ${leftOpen ? 'config-open' : ''} ${rightOpen ? 'results-open' : ''}`}>
       <header className="topbar">
         <a className="brand" href="#workspace" aria-label="TerraLunar, visor"><strong>TERRALUNAR</strong><span>Análogos terrestres para misiones planetarias</span></a>
         <div className="pipeline-status"><span aria-hidden="true">△</span><span>{body === 'tierra' ? 'Datos preliminares de simulación' : 'Relieve planetario · análisis exploratorio'}<small>{body === 'tierra' ? 'Catálogo de demostración' : body === 'luna' ? 'NASA LRO / LOLA' : 'NASA MGS / MOLA'}</small></span></div>
         <nav className="planet-tabs" aria-label="Planeta visualizado">
           {(['tierra','luna','marte'] as const).map(b => <button key={b} aria-pressed={body === b && !comparing} onClick={() => {setBody(b);setComparing(false)}}>{b === 'tierra' ? 'Tierra' : b === 'luna' ? 'Luna' : 'Marte'}</button>)}
-          <button disabled={!selectedId} aria-pressed={comparing} title={selectedId ? 'Comparar el candidato seleccionado' : 'Seleccioná un candidato terrestre para comparar'} onClick={() => setComparing(true)}>Comparador 3D</button>
+          <button disabled={!selectedId || !!discoveryZone} aria-pressed={comparing} title={selectedId ? 'Comparar el candidato seleccionado' : 'Seleccioná un candidato terrestre para comparar'} onClick={() => setComparing(true)}>Comparador 3D</button>
         </nav>
         <div className="source-status"><i/>DATOS ABIERTOS<br/>NASA / PDS</div>
         <div className="top-actions"><button className="mobile-toggle" aria-label="Mostrar configuración" aria-expanded={leftOpen} onClick={() => {setLeftOpen(!leftOpen);setRightOpen(false)}}>Parámetros</button><button aria-label="Fuentes y método" onClick={() => setMethodOpen(true)}>ⓘ</button><button aria-label="Alternar pantalla completa" onClick={fullscreen}><ConsoleIcon name="expand"/></button><button className="mobile-toggle" aria-expanded={rightOpen} onClick={() => {setRightOpen(!rightOpen);setLeftOpen(false)}}>Resultados</button></div>
@@ -87,7 +89,7 @@ export default function App() {
       <nav className="console-rail" aria-label="Herramientas de análisis"><button onClick={() => setScientificOpen(true)}>Comparación científica</button>
         <div className="rail-caption">EXPLORACIÓN PLANETARIA <strong>04 VISTAS</strong></div>
         <button onClick={() => {setBody('tierra');setComparing(false);setLeftOpen(true)}}><ConsoleIcon name="catalog"/>Catálogo de Análogos</button>
-        <button disabled={!selectedId} onClick={() => setComparing(true)}><ConsoleIcon name="terrain"/>Evaluación Geológica</button>
+        <button disabled={!selectedId || !!discoveryZone} onClick={() => setComparing(true)}><ConsoleIcon name="terrain"/>Evaluación Geológica</button>
         <button onClick={() => setMethodOpen(true)}><ConsoleIcon name="limits"/>Límites de Analogía</button>
         <button aria-pressed={showTelemetry} onClick={() => setShowTelemetry(!showTelemetry)}><ConsoleIcon name="orbit"/>Información de cámara</button>
         <div className="operating-mode"><span>MODO OPERATIVO</span><p>{body === 'tierra' ? 'Catálogo de análogos' : body === 'luna' ? 'LRO LOLA · polo sur' : 'MOLA · relieve regional'}</p><small>{body === 'tierra' ? 'Puntajes de prueba' : body === 'luna' ? 'Cobertura analítica 80°–90° S' : 'Análisis a 2 km por celda'}</small></div>
@@ -147,7 +149,7 @@ export default function App() {
       <main id="workspace" className="viewer-workspace" aria-label="Visor geoespacial">
         <div className="viewer-heading"><span>{body === 'tierra' ? 'Tierra / Candidatos terrestres' : body === 'luna' ? 'Luna / Polo sur / LRO LOLA' : 'Marte / Exploración / MOLA'}</span><span className="status-badge">{body === 'tierra' ? 'Catálogo de prueba' : 'Análisis topográfico'}</span></div>
         <div className="viewer-canvas">
-          <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={ranked} selectedId={selectedId} onSelect={pickEarth} /></div>
+          <div className={body === 'tierra' ? 'h-full' : 'hidden'}><MapView ranked={discoveryZone ? [{zone:discoveryZone,score:discoveryScore/100}] : ranked} selectedId={selectedId} onSelect={pickEarth} /></div>
           {body === 'luna' && <MoonMap onPickEarth={pickEarth} />}
           {body === 'marte' && <MarsView onPickEarth={pickEarth} />}
         </div>
@@ -158,7 +160,7 @@ export default function App() {
         <div className="results-kicker">{body === 'tierra' ? 'FICHA DEL CANDIDATO' : body === 'luna' ? 'COORDENADAS DEL MODELO · LRO / LOLA' : 'SUPERFICIE MARCIANA · MOLA'}</div>
         <div ref={setResultsTarget} />
         {body === 'tierra' && <>
-          {selectedIndex >= 0 ? <ZoneCard ranked={ranked[selectedIndex]} position={selectedIndex+1} profile={profile} weights={weights} onClose={() => setSelectedId(null)} onCompare={() => setComparing(true)} /> : <div className="empty-state"><span>◎</span><h3>Seleccioná un candidato</h3><p>Consultá sus indicadores, fuentes y comparación de relieve.</p></div>}
+          {discoveryZone ? <div className="empty-state"><h3>{discoveryZone.name}</h3><p>{discoveryScore.toFixed(1)}/100 · similitud topográfica exploratoria</p><p>{discoveryZone.centroid[1].toFixed(4)}°, {discoveryZone.centroid[0].toFixed(4)}° · 20 × 20 km</p><p>{discoveryZone.notes}</p><p>{discoveryZone.sources.join('; ')}</p><button onClick={()=>setScientificOpen(true)}>Volver a la búsqueda científica</button><button onClick={()=>{setDiscoveryZone(null);setSelectedId(null)}}>Cerrar candidato</button></div> : selectedIndex >= 0 ? <ZoneCard ranked={ranked[selectedIndex]} position={selectedIndex+1} profile={profile} weights={weights} onClose={() => setSelectedId(null)} onCompare={() => setComparing(true)} /> : <div className="empty-state"><span>◎</span><h3>Seleccioná un candidato</h3><p>Consultá sus indicadores, fuentes y comparación de relieve.</p></div>}
           <button className="secondary-action" onClick={() => {setLeftOpen(true);setRightOpen(false);document.querySelector<HTMLInputElement>('.weight-controls input')?.focus()}}>Ajustar pesos</button>
         </>}
       </aside>
@@ -168,4 +170,5 @@ export default function App() {
     </ResultsTarget.Provider>
   )
 }
+
 

@@ -61,3 +61,19 @@ Entrenar offline únicamente con datos suficientes y comparar contra la línea b
 ## Validación
 
 Pruebas automatizadas de rangos, máscara de suma completa, NoData, restricciones desconocidas, sensibilidad de pesos y función de similitud. Ejecutar npm test, npm run build, npm run lint desde web. Estos tests verifican implementación; no constituyen validación científica ni evaluación geotécnica. Quedan pendientes análisis de resolución, benchmark espacial, nuevas regiones y validación mineralógica.
+
+## Piloto de descubrimiento ejecutado
+
+Se incorpora `pipeline/05_discovery.py`, grilla automática de 6×6 ventanas de 20 km, centro 24° S / 68° O. Área nominal 14.400 km². Extensión exacta, fuentes de cada tile, SHA256, fecha y fallos en `data/discovery/pilot.json`. Descarga pública Terrain Tiles: https://registry.opendata.aws/terrain-tiles/ ; atribución https://github.com/tilezen/joerd/blob/master/docs/attribution.md . No se presenta como NASADEM puro: es una fuente combinada con procedencia y resolución efectiva heterogéneas.
+
+Se procesaron 36/36 ventanas en aproximadamente 21 s en esta ejecución, sin fallos. El navegador consulta el índice ya procesado; no descarga ni procesa el mundo al pulsar buscar. Sin máscara de agua/vegetación; coverage=1 significa todas las muestras de elevación finitas, NO cobertura científica completa ni ausencia de vacíos interpolados del proveedor. No hay garantía geotécnica ni acceso de campo.
+
+Muestreo bilineal z10 (~140 m nominal en esta latitud), paso 200 m y promedio 10×10 a celdas de 2 km. Ventanas en proyección esférica equirectangular local con error máximo de escala E–O de 0,424% en esta región. Las ventanas comparten límites, no se solapan. No extrapolar a polos. La Luna se agrega desde el recorte LOLA existente. Falta cuantificar diferencias de resolución efectiva y orientación de las grillas; muestreo común no elimina esos sesgos.
+
+Excluye centros a menos de 30 km de centros del catálogo terrestre y selecciona representantes separados al menos 30 km. Esto es una regla de diversidad, no clustering geológico ni prueba de originalidad. No se afirma que los sitios sean desconocidos para la ciencia. Para evaluar recuperación de análogos se requiere otra ejecución SIN excluir los sitios reservados, más datos y etiquetas independientes.
+
+Resultados y sensibilidad: `data/discovery/validation.json`. Mons Mouton, pesos iguales: 36 elegibles y 8 representantes. Primera celda 5–4, -23.730204/-67.901557, 94,73/100; segunda 2–2, 94,68/100. Diferencia mínima, no un ganador robusto. Duplicar individualmente pesos mantiene 4–5 de los 5 primeros; cambia el primero en tres de cuatro variaciones. No se interpreta como precisión o probabilidad.
+
+Interfaz: Comparación científica → Piloto Atacama → Calcular. Ver en Tierra abre la geometría nueva y una ficha específica, sin heredar puntajes ficticios del catálogo. Exportación incluye parámetros y manifiesto. Se comprobó búsqueda y selección en Chrome sin errores JavaScript; 14 tests, compilación y lint. Pendientes: validación externa, escala/resolución, máscara de cobertura, mineralogía, nuevas áreas y entrenamiento si mejora una línea base evaluada.
+
+Reproducir: ejecutar `python pipeline/05_discovery.py` con numpy/Pillow. Parámetros `--lat`, `--lon`, `--cells` generan otra grilla (reemplazan el manifiesto del piloto; conservar una copia para comparaciones). Ampliar la UI a múltiples manifiestos antes de publicar nuevas regiones: el rótulo actual identifica el piloto Atacama. Tests desde web: `npm test`.
