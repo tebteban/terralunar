@@ -1,0 +1,185 @@
+{
+ "description": "Sitios terrestres del catálogo de referencia (análogos conocidos). Solo nombre y coordenadas; el relieve lo mide pipeline/02_compare_patches.py.",
+ "sites": [
+  {
+   "id": "mcmurdo-dry-valleys",
+   "name": "Valles Secos de McMurdo",
+   "country": "Antártida",
+   "centroid": [
+    161.8,
+    -77.5
+   ]
+  },
+  {
+   "id": "haughton-crater",
+   "name": "Cráter Haughton (Isla Devon)",
+   "country": "Canadá",
+   "centroid": [
+    -89.67,
+    75.38
+   ]
+  },
+  {
+   "id": "atacama-yungay",
+   "name": "Desierto de Atacama (Yungay)",
+   "country": "Chile",
+   "centroid": [
+    -70.0,
+    -24.1
+   ]
+  },
+  {
+   "id": "mauna-kea",
+   "name": "Mauna Kea",
+   "country": "EE.UU. (Hawái)",
+   "centroid": [
+    -155.47,
+    19.82
+   ]
+  },
+  {
+   "id": "barringer-crater",
+   "name": "Cráter Barringer",
+   "country": "EE.UU.",
+   "centroid": [
+    -111.02,
+    35.03
+   ]
+  },
+  {
+   "id": "black-point-lava",
+   "name": "Colada Black Point",
+   "country": "EE.UU.",
+   "centroid": [
+    -111.4,
+    35.68
+   ]
+  },
+  {
+   "id": "svalbard-bockfjorden",
+   "name": "Bockfjorden (Svalbard)",
+   "country": "Noruega",
+   "centroid": [
+    13.9,
+    79.4
+   ]
+  },
+  {
+   "id": "holuhraun",
+   "name": "Holuhraun / Askja",
+   "country": "Islandia",
+   "centroid": [
+    -16.8,
+    64.85
+   ]
+  },
+  {
+   "id": "rio-tinto",
+   "name": "Río Tinto",
+   "country": "España",
+   "centroid": [
+    -6.6,
+    37.7
+   ]
+  },
+  {
+   "id": "death-valley",
+   "name": "Valle de la Muerte",
+   "country": "EE.UU.",
+   "centroid": [
+    -116.9,
+    36.5
+   ]
+  },
+  {
+   "id": "craters-of-the-moon",
+   "name": "Craters of the Moon",
+   "country": "EE.UU.",
+   "centroid": [
+    -113.5,
+    43.4
+   ]
+  },
+  {
+   "id": "lanzarote-timanfaya",
+   "name": "Timanfaya (Lanzarote)",
+   "country": "España",
+   "centroid": [
+    -13.78,
+    29.0
+   ]
+  },
+  {
+   "id": "pilbara",
+   "name": "Pilbara",
+   "country": "Australia",
+   "centroid": [
+    118.0,
+    -21.2
+   ]
+  },
+  {
+   "id": "axel-heiberg",
+   "name": "Isla Axel Heiberg",
+   "country": "Canadá",
+   "centroid": [
+    -91.0,
+    79.4
+   ]
+  },
+  {
+   "id": "campo-piedra-pomez",
+   "name": "Campo de Piedra Pómez (Puna)",
+   "country": "Argentina",
+   "centroid": [
+    -67.4,
+    -26.6
+   ]
+  },
+  {
+   "id": "payunia",
+   "name": "La Payunia",
+   "country": "Argentina",
+   "centroid": [
+    -69.3,
+    -36.4
+   ]
+  },
+  {
+   "id": "ischigualasto",
+   "name": "Ischigualasto (Valle de la Luna)",
+   "country": "Argentina",
+   "centroid": [
+    -67.95,
+    -30.15
+   ]
+  },
+  {
+   "id": "qaidam",
+   "name": "Cuenca de Qaidam",
+   "country": "China",
+   "centroid": [
+    93.0,
+    37.8
+   ]
+  },
+  {
+   "id": "wadi-rum",
+   "name": "Wadi Rum",
+   "country": "Jordania",
+   "centroid": [
+    35.42,
+    29.57
+   ]
+  },
+  {
+   "id": "gobi-flaming-cliffs",
+   "name": "Gobi (Bayanzag)",
+   "country": "Mongolia",
+   "centroid": [
+    103.7,
+    44.2
+   ]
+  }
+ ]
+}

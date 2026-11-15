@@ -68,8 +68,8 @@ export async function loadCandidates(regions:Region[],scope:string,recent:boolea
 }
 
 /** Semejanza de relieve al destino: la MISMA fórmula para el ranking y para la validación (validation.ts). */
-export function reliefScore(features:Relief,reference:Relief,weights:Record<string,number>){
- return combine(Object.entries(TOLERANCES).map(([id,t])=>({id,weight:weights[id],value:targetMatch(features[id as keyof Relief],reference[id as keyof Relief],t)})))
+export function reliefScore(features:Relief,reference:Relief,weights:Record<string,number>,tolerances:Relief=TOLERANCES){
+ return combine(Object.entries(tolerances).map(([id,t])=>({id,weight:weights[id],value:targetMatch(features[id as keyof Relief],reference[id as keyof Relief],t)})))
 }
 export function rankCandidates(candidates:Candidate[],reference:Relief,weights:Record<string,number>,policy:MaskPolicy,bounds?:SearchBounds,referencePoints: {lon:number;lat:number}[]=[]){
  // Validate even when no candidate survives the filters.

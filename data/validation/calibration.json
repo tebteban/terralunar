@@ -1,0 +1,165 @@
+{
+  "version": "tolerance-calibration/1",
+  "generated_utc": "2026-11-15T19:57:37.041Z",
+  "method": "Escala = rango intercuartil de cada medida en 300 ventanas de tierra al azar; tolerancia = c × escala; c elegido con los análogos USGS fit (Mons Mouton, pesos iguales); test evaluado una sola vez.",
+  "rules": [
+    "c ∈ {0,25; 0,5; 1; 2; 4}",
+    "mayor acierto en fit; empate → c más cercano a 1",
+    "test se evalúa una vez y se informa junto a las tolerancias a mano"
+  ],
+  "scale": {
+    "pendiente_mediana": 1.34,
+    "pendiente_p90": 3.23,
+    "rugosidad_m": 32.8,
+    "desnivel_m": 463
+  },
+  "multipliers": [
+    {
+      "c": 0.25,
+      "fitHits": 3,
+      "fitUsed": 133,
+      "fitRate": 0.022556390977443608
+    },
+    {
+      "c": 0.5,
+      "fitHits": 3,
+      "fitUsed": 133,
+      "fitRate": 0.022556390977443608
+    },
+    {
+      "c": 1,
+      "fitHits": 3,
+      "fitUsed": 133,
+      "fitRate": 0.022556390977443608
+    },
+    {
+      "c": 2,
+      "fitHits": 3,
+      "fitUsed": 133,
+      "fitRate": 0.022556390977443608
+    },
+    {
+      "c": 4,
+      "fitHits": 3,
+      "fitUsed": 133,
+      "fitRate": 0.022556390977443608
+    }
+  ],
+  "chosen": 1,
+  "manualTolerances": {
+    "pendiente_mediana": 5,
+    "pendiente_p90": 8,
+    "rugosidad_m": 200,
+    "desnivel_m": 1000
+  },
+  "calibratedTolerances": {
+    "pendiente_mediana": 1.34,
+    "pendiente_p90": 3.23,
+    "rugosidad_m": 32.8,
+    "desnivel_m": 463
+  },
+  "test": [
+    {
+      "id": "luna-mons-mouton",
+      "name": "Mons Mouton (meseta)",
+      "manual": {
+        "hits": 3,
+        "used": 54,
+        "rate": 0.05555555555555555,
+        "pValue": 0.9165923327997741,
+        "threshold": 76.52525284758657,
+        "top": [
+          "Santa Fe",
+          "Ritland",
+          "Charlevoix (=La Malbaie)",
+          "Bosumtwi (= Ashanti)",
+          "Ritland"
+        ],
+        "informative": true
+      },
+      "calibrated": {
+        "hits": 2,
+        "used": 54,
+        "rate": 0.037037037037037035,
+        "pValue": 0.9763302566053423,
+        "threshold": 43.61864785964899,
+        "top": [
+          "Charlevoix (=La Malbaie)",
+          "Santa Fe",
+          "Ritland",
+          "Bosumtwi (= Ashanti)",
+          "Ritland"
+        ],
+        "informative": true
+      }
+    },
+    {
+      "id": "luna-mons-malapert",
+      "name": "Mons Malapert (macizo)",
+      "manual": {
+        "hits": 1,
+        "used": 54,
+        "rate": 0.018518518518518517,
+        "pValue": 0.9966186080864786,
+        "threshold": 19.319952570821062,
+        "top": [
+          "Ritland",
+          "Charlevoix (=La Malbaie)",
+          "Bosumtwi (= Ashanti)",
+          "Santa Fe",
+          "Vista Alegre"
+        ],
+        "informative": true
+      },
+      "calibrated": {
+        "hits": 1,
+        "used": 54,
+        "rate": 0.018518518518518517,
+        "pValue": 0.9966186080864786,
+        "threshold": 0,
+        "top": [
+          "Ritland",
+          "Acraman",
+          "Aorounga",
+          "Aouelloul",
+          "Barringer (= Meteor)"
+        ],
+        "informative": false
+      }
+    },
+    {
+      "id": "luna-nobile-rim-2",
+      "name": "Nobile Rim 2 (punto óptimo de un estudio)",
+      "manual": {
+        "hits": 1,
+        "used": 54,
+        "rate": 0.018518518518518517,
+        "pValue": 0.9966186080864786,
+        "threshold": 19.573863701966136,
+        "top": [
+          "Ritland",
+          "Charlevoix (=La Malbaie)",
+          "Bosumtwi (= Ashanti)",
+          "Santa Fe",
+          "Vista Alegre"
+        ],
+        "informative": true
+      },
+      "calibrated": {
+        "hits": 1,
+        "used": 54,
+        "rate": 0.018518518518518517,
+        "pValue": 0.9966186080864786,
+        "threshold": 0,
+        "top": [
+          "Ritland",
+          "Acraman",
+          "Aorounga",
+          "Aouelloul",
+          "Barringer (= Meteor)"
+        ],
+        "informative": false
+      }
+    }
+  ]
+}

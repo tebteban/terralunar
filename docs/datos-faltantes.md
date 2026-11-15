@@ -2,8 +2,8 @@
 
 Cosas que la app necesita y todavía no existen. Se anotan acá en vez de inventarlas.
 
-- **Todo `data/zones.json` es MOCK.** Puntajes inventados a mano; los reemplaza el pipeline real.
-- **Polígonos de zonas:** el mock usa un cuadrado del área indicada alrededor del centroide.
+- ~~`data/zones.json` MOCK~~ **borrado (D-029).** La app no lo usaba; los nombres y coordenadas reales de los 20
+  sitios del catálogo quedaron en `data/earth_sites.json`.
 - **Lista de análogos de referencia para validar:** `data/known_analogs.geojson` ya tiene la capa USGS real (192 sitios, división fit/test por hash del nombre: 137/55), pero son casi todos cráteres de impacto y no incluye los análogos de ensayo clásicos (Atacama, Mauna Kea, Valles Secos, Death Valley, Lanzarote, Holuhraun). Falta una lista curada de análogos de ensayo para movilidad/excavación/hábitat, con cita por sitio (programas de análogos de NASA, ESA, papers), dividida fit/test ANTES de calcular. Le toca a Civil.
 - **Umbrales difusos (`a, b, c, d`) y pesos de presets en `profiles.json`:** provisorios. Validar con el de civil y el ingeniero aeroespacial; idealmente derivados de LRO Diviner (temperatura) y LOLA (pendiente/rugosidad) de los sitios Artemis III.
 - **Litología (anortosita, tierras altas):** no hay dimensión todavía. Falta un dataset geológico global.
@@ -14,7 +14,7 @@ Cosas que la app necesita y todavía no existen. Se anotan acá en vez de invent
 - **NASADEM no cubre más allá de 56° S / 60° N:** McMurdo, Haughton, Svalbard, Axel Heiberg y Holuhraun (Islandia) necesitan Copernicus GLO-30 para pendiente.
 - **Comparador 3D, lado Tierra:** usa AWS Terrain Tiles; pasar a NASADEM (o Copernicus fuera de 56° S–60° N) para que el número sea 100 % NASA. Las zonas costeras tienen el mar aplanado a 0.
 - **Polígonos de aterrizaje Artemis III:** el comparador usa centros IAU de los accidentes (Mons Mouton, Mons Malapert) y un punto de un estudio (Nobile Rim 2). Si aparece la fuente oficial, reemplazar.
-- **Búsqueda desde la Luna:** compara solo contra las zonas de `zones.json` (hoy 20 mock). Cuando el pipeline extraiga ~200 candidatas, correr `02_compare_patches.py` para sus métricas. Tolerancias del parecido (pendiente 5°, p90 8°, rugosidad 3 m, desnivel 1000 m) son provisorias: validar con Civil.
+- **Búsqueda desde la Luna:** compara solo contra las zonas de `zones.json` (hoy 20 mock). Cuando el pipeline extraiga ~200 candidatas, correr `02_compare_patches.py` para sus métricas. Tolerancias del parecido: calibradas con datos reales (D-030); los análogos fit no discriminan, falta la lista curada de análogos de ensayo para afinarlas.
 - **Perfil Marte:** no existe (es lo primero que se recorta).
 
 ## Consideraciones geomecánicas (D-024, documento de Civil `docs/consideraciones-geomecanicas.md`)
