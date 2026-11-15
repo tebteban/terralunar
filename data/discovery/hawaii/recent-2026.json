@@ -1,0 +1,295 @@
+{
+  "version": "sentinel-recent-1",
+  "pilot_sha256": "5b106af6175679e3e1f202fcaac99e0daf521908875df16c0bb587ffbf6fd593",
+  "product": "Sentinel-2 L2A 2026; SCL and calibrated NDVI",
+  "method": "200m approximate nearest overview sampling; latest clear observation from selected tiles; SCL 4/5/6 only; NDVI filter uses window p90; built-up not measured",
+  "sources": [
+    {
+      "id": "S2C_MSIL2A_20261112T205931_R014_T05QKB_20261112T230452",
+      "datetime": "2026-11-12T20:59:31.025000Z",
+      "accepted_samples": 60446,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T05QKB_20261112T230452.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T05QKB_20261112T230452.SAFE/GRANULE/L2A_T05QKB_A011424_20261112T205934/IMG_DATA/R10m/T05QKB_20261112T205931_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T05QKB_20261112T230452.SAFE/GRANULE/L2A_T05QKB_A011424_20261112T205934/IMG_DATA/R10m/T05QKB_20261112T205931_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T05QKB_20261112T230452.SAFE/GRANULE/L2A_T05QKB_A011424_20261112T205934/IMG_DATA/R20m/T05QKB_20261112T205931_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2C_MSIL2A_20261112T205931_R014_T04QHG_20261112T230452",
+      "datetime": "2026-11-12T20:59:31.025000Z",
+      "accepted_samples": 5217,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T04QHG_20261112T230452.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T04QHG_20261112T230452.SAFE/GRANULE/L2A_T04QHG_A011424_20261112T205934/IMG_DATA/R10m/T04QHG_20261112T205931_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T04QHG_20261112T230452.SAFE/GRANULE/L2A_T04QHG_A011424_20261112T205934/IMG_DATA/R10m/T04QHG_20261112T205931_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/12/S2C_MSIL2A_20261112T205931_N0513_R014_T04QHG_20261112T230452.SAFE/GRANULE/L2A_T04QHG_A011424_20261112T205934/IMG_DATA/R20m/T04QHG_20261112T205931_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261110T210919_R057_T05QKB_20261110T223548",
+      "datetime": "2026-11-10T21:09:19.024000Z",
+      "accepted_samples": 968,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T05QKB_20261110T223548.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T05QKB_20261110T223548.SAFE/GRANULE/L2A_T05QKB_A050562_20261110T210921/IMG_DATA/R10m/T05QKB_20261110T210919_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T05QKB_20261110T223548.SAFE/GRANULE/L2A_T05QKB_A050562_20261110T210921/IMG_DATA/R10m/T05QKB_20261110T210919_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/05/Q/KB/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T05QKB_20261110T223548.SAFE/GRANULE/L2A_T05QKB_A050562_20261110T210921/IMG_DATA/R20m/T05QKB_20261110T210919_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261110T210919_R057_T04QHG_20261110T223548",
+      "datetime": "2026-11-10T21:09:19.024000Z",
+      "accepted_samples": 459,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T04QHG_20261110T223548.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T04QHG_20261110T223548.SAFE/GRANULE/L2A_T04QHG_A050562_20261110T210921/IMG_DATA/R10m/T04QHG_20261110T210919_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T04QHG_20261110T223548.SAFE/GRANULE/L2A_T04QHG_A050562_20261110T210921/IMG_DATA/R10m/T04QHG_20261110T210919_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HG/2026/11/10/S2B_MSIL2A_20261110T210919_N0513_R057_T04QHG_20261110T223548.SAFE/GRANULE/L2A_T04QHG_A050562_20261110T210921/IMG_DATA/R20m/T04QHG_20261110T210919_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2B_MSIL2A_20261107T205939_R014_T04QHH_20261108T000703",
+      "datetime": "2026-11-07T20:59:39.024000Z",
+      "accepted_samples": 0,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/07/S2B_MSIL2A_20261107T205939_N0513_R014_T04QHH_20261108T000703.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/07/S2B_MSIL2A_20261107T205939_N0513_R014_T04QHH_20261108T000703.SAFE/GRANULE/L2A_T04QHH_A050519_20261107T205937/IMG_DATA/R10m/T04QHH_20261107T205939_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/07/S2B_MSIL2A_20261107T205939_N0513_R014_T04QHH_20261108T000703.SAFE/GRANULE/L2A_T04QHH_A050519_20261107T205937/IMG_DATA/R10m/T04QHH_20261107T205939_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/07/S2B_MSIL2A_20261107T205939_N0513_R014_T04QHH_20261108T000703.SAFE/GRANULE/L2A_T04QHH_A050519_20261107T205937/IMG_DATA/R20m/T04QHH_20261107T205939_SCL_20m.tif"
+      }
+    },
+    {
+      "id": "S2C_MSIL2A_20261102T205931_R014_T04QHH_20261102T225601",
+      "datetime": "2026-11-02T20:59:31.025000Z",
+      "accepted_samples": 0,
+      "quantification": 10000.0,
+      "band_offsets": {
+        "0": -1000.0,
+        "1": -1000.0,
+        "2": -1000.0,
+        "3": -1000.0,
+        "4": -1000.0,
+        "5": -1000.0,
+        "6": -1000.0,
+        "7": -1000.0,
+        "8": -1000.0,
+        "9": -1000.0,
+        "10": -1000.0,
+        "11": -1000.0,
+        "12": -1000.0
+      },
+      "calibration_source": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/02/S2C_MSIL2A_20261102T205931_N0513_R014_T04QHH_20261102T225601.SAFE/MTD_MSIL2A.xml",
+      "assets": {
+        "B04": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/02/S2C_MSIL2A_20261102T205931_N0513_R014_T04QHH_20261102T225601.SAFE/GRANULE/L2A_T04QHH_A011281_20261102T205932/IMG_DATA/R10m/T04QHH_20261102T205931_B04_10m.tif",
+        "B08": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/02/S2C_MSIL2A_20261102T205931_N0513_R014_T04QHH_20261102T225601.SAFE/GRANULE/L2A_T04QHH_A011281_20261102T205932/IMG_DATA/R10m/T04QHH_20261102T205931_B08_10m.tif",
+        "SCL": "https://sentinel2l2a01.blob.core.windows.net/sentinel2-l2/04/Q/HH/2026/11/02/S2C_MSIL2A_20261102T205931_N0513_R014_T04QHH_20261102T225601.SAFE/GRANULE/L2A_T04QHH_A011281_20261102T205932/IMG_DATA/R20m/T04QHH_20261102T205931_SCL_20m.tif"
+      }
+    }
+  ],
+  "failures": [],
+  "items": [
+    {
+      "id": "hawaii-0-0",
+      "valid_fraction": 0.9136,
+      "ndvi": 0.43210198807783207,
+      "ndvi_median": 0.01036889703054639,
+      "water": 0.099715411558669,
+      "vegetation": 0.07935639229422066,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-0-1",
+      "valid_fraction": 0.9468,
+      "ndvi": 0.8572030704920575,
+      "ndvi_median": 0.7589967920035355,
+      "water": 0.002006759611322349,
+      "vegetation": 0.704900718208703,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-0-2",
+      "valid_fraction": 0.7249,
+      "ndvi": 0.7910227521984485,
+      "ndvi_median": 0.323840520748576,
+      "water": 0.2914884811698165,
+      "vegetation": 0.3935715271071872,
+      "built": null,
+      "dates": [
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-1-0",
+      "valid_fraction": 0.7011,
+      "ndvi": 0.5931161647203441,
+      "ndvi_median": 0.31565262610504424,
+      "water": 0.011268007416916274,
+      "vegetation": 0.28940236770788763,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-1-1",
+      "valid_fraction": 0.8815,
+      "ndvi": 0.150962266828427,
+      "ndvi_median": 0.004840271055179094,
+      "water": 0.03902439024390244,
+      "vegetation": 0.028701077708451504,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-1-2",
+      "valid_fraction": 0.5286,
+      "ndvi": 0.7827724014928825,
+      "ndvi_median": 0.5563875596026111,
+      "water": 0.016836927733636018,
+      "vegetation": 0.7162315550510783,
+      "built": null,
+      "dates": [
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-2-0",
+      "valid_fraction": 0.6713,
+      "ndvi": 0.5009365982622154,
+      "ndvi_median": 0.3191011235955055,
+      "water": 0.0034261879934455535,
+      "vegetation": 0.1671383882019961,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-2-1",
+      "valid_fraction": 0.8623,
+      "ndvi": 0.543240483391084,
+      "ndvi_median": 0.19069767441860463,
+      "water": 0.06273918589817928,
+      "vegetation": 0.20074220109010785,
+      "built": null,
+      "dates": [
+        "2026-11-10",
+        "2026-11-12"
+      ]
+    },
+    {
+      "id": "hawaii-2-2",
+      "valid_fraction": 0.4789,
+      "ndvi": 0.7674244680982096,
+      "ndvi_median": 0.5480149304377334,
+      "water": 0.0008352474420547087,
+      "vegetation": 0.6377114220087701,
+      "built": null,
+      "dates": [
+        "2026-11-12"
+      ]
+    }
+  ],
+  "requested_interval": [
+    "2026-10-01",
+    "2026-11-14"
+  ],
+  "max_scenes_per_tile": 2,
+  "catalogue_limit": 100,
+  "catalogue_returned": 45,
+  "created": "2026-11-15T02:02:04.387873+00:00"
+}

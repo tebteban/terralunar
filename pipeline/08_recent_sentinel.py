@@ -1,5 +1,5 @@
 """Recent Sentinel-2 regional sampling, dated observations, not annual land-cover."""
-import sys,json,urllib.request,urllib.parse,urllib.error,hashlib,time
+import argparse,re,sys,json,urllib.request,urllib.parse,urllib.error,hashlib,time
 from pathlib import Path
 from datetime import datetime,timezone
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'pipeline/.deps'))
@@ -18,17 +18,22 @@ def request(url,data=None):
    if e.code!=429 or attempt==4:raise
    delay=min(55,max(5,int(e.headers.get('Retry-After','10'))));print('Rate limit: waiting',delay,flush=True);time.sleep(delay)
 def main():
- raw=(ROOT/'data/discovery/pilot.json').read_bytes();pilot=json.loads(raw);a,b=pilot['extent'];end='2026-11-14T23:59:59Z'
- q={'collections':['sentinel-2-l2a'],'bbox':a+b,'datetime':'2026-10-01T00:00:00Z/'+end,'limit':100,'sortby':[{'field':'datetime','direction':'desc'}]}
- found=request('https://planetarycomputer.microsoft.com/api/stac/v1/search',q)['features'];chosen={}
+ parser=argparse.ArgumentParser();parser.add_argument('--region',default='pilot');parser.add_argument('--start',default='2026-10-01');parser.add_argument('--end',default='2026-11-14');parser.add_argument('--scenes-per-tile',type=int,default=3);args=parser.parse_args()
+ if not re.fullmatch(r'[a-z0-9_-]+',args.region) or not 1<=args.scenes_per_tile<=5:raise ValueError('Invalid region or scene limit')
+ datetime.fromisoformat(args.start);datetime.fromisoformat(args.end)
+ base=ROOT/'data/discovery' if args.region=='pilot' else ROOT/'data/discovery'/args.region
+ raw=(base/'pilot.json').read_bytes();pilot=json.loads(raw);a,b=pilot['extent'];end=args.end+'T23:59:59Z'
+ q={'collections':['sentinel-2-l2a'],'bbox':a+b,'datetime':args.start+'T00:00:00Z/'+end,'limit':100,'sortby':[{'field':'datetime','direction':'desc'}]}
+ found=request('https://planetarycomputer.microsoft.com/api/stac/v1/search',q)['features'];chosen=[];tile_counts={}
  for f in found:
   tile=f['properties'].get('s2:mgrs_tile') or f['id'].split('_T')[1][:5]
-  if tile not in chosen and f['properties'].get('eo:cloud_cover',100)<30:chosen[tile]=f
+  if tile_counts.get(tile,0)<args.scenes_per_tile and f['properties'].get('eo:cloud_cover',100)<60:
+   chosen.append((tile,f));tile_counts[tile]=tile_counts.get(tile,0)+1
  points=[]
  for p in pilot['items']:
   ring=p['polygon']['coordinates'][0];west,south=ring[0];east,north=ring[2];x,y=np.meshgrid(west+(np.arange(100)+.5)*(east-west)/100,north-(np.arange(100)+.5)*(north-south)/100);points.append((x.ravel(),y.ravel()))
  lon=np.concatenate([p[0] for p in points]);lat=np.concatenate([p[1] for p in points]);ndvi=np.full(len(lon),np.nan);scl=np.zeros(len(lon),dtype=np.uint8);dates=np.full(len(lon),'',dtype='U30');sources=[];failures=[]
- for tile,f in chosen.items():
+ for tile,f in chosen:
   try:
    meta_url=f['assets']['product-metadata']['href']
    signed_meta=request('https://planetarycomputer.microsoft.com/api/sas/v1/sign?href='+urllib.parse.quote(meta_url,safe=''))['href']
@@ -54,6 +59,6 @@ def main():
  items=[]
  for i,p in enumerate(pilot['items']):
   v=ndvi[i*10000:(i+1)*10000];c=scl[i*10000:(i+1)*10000];d=dates[i*10000:(i+1)*10000];ok=np.isfinite(v);count=int(ok.sum());items.append({'id':p['id'],'valid_fraction':count/10000,'ndvi':float(np.quantile(v[ok],.9)) if count else None,'ndvi_median':float(np.median(v[ok])) if count else None,'water':float((c[ok]==6).mean()) if count else None,'vegetation':float((c[ok]==4).mean()) if count else None,'built':None,'dates':sorted(set(d[ok]))})
- output={'version':'sentinel-recent-1','pilot_sha256':hashlib.sha256(raw).hexdigest(),'product':'Sentinel-2 L2A 2026; SCL and calibrated NDVI','method':'200m approximate nearest overview sampling; latest clear observation from selected tiles; SCL 4/5/6 only; NDVI filter uses window p90; built-up not measured','sources':sources,'failures':failures,'items':items,'created':datetime.now(timezone.utc).isoformat()}
- (ROOT/'data/discovery/recent-2026.json').write_text(json.dumps(output,indent=2,allow_nan=False),encoding='utf8');print('windows with observations',sum(i['ndvi'] is not None for i in items),flush=True)
+ output={'version':'sentinel-recent-1','pilot_sha256':hashlib.sha256(raw).hexdigest(),'product':'Sentinel-2 L2A 2026; SCL and calibrated NDVI','method':'200m approximate nearest overview sampling; latest clear observation from selected tiles; SCL 4/5/6 only; NDVI filter uses window p90; built-up not measured','sources':sources,'failures':failures,'items':items,'requested_interval':[args.start,args.end],'max_scenes_per_tile':args.scenes_per_tile,'catalogue_limit':100,'catalogue_returned':len(found),'created':datetime.now(timezone.utc).isoformat()}
+ (base/'recent-2026.json').write_text(json.dumps(output,indent=2,allow_nan=False),encoding='utf8');print('windows with observations',sum(i['ndvi'] is not None for i in items),flush=True)
 if __name__=='__main__':main()

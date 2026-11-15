@@ -1,0 +1,12 @@
+# Regiones extensibles y cobertura temporal
+
+Registro público `data/discovery/regions.json`: id, nombre, ruta local validada y capacidades por región. La UI deja de codificar rutas Atacama/Hawái: agregar una región requiere procesar sus datos y registrarla, no modificar el comparador. No representa cobertura mundial.
+
+Procesador WorldCover: `node web/scripts/build-coverage.mjs REGION`. Selección dinámica de tiles 3×3° en ambas coordenadas, incluyendo ventanas cruzando límites; lee valores categóricos nativos en 100×100 puntos regulares por ventana. No es máscara exhaustiva a 10m. Hawái: nueve ventanas, 90.000 muestras, sin errores de descarga. Producto histórico 2021.
+
+Sentinel reciente: `python pipeline/08_recent_sentinel.py --region REGION --start YYYY-MM-DD --end YYYY-MM-DD --scenes-per-tile 2`. Selección de hasta N escenas por tile, orden temporal descendente, nubosidad de escena <60%, SCL local 4/5/6 y reflectancia corregida. Conserva la primera observación válida (más reciente entre escenas seleccionadas) por punto. No es promedio anual ni comparación estacional; fechas pueden variar entre puntos y ventanas. Se registran fechas e intervalo. Límite de catálogo 100 escenas explícito; no se afirma exhaustividad. Las capacidades no garantizan cobertura: un archivo faltante o hash incompatible conserva estado desconocido.
+
+Área terrestre por coordenadas en UI: filtra centros de ventanas dentro de bbox de la región procesada. No descarga AOI nueva, no recorta ventanas ni soporta bbox cruzando antimeridiano. Exportación conserva bbox y región. Cero resultados se informa y se puede exportar; no se interpreta como inexistencia de análogos. Las restricciones operativas están separadas del puntaje.
+
+ML no se aplica a otra región sin validación: Hawái continúa sin un modelo local. No se habilitan perfiles sin datos ni se inventa equivalencia geológica/térmica. Falta procesar más regiones, paginar catálogo, mapas globales de cobertura, recursos y mediciones especializadas.
+`nEjecución Hawái: seis escenas procesadas sin fallos de descarga; fechas válidas 10 y 12 noviembre 2026, nueve ventanas con alguna observación, cero con cobertura >=99%. Política inicial de terreno despejado: nueve excluidas por las fracciones muestreadas; no valida la totalidad de cada ventana ni descarta usos con otros perfiles. Chrome verificó consulta, filtro, área sin candidatos y exportación. Treinta pruebas pasan, build y lint.
