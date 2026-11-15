@@ -3,6 +3,7 @@ import { gotoExplore } from './helpers'
 
 test.describe('Luna y Marte', () => {
   test('Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D', async ({ page }) => {
+    test.slow() // globo lunar + dos maquetas WebGL en software GL, en paralelo con la bajada de MOLA
     await gotoExplore(page)
     await page.getByRole('navigation', { name: 'Cuerpo visualizado' }).getByRole('button', { name: 'Luna', exact: true }).click()
     await page.getByRole('button', { name: 'Mons Mouton' }).click()
@@ -40,7 +41,7 @@ test.describe('Luna y Marte', () => {
     await expect(page.getByRole('heading', { name: 'Punto elegido en Marte' })).toBeVisible({ timeout: 90_000 })
     const dl = page.locator('dl').filter({ hasText: 'Pendiente mediana' })
     await expect(dl.getByRole('definition')).toHaveCount(4)
-    await expect(page.getByText('Lugares parecidos en la Tierra')).toBeVisible()
+    await expect(page.getByText('Paisajes terrestres de contexto')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Comparar relieve 3D' }).first()).toBeVisible()
   })
 })

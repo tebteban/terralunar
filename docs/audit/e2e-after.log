@@ -1,59 +1,249 @@
 
 Running 33 tests using 2 workers
 
-  ok  2 [desktop] › e2e\custom.spec.ts:4:3 › Búsqueda personalizada (formulario) › vacío: el CTA está deshabilitado y la vista previa lo explica (1.0s)
-  ok  1 [desktop] › e2e\a11y.spec.ts:11:1 › portada sin violaciones WCAG AA (2.0s)
-  ok  3 [desktop] › e2e\custom.spec.ts:12:3 › Búsqueda personalizada (formulario) › válido: elegir variables arma pesos que suman 100 % y muestra 5 mejores (1.4s)
-  ok  5 [desktop] › e2e\custom.spec.ts:28:3 › Búsqueda personalizada (formulario) › cambiar importancia y limpiar (1.2s)
-  ok  4 [desktop] › e2e\a11y.spec.ts:16:1 › personalizado sin violaciones WCAG AA (2.3s)
-  ok  6 [desktop] › e2e\explore.spec.ts:5:3 › Explorar: ranking, pesos y ficha › ranking de 20 zonas con puntajes 0–100 y pesos que suman ~100 % (1.4s)
-  ok  8 [desktop] › e2e\explore.spec.ts:21:3 › Explorar: ranking, pesos y ficha › mover un slider marca "Personalizado" y Restaurar vuelve al preset (4.0s)
-  ok  9 [desktop] › e2e\explore.spec.ts:31:3 › Explorar: ranking, pesos y ficha › todos los pesos en 0 muestra un aviso (estado inválido) (6.2s)
-  ok  7 [desktop] › e2e\a11y.spec.ts:22:1 › explorar con ficha abierta sin violaciones WCAG AA (1.0m)
-  x  10 [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview (1.1m)
-  ok 11 [desktop] › e2e\a11y.spec.ts:30:1 › Marte sin violaciones WCAG AA (18.1s)
-  ok 12 [desktop] › e2e\landing.spec.ts:5:3 › Portada › muestra las tres opciones y datos NASA, sin errores de consola (2.4s)
-  ok 13 [desktop] › e2e\explore.spec.ts:62:3 › Explorar: ranking, pesos y ficha › el diálogo Fuentes y método abre y cierra con Escape (1.8s)
-  ok 14 [desktop] › e2e\landing.spec.ts:19:3 › Portada › atajos de teclado 1/2/3 y botón atrás del navegador (1.6s)
-  ok 16 [desktop] › e2e\landing.spec.ts:32:3 › Portada › navegación por teclado: Tab llega a las opciones y Enter las activa (10.8s)
-  ok 17 [desktop] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (21.2s)
-  ok 18 [desktop] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (6.1s)
-  ok 15 [desktop] › e2e\moon-mars.spec.ts:5:3 › Luna y Marte › Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D (41.7s)
-  ok 19 [desktop] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (2.8s)
-  ok 21 [desktop] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.8s)
-  ok 20 [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA (21.7s)
-  ok 22 [desktop] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (48.4s)
-  ok 24 [tablet] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (1.8s)
-  ok 25 [tablet] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.8s)
-  ok 23 [tablet] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (30.4s)
-  ok 27 [tablet] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (4.6s)
-  ok 26 [tablet] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (31.6s)
-  ok 29 [mobile] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (1.4s)
-  ok 30 [mobile] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.7s)
-  ok 28 [mobile] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (51.5s)
-  ok 32 [mobile] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (8.5s)
-  ok 31 [mobile] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (24.8s)
-  ok 33 [sin-webgl] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía (1.6s)
+  ok  2 [desktop] › e2e\custom.spec.ts:4:3 › Búsqueda personalizada (formulario) › vacío: el CTA está deshabilitado y la vista previa lo explica (10.8s)
+  ok  1 [desktop] › e2e\a11y.spec.ts:11:1 › portada sin violaciones WCAG AA (11.7s)
+  ok  3 [desktop] › e2e\custom.spec.ts:12:3 › Búsqueda personalizada (formulario) › válido: elegir variables arma pesos que suman 100 % y muestra 5 mejores (1.2s)
+  ok  5 [desktop] › e2e\custom.spec.ts:28:3 › Búsqueda personalizada (formulario) › cambiar importancia y limpiar (926ms)
+  ok  4 [desktop] › e2e\a11y.spec.ts:16:1 › personalizado sin violaciones WCAG AA (2.0s)
+  ok  6 [desktop] › e2e\explore.spec.ts:5:3 › Explorar: ranking, pesos y ficha › ranking de 20 zonas con puntajes 0–100 y pesos que suman ~100 % (1.3s)
+[WebServer] 06:56:22 [vite] (client) [console.warn] calculateFogMatrix is not supported on globe projection.
+  ok  8 [desktop] › e2e\explore.spec.ts:21:3 › Explorar: ranking, pesos y ficha › mover un slider marca "Personalizado" y Restaurar vuelve al preset (1.7s)
+  ok  9 [desktop] › e2e\explore.spec.ts:31:3 › Explorar: ranking, pesos y ficha › todos los pesos en 0 muestra un aviso (estado inválido) (5.6s)
+[WebServer] 06:56:32 [vite] (client) [console.warn] calculateFogMatrix is not supported on globe projection.
+  ok  7 [desktop] › e2e\a11y.spec.ts:22:1 › explorar con ficha abierta sin violaciones WCAG AA (52.5s)
+  ok 10 [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview (46.8s)
+  ok 12 [desktop] › e2e\explore.spec.ts:63:3 › Explorar: ranking, pesos y ficha › el diálogo Fuentes y método abre y cierra con Escape (3.2s)
+  ok 11 [desktop] › e2e\a11y.spec.ts:30:1 › Marte sin violaciones WCAG AA (7.0s)
+  ok 13 [desktop] › e2e\landing.spec.ts:5:3 › Portada › muestra las tres opciones y datos NASA, sin errores de consola (2.6s)
+  ok 15 [desktop] › e2e\landing.spec.ts:19:3 › Portada › atajos de teclado 1/2/3 y botón atrás del navegador (6.9s)
+  ok 16 [desktop] › e2e\landing.spec.ts:37:3 › Portada › navegación por teclado: Tab llega a las opciones y Enter las activa (1.6s)
+  ok 14 [desktop] › e2e\moon-mars.spec.ts:5:3 › Luna y Marte › Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D (33.7s)
+  ok 17 [desktop] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (26.9s)
+[WebServer] 06:57:59 [vite] (client) [console.warn] calculateFogMatrix is not supported on globe projection.
+  ok 19 [desktop] › e2e\navigation.spec.ts:41:1 › el hash #marte abre directo la vista de Marte (4.7s)
+  x  20 [desktop] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (3.9s)
+  ok 21 [desktop] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (3.0s)
+[WebServer] 06:58:14 [vite] (client) [console.warn] calculateFogMatrix is not supported on globe projection.
+  x  18 [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA (32.3s)
+  ok 22 [desktop] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (45.6s)
+  x  24 [tablet] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (2.8s)
+  ok 23 [tablet] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (24.5s)
+  ok 25 [tablet] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.5s)
+  ok 26 [tablet] › e2e\navigation.spec.ts:41:1 › el hash #marte abre directo la vista de Marte (2.1s)
+[WebServer] 06:59:18 [vite] (client) [console.warn] calculateFogMatrix is not supported on globe projection.
+  ok 28 [mobile] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (28.5s)
+  ok 29 [mobile] › e2e\navigation.spec.ts:41:1 › el hash #marte abre directo la vista de Marte (7.0s)
+  x  30 [mobile] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (4.4s)
+  ok 27 [tablet] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (57.2s)
+  ok 31 [mobile] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (2.5s)
+[WebServer] 07:00:04 [vite] (client) [console.warn] calculateFogMatrix is not supported on globe projection.
+  ok 33 [sin-webgl] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía (2.4s)
+  ok 32 [mobile] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (19.9s)
 
 
-  1) [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview 
+  1) [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA 
 
-    Test timeout of 60000ms exceeded.
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Lugares parecidos en la Tierra')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Lugares parecidos en la Tierra') with timeout 15000ms
+      - waiting for getByText('Lugares parecidos en la Tierra')
+
+
+      41 |     const dl = page.locator('dl').filter({ hasText: 'Pendiente mediana' })
+      42 |     await expect(dl.getByRole('definition')).toHaveCount(4)
+    > 43 |     await expect(page.getByText('Lugares parecidos en la Tierra')).toBeVisible()
+         |                                                                    ^
+      44 |     await expect(page.getByRole('button', { name: 'Comparar relieve 3D' }).first()).toBeVisible()
+      45 |   })
+      46 | })
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\moon-mars.spec.ts:43:68
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\test-failed-1.png
+    test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\error-context.md
+    Error Context: test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\error-context.md
 
     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
-    test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\trace.zip
+    test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\trace.zip
     Usage:
 
-        npx playwright show-trace test-results\explore-Explorar-ranking-p-0be6e-alogía-y-enlace-a-Worldview-desktop\trace.zip
+        npx playwright show-trace test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\trace.zip
 
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-  1 failed
-    [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview 
-  32 passed (4.5m)
+  2) [desktop] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión ─────────
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      43953 pixels (ratio 0.04 of all image pixels) are different.
+
+      Snapshot: landing.png
+
+    Call log:
+      - Expect "toHaveScreenshot(landing.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 43953 pixels (ratio 0.04 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 43953 pixels (ratio 0.04 of all image pixels) are different.
+
+
+       8 |   await page.waitForTimeout(500)
+       9 |   await noHorizontalScroll(page)
+    > 10 |   await expect(page).toHaveScreenshot('landing.png', { fullPage: true })
+         |                      ^
+      11 | })
+      12 |
+      13 | test('personalizado: sin desborde y captura de regresión', async ({ page }) => {
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts:10:22
+
+    attachment #1: landing (image/png) ─────────────────────────────────────────────────────────────
+    Expected: e2e\responsive.spec.ts-snapshots\landing-desktop-win32.png
+    Received: test-results\responsive-portada-sin-desborde-y-captura-de-regresión-desktop\landing-actual.png
+    Diff:     test-results\responsive-portada-sin-desborde-y-captura-de-regresión-desktop\landing-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\responsive-portada-sin-desborde-y-captura-de-regresión-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\responsive-portada-sin-desborde-y-captura-de-regresión-desktop\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\responsive-portada-sin-desborde-y-captura-de-regresión-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-portada-sin-desborde-y-captura-de-regresión-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [tablet] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión ──────────
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      25929 pixels (ratio 0.04 of all image pixels) are different.
+
+      Snapshot: landing.png
+
+    Call log:
+      - Expect "toHaveScreenshot(landing.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 25929 pixels (ratio 0.04 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 25929 pixels (ratio 0.04 of all image pixels) are different.
+
+
+       8 |   await page.waitForTimeout(500)
+       9 |   await noHorizontalScroll(page)
+    > 10 |   await expect(page).toHaveScreenshot('landing.png', { fullPage: true })
+         |                      ^
+      11 | })
+      12 |
+      13 | test('personalizado: sin desborde y captura de regresión', async ({ page }) => {
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts:10:22
+
+    attachment #1: landing (image/png) ─────────────────────────────────────────────────────────────
+    Expected: e2e\responsive.spec.ts-snapshots\landing-tablet-win32.png
+    Received: test-results\responsive-portada-sin-desborde-y-captura-de-regresión-tablet\landing-actual.png
+    Diff:     test-results\responsive-portada-sin-desborde-y-captura-de-regresión-tablet\landing-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\responsive-portada-sin-desborde-y-captura-de-regresión-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\responsive-portada-sin-desborde-y-captura-de-regresión-tablet\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\responsive-portada-sin-desborde-y-captura-de-regresión-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-portada-sin-desborde-y-captura-de-regresión-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [mobile] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión ──────────
+
+    Error: expect(page).toHaveScreenshot(expected) failed
+
+      29823 pixels (ratio 0.10 of all image pixels) are different.
+
+      Snapshot: landing.png
+
+    Call log:
+      - Expect "toHaveScreenshot(landing.png)" with timeout 15000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 29823 pixels (ratio 0.10 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 29823 pixels (ratio 0.10 of all image pixels) are different.
+
+
+       8 |   await page.waitForTimeout(500)
+       9 |   await noHorizontalScroll(page)
+    > 10 |   await expect(page).toHaveScreenshot('landing.png', { fullPage: true })
+         |                      ^
+      11 | })
+      12 |
+      13 | test('personalizado: sin desborde y captura de regresión', async ({ page }) => {
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts:10:22
+
+    attachment #1: landing (image/png) ─────────────────────────────────────────────────────────────
+    Expected: e2e\responsive.spec.ts-snapshots\landing-mobile-win32.png
+    Received: test-results\responsive-portada-sin-desborde-y-captura-de-regresión-mobile\landing-actual.png
+    Diff:     test-results\responsive-portada-sin-desborde-y-captura-de-regresión-mobile\landing-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\responsive-portada-sin-desborde-y-captura-de-regresión-mobile\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\responsive-portada-sin-desborde-y-captura-de-regresión-mobile\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\responsive-portada-sin-desborde-y-captura-de-regresión-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-portada-sin-desborde-y-captura-de-regresión-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA 
+    [desktop] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión ──────────
+    [tablet] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión ───────────
+    [mobile] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión ───────────
+  29 passed (4.3m)

@@ -5,8 +5,15 @@ import { gotoExplore, noHorizontalScroll } from './helpers'
 test('recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio', async ({ page }) => {
   await page.goto('/')
   await noHorizontalScroll(page)
-  await page.getByRole('button', { name: /Personalizado/ }).click()
-  await expect(page).toHaveURL(/#personalizado$/)
+  await page.getByRole('button', { name: /Búsqueda global/ }).click()
+  await expect(page).toHaveURL(/#explorar$/)
+  const buscador = page.getByRole('dialog').filter({ hasText: 'Comparar entornos de misión' })
+  await expect(buscador).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(buscador).toBeHidden()
+  // la búsqueda personalizada por variables sigue viva en su URL
+  await page.goto('/#personalizado')
+  await expect(page.getByRole('heading', { name: 'Armá tu búsqueda' })).toBeVisible()
   await noHorizontalScroll(page)
   await page.getByRole('button', { name: 'Inicio' }).first().click()
   await expect(page).toHaveURL(/\/$/)

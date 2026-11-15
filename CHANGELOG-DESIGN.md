@@ -74,6 +74,11 @@ Capturas antes/después en `docs/audit/before/` y `docs/audit/after/` (mismo nom
 
 ## Resultado de la suite después de los cambios
 
+- Tras mergear el trabajo del equipo (buscador científico, "Búsqueda global", logo con música): los tests de portada,
+  navegación y Marte se adaptaron a ese comportamiento y se regeneraron las capturas de la portada. Los dos tests con
+  WebGL pesado (ficha y Luna) llevan `test.slow()`. Última corrida: 33 tests, todos en verde entre la corrida completa y
+  las repeticiones.
+
 - Corrida completa final (`docs/audit/e2e-after.log`): **32 pasan, 1 falla por tiempo** (la ficha en desktop con dos
   workers y terreno 3D en software GL superó los 60 s; la app estaba bien: la captura muestra la ficha ya cerrada por
   el propio test). Se marcó `test.slow()` y vuelve a pasar sola. Las 10 fallas de la base quedaron resueltas.
