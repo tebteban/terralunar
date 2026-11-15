@@ -9,6 +9,17 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-025 — La búsqueda de análogos se cierra sola y se rediseña en papel limpio
+
+**Qué:** al terminar «Buscar análogos», la ventana se cierra y lleva al globo terrestre con el ranking.
+La ventana pasa a pasos numerados en una columna (destino, ensayo, cobertura, pesos), con selectores,
+casillas y plegables propios y un único «Opciones avanzadas». **Por qué:** el equipo esperaba ver los
+candidatos al buscar, y el formulario anterior (controles nativos, cajas anidadas) se veía sin terminar.
+**Cómo:** `ScientificSearch.tsx`, `AnalogyScope.tsx` y clases `.field`, `.step-num`, `.check` en `index.css`.
+El detalle de resultados y el GeoJSON siguen en «Editar análisis». **Descartado:** estilo oscuro de
+consola y panel lateral (el equipo eligió papel claro).
+
+---
 ## D-024 — Consideraciones geomecánicas de Civil, aplicadas solo con datos medidos
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban; documento del equipo de Civil).
 - **Qué:** `docs/consideraciones-geomecanicas.md` define 7 criterios con pesos (morfología 20 %, volátiles
