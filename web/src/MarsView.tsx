@@ -41,6 +41,11 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
   const [cameraInfo,setCameraInfo]=useState('') // de Eze (c891b87)
   const [status,setStatus]=useState('Cargando topografía NASA MOLA…'),[error,setError]=useState('')
   const [pick,setPick]=useState<Patch|null>(null),[earth,setEarth]=useState<Patch[]>([])
+  // Ficha plegable (D-021): se abre sola con un punto nuevo (el vuelo al punto ya deja su lugar)
+  const [panelOpen,setPanelOpen]=useState(false)
+  const pickKey=pick?`${pick.lat},${pick.lon}`:undefined
+  const [lastPickKey,setLastPickKey]=useState(pickKey)
+  if(pickKey!==lastPickKey){setLastPickKey(pickKey);if(pickKey)setPanelOpen(true)}
   const [compare,setCompare]=useState<string|null>(null),[flat,setFlat]=useState(false)
   const [coordinates,setCoordinates]=useState({lon:'77.58',lat:'18.44'})
   const [imagery,setImagery]=useState<'viking'|'themis'>('viking')
@@ -208,7 +213,7 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
     </div>
     {cameraInfo&&<p aria-hidden="true" className="hud pointer-events-none absolute bottom-2 left-6 z-[1] hidden text-mute lg:block">{cameraInfo}</p>}
     {(status||error)&&<p role={error?'alert':'status'} className="chip-dark absolute bottom-6 left-6 z-[1] max-w-sm font-mono text-xs font-normal"><span className={`size-2 shrink-0 rounded-full ${error?'bg-warn':'bg-mars'}`} aria-hidden="true"/>{error||status}</p>}
-    <SurfacePanel label="Ficha de Marte">
+    <SurfacePanel label="Ficha de Marte" collapsible open={panelOpen} onOpenChange={setPanelOpen}>
       <header className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between gap-2">
           <span className="label-mono text-body">Cuerpo seleccionado · exploratorio</span>

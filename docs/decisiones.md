@@ -9,6 +9,30 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-021 — Ficha de Luna y Marte como pestaña flotante desplegable
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban).
+- **Cómo:** `SurfacePanel` acepta `collapsible`. En Luna y Marte la ficha arranca plegada como una
+  pestaña flotante ("Ficha de la Luna · Tocá para desplegar", arriba a la derecha; abajo en celular).
+  Al tocarla se despliega la ficha completa, con "Minimizar" fijo arriba. Cuando el usuario elige un
+  punto en el globo, la ficha se despliega sola (`openSignal`) para que vea los resultados. La ficha de
+  la Tierra no cambia: se abre al elegir una zona.
+- **Recentrado:** el estado de la ficha vive en `MoonMap`/`MarsView` (modo controlado de `SurfacePanel`).
+  El globo lunar reserva el lugar de la ficha solo si está desplegada (`MoonGlobe panelOpen`); plegada,
+  usa todo el ancho y los controles +/−/N/◎ pasan al borde derecho.
+- **Límites de la analogía:** siguen dentro de la ficha; plegarla es una elección del usuario y la ficha
+  se abre sola al haber resultados, así que los límites se ven junto a cada resultado.
+
+## D-020 — Panel lateral ocultable en Luna, Marte y búsqueda personalizada
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban).
+- **Por qué:** en Luna y Marte el panel lateral solo muestra un resumen fijo, y en la búsqueda
+  personalizada ocupa lugar que puede aprovechar el globo o el mapa. El usuario decide si lo ve.
+- **Cómo:** en escritorio (`lg`), botón "Ocultar panel" arriba del panel; oculto, queda una barra fina
+  a la izquierda con "›" y el texto vertical "Mostrar panel · Luna/Marte/Búsqueda personalizada". La
+  preferencia se guarda en `localStorage` (`terralunar.panel-oculto`). Al volver, el panel entra
+  deslizándose (`.panel-in`, respeta "reducir movimiento"). Mapas y globos se reajustan solos
+  (ResizeObserver). En el catálogo terrestre con preset el panel queda fijo; en celular siguen las
+  pestañas Ajustes · Mapa · Ranking. Código en `web/src/App.tsx`.
+
 ## D-019 — Auditoría de diseño: consola de misión, mobile por pestañas, fallback WebGL y suite e2e
 - **Fecha:** 2026-11-15 · **Estado:** vigente. Informe en `AUDIT.md`, dirección de arte en `DESIGN.md` (raíz), cambios en `CHANGELOG-DESIGN.md`.
 - **Por qué:** el recorrido con Playwright mostró que en celular la página desbordaba (454 px en 390), el ranking

@@ -39,6 +39,14 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
   const [grid, setGrid] = useState<Uint16Array | null>(null)
   const [earth, setEarth] = useState<EarthItem[]>([])
   const [pick, setPick] = useState<Pick | null>(null)
+  // Ficha plegable (D-021): el estado vive acá para que el globo use todo el ancho cuando está plegada
+  const [panelOpen, setPanelOpen] = useState(false)
+  const pickKey = pick ? `${pick.lat},${pick.lon}` : undefined
+  const [lastPickKey, setLastPickKey] = useState(pickKey)
+  if (pickKey !== lastPickKey) {
+    setLastPickKey(pickKey)
+    if (pickKey) setPanelOpen(true)
+  }
   const [compare, setCompare] = useState<CompareIndex | null>(null)
   const [compareId, setCompareId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -118,7 +126,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
       {pick&&onAnalyze&&canRank&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
       {!hasWebGL() && <NoWebGL what="la Luna en 3D" href="https://trek.nasa.gov/moon/" label="Abrir NASA Moon Trek" />}
       {!index && !error && hasWebGL() && <div className="flex h-full items-center justify-center" role="status"><div className="flex w-56 flex-col gap-2"><span className="hud text-mute">Cargando relieve LOLA…</span><span className="loading-bar" aria-hidden="true" /></div></div>}
-      {index && hasWebGL() && <MoonGlobe index={index} pick={pick}
+      {index && hasWebGL() && <MoonGlobe index={index} pick={pick} panelOpen={panelOpen}
         onPick={(line, sample) => { setNotice(null); setPick(pickAt(line, sample)) }}
         onOutside={outside} />}
       <div className="pointer-events-none absolute left-4 top-32 z-[1] hidden flex-col gap-1 rounded-2xl border border-hairline bg-rail/85 px-4 py-3 shadow-float lg:flex">
@@ -133,7 +141,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
       {compare && compareId && <Compare3D zoneId={compareId} supplied={compare} onClose={() => { setCompare(null); setCompareId(null) }} />}
       {error && <p role="alert" className="chip-dark absolute left-6 top-56 z-[1] max-w-sm text-xs">No se pudieron cargar los datos lunares: {error}</p>}
 
-      <SurfacePanel label="Ficha de la Luna">
+      <SurfacePanel label="Ficha de la Luna" collapsible open={panelOpen} onOpenChange={setPanelOpen}>
         <label className="flex flex-col gap-2 text-sm">Destino de misión · Luna
           <select aria-label="Destino lunar" value={index?.sites.find(s=>s.line===pick?.line&&s.sample===pick?.sample)?.name ?? ''} onChange={e=>{const site=index?.sites.find(s=>s.name===e.target.value);if(site)setPick(pickAt(site.line,site.sample))}}>
             <option value="">{pick?'Punto seleccionado en el mapa':'Elegí una región o un punto'}</option>
