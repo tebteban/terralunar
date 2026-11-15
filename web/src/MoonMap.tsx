@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react'
 import SurfacePanel from './SurfacePanel.tsx'
 import { earthPatchZone, type PickEarth } from './earthSelection.ts'
 import AnalogyScope from './AnalogyScope.tsx'
@@ -32,7 +33,7 @@ const similarity = moonSimilarity
 
 interface Pick { line: number; sample: number; lat: number; lon: number; m: Metrics }
 
-export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEarth;onAnalyze?:(target:SearchTarget)=>void }) {
+export default function MoonMap({ onPickEarth,onAnalyze,integrated=false,candidatesPanel }: { onPickEarth: PickEarth;integrated?:boolean;candidatesPanel?:ReactNode;onAnalyze?:(target:SearchTarget)=>void }) {
   const [experiment,setExperiment]=useState('regional')
   const canRank=profileScope(experiment).canScreen
   const [index, setIndex] = useState<MoonIndex | null>(null)
@@ -123,7 +124,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
 
   return (
     <div className="relative h-full w-full bg-space">
-      {pick&&onAnalyze&&canRank&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
+      {!integrated&&pick&&onAnalyze&&canRank&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
       {!hasWebGL() && <NoWebGL what="la Luna en 3D" href="https://trek.nasa.gov/moon/" label="Abrir NASA Moon Trek" />}
       {!index && !error && hasWebGL() && <div className="flex h-full items-center justify-center" role="status"><div className="flex w-56 flex-col gap-2"><span className="hud text-mute">Cargando relieve LOLA…</span><span className="loading-bar" aria-hidden="true" /></div></div>}
       {index && hasWebGL() && <MoonGlobe index={index} pick={pick} panelOpen={panelOpen}
@@ -187,7 +188,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
                 </div>
               ))}
             </dl>
-            <section className="flex flex-col gap-2">
+            {!integrated&&<>            <section className="flex flex-col gap-2">
               <h3 className="text-lg leading-7 font-bold tracking-tight">Paisajes terrestres de contexto</h3>
               <ol className="flex flex-col gap-2">
                 {(canRank?matches:[]).map(({ e, s }, i) => (
@@ -214,7 +215,9 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
                 Solo relieve: no incluye temperatura ni suelo. Métricas a 80 m; no comparar este puntaje directamente con Marte a 2 km. La búsqueda científica utiliza 2 km en ambos cuerpos.
               </p>
             </section>
+</>}
             <LimitsCard items={LIMITS} />
+            {integrated&&<button className="btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
             <p className="flex justify-between gap-2 border-t border-pressed pt-2 font-mono text-[11px] text-body">
               <span>Fuente: {index?.source}</span>
               <span className="shrink-0">cada {index ? (index.grid.stride_px * index.lola_res_m) / 1000 : 4} km</span>
@@ -222,7 +225,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
             <button type="button" onClick={() => setPick(null)} className="btn-secondary w-full">Elegir otro lugar</button>
           </>
         )}
-      </SurfacePanel>
+      {integrated&&candidatesPanel}</SurfacePanel>
     </div>
   )
 }

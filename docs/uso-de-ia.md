@@ -67,3 +67,10 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel lateral ocultable con barra izquierda en Luna, Marte y búsqueda personalizada (`web/src/App.tsx`, `web/src/index.css`); D-020 | — |
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Ficha de Luna y Marte como pestaña flotante desplegable (`web/src/SurfacePanel.tsx`, `MoonMap.tsx`, `MarsView.tsx`); D-021 | — |
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Recentrado del globo lunar según la ficha plegada o desplegada (`SurfacePanel` controlado, `MoonGlobe panelOpen`); D-021 | — |
+
+| 2026-11-15 | OpenAI Codex | AnalysisRun compartido, ficha con evidencia real, retiro del mock del recorrido principal, continuidad con comparador 3D y pruebas de integración |
+
+| 2026-11-15 | OpenAI Codex | Paso 3: requisitos por ensayo, separación de contexto topográfico y compatibilidad pendiente, pruebas unitarias y de navegador |
+| 2026-11-15 | OpenAI Codex | Ingestión MOD11A1 HDF real con QC, proyección, percentiles día/noche, evidencia en ficha y exportación; pruebas. Paso 4 parcial: sin índice térmico ni series planetarias integradas. |
+
+| 2026-11-15 | OpenAI Codex | Adaptación de D-020 y D-021 al flujo de ejecución científica y evidencia MODIS | — |

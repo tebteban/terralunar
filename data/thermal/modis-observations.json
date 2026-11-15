@@ -1,0 +1,1270 @@
+{
+  "version": "thermal-observation/1",
+  "product": "MOD11A1.061",
+  "date": "2025-08-04",
+  "granule": "MOD11A1.A2025216.h11v11.061.2025217103049.hdf",
+  "sha256": "03d2fb25d135bdfc1470ace8e10255edd379435e1d3f8f3217ddd3afc5689b0e",
+  "source": "https://doi.org/10.5067/MODIS/MOD11A1.061",
+  "documentation": "https://lpdaac.usgs.gov/documents/715/MOD11_User_Guide_V61.pdf",
+  "resolutionM": 926.6254331391661,
+  "windowKm": 20,
+  "quality": "QC=0: good retrieval, good data, emissivity error <=0.01, LST error <=1 K",
+  "interpretation": "Spatial percentiles of clear-sky surface temperature for one day; not air temperature or a complete thermal cycle.",
+  "comparisonEligible": false,
+  "items": [
+    {
+      "id": "atacama-yungay",
+      "lat": -24.1,
+      "lon": -70.0,
+      "day": {
+        "count": 264,
+        "total": 473,
+        "validFraction": 0.5581395348837209,
+        "kelvin": [
+          295.75,
+          297.56,
+          300.7
+        ],
+        "solarHours": [
+          8.6,
+          8.6
+        ]
+      },
+      "night": {
+        "count": 263,
+        "total": 473,
+        "validFraction": 0.5560253699788583,
+        "kelvin": [
+          280.43,
+          284.28,
+          285.92
+        ],
+        "solarHours": [
+          21.7,
+          21.7
+        ]
+      }
+    },
+    {
+      "id": "campo-piedra-pomez",
+      "lat": -26.6,
+      "lon": -67.4,
+      "day": {
+        "count": 228,
+        "total": 475,
+        "validFraction": 0.48,
+        "kelvin": [
+          281.27,
+          283.97,
+          285.66
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 364,
+        "total": 475,
+        "validFraction": 0.7663157894736842,
+        "kelvin": [
+          270.99,
+          273.59,
+          276.25
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-0-0",
+      "lat": -24.44966018186227,
+      "lon": -68.49221434806607,
+      "day": {
+        "count": 160,
+        "total": 481,
+        "validFraction": 0.33264033264033266,
+        "kelvin": [
+          276.33,
+          279.79,
+          282.31
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 406,
+        "total": 481,
+        "validFraction": 0.8440748440748441,
+        "kelvin": [
+          263.99,
+          267.98,
+          270.93
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-0-1",
+      "lat": -24.44966018186227,
+      "lon": -68.29532860883964,
+      "day": {
+        "count": 77,
+        "total": 479,
+        "validFraction": 0.16075156576200417,
+        "kelvin": [
+          274.89,
+          278.0,
+          281.45
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 213,
+        "total": 479,
+        "validFraction": 0.44467640918580376,
+        "kelvin": [
+          265.15,
+          268.68,
+          271.32
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-0-2",
+      "lat": -24.44966018186227,
+      "lon": -68.09844286961321,
+      "day": {
+        "count": 157,
+        "total": 479,
+        "validFraction": 0.3277661795407098,
+        "kelvin": [
+          266.38,
+          272.68,
+          280.92
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 406,
+        "total": 479,
+        "validFraction": 0.8475991649269311,
+        "kelvin": [
+          260.34,
+          263.21,
+          268.96
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-0-3",
+      "lat": -24.44966018186227,
+      "lon": -67.90155713038679,
+      "day": {
+        "count": 460,
+        "total": 476,
+        "validFraction": 0.9663865546218487,
+        "kelvin": [
+          275.88,
+          281.18,
+          283.82
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 417,
+        "total": 476,
+        "validFraction": 0.8760504201680672,
+        "kelvin": [
+          264.55,
+          270.1,
+          271.52
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-0-4",
+      "lat": -24.44966018186227,
+      "lon": -67.70467139116036,
+      "day": {
+        "count": 468,
+        "total": 477,
+        "validFraction": 0.9811320754716981,
+        "kelvin": [
+          279.47,
+          282.13,
+          285.5
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 368,
+        "total": 477,
+        "validFraction": 0.7714884696016772,
+        "kelvin": [
+          269.19,
+          270.42,
+          272.04
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-0-5",
+      "lat": -24.44966018186227,
+      "lon": -67.50778565193393,
+      "day": {
+        "count": 476,
+        "total": 476,
+        "validFraction": 1.0,
+        "kelvin": [
+          278.59,
+          281.78,
+          283.58
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 315,
+        "total": 476,
+        "validFraction": 0.6617647058823529,
+        "kelvin": [
+          270.97,
+          273.46,
+          274.62
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-1-0",
+      "lat": -24.26979610911736,
+      "lon": -68.49221434806607,
+      "day": {
+        "count": 445,
+        "total": 451,
+        "validFraction": 0.9866962305986696,
+        "kelvin": [
+          277.08,
+          281.66,
+          285.68
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 451,
+        "total": 451,
+        "validFraction": 1.0,
+        "kelvin": [
+          268.3,
+          271.98,
+          274.3
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-1-1",
+      "lat": -24.26979610911736,
+      "lon": -68.29532860883964,
+      "day": {
+        "count": 418,
+        "total": 452,
+        "validFraction": 0.9247787610619469,
+        "kelvin": [
+          278.09,
+          282.98,
+          285.31
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 437,
+        "total": 452,
+        "validFraction": 0.9668141592920354,
+        "kelvin": [
+          269.76,
+          272.96,
+          274.57
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-1-2",
+      "lat": -24.26979610911736,
+      "lon": -68.09844286961321,
+      "day": {
+        "count": 292,
+        "total": 451,
+        "validFraction": 0.647450110864745,
+        "kelvin": [
+          265.4,
+          269.42,
+          280.72
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 436,
+        "total": 451,
+        "validFraction": 0.9667405764966741,
+        "kelvin": [
+          259.2,
+          263.66,
+          268.33
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-1-3",
+      "lat": -24.26979610911736,
+      "lon": -67.90155713038679,
+      "day": {
+        "count": 371,
+        "total": 452,
+        "validFraction": 0.8207964601769911,
+        "kelvin": [
+          266.24,
+          272.3,
+          281.32
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 450,
+        "total": 452,
+        "validFraction": 0.995575221238938,
+        "kelvin": [
+          264.8,
+          268.33,
+          270.3
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-1-4",
+      "lat": -24.26979610911736,
+      "lon": -67.70467139116036,
+      "day": {
+        "count": 408,
+        "total": 451,
+        "validFraction": 0.9046563192904656,
+        "kelvin": [
+          267.56,
+          278.57,
+          281.89
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 451,
+        "total": 451,
+        "validFraction": 1.0,
+        "kelvin": [
+          264.62,
+          269.56,
+          270.96
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-1-5",
+      "lat": -24.26979610911736,
+      "lon": -67.50778565193393,
+      "day": {
+        "count": 384,
+        "total": 453,
+        "validFraction": 0.847682119205298,
+        "kelvin": [
+          274.72,
+          280.76,
+          283.03
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 347,
+        "total": 453,
+        "validFraction": 0.7660044150110376,
+        "kelvin": [
+          265.68,
+          270.68,
+          272.72
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-2-0",
+      "lat": -24.089932036372453,
+      "lon": -68.49221434806607,
+      "day": {
+        "count": 475,
+        "total": 475,
+        "validFraction": 1.0,
+        "kelvin": [
+          281.26,
+          284.12,
+          287.46
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 475,
+        "total": 475,
+        "validFraction": 1.0,
+        "kelvin": [
+          272.06,
+          274.68,
+          277.24
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-2-1",
+      "lat": -24.089932036372453,
+      "lon": -68.29532860883964,
+      "day": {
+        "count": 475,
+        "total": 475,
+        "validFraction": 1.0,
+        "kelvin": [
+          281.75,
+          284.04,
+          286.08
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 475,
+        "total": 475,
+        "validFraction": 1.0,
+        "kelvin": [
+          272.46,
+          274.7,
+          276.31
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-2-2",
+      "lat": -24.089932036372453,
+      "lon": -68.09844286961321,
+      "day": {
+        "count": 328,
+        "total": 476,
+        "validFraction": 0.6890756302521008,
+        "kelvin": [
+          270.55,
+          284.2,
+          287.81
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 360,
+        "total": 476,
+        "validFraction": 0.7563025210084033,
+        "kelvin": [
+          263.7,
+          273.03,
+          275.52
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-2-3",
+      "lat": -24.089932036372453,
+      "lon": -67.90155713038679,
+      "day": {
+        "count": 264,
+        "total": 475,
+        "validFraction": 0.5557894736842105,
+        "kelvin": [
+          264.39,
+          267.67,
+          270.07
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 340,
+        "total": 475,
+        "validFraction": 0.7157894736842105,
+        "kelvin": [
+          261.52,
+          263.38,
+          265.63
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-2-4",
+      "lat": -24.089932036372453,
+      "lon": -67.70467139116036,
+      "day": {
+        "count": 338,
+        "total": 476,
+        "validFraction": 0.7100840336134454,
+        "kelvin": [
+          266.02,
+          271.41,
+          275.65
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 437,
+        "total": 476,
+        "validFraction": 0.9180672268907563,
+        "kelvin": [
+          262.56,
+          265.84,
+          272.2
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-2-5",
+      "lat": -24.089932036372453,
+      "lon": -67.50778565193393,
+      "day": {
+        "count": 258,
+        "total": 473,
+        "validFraction": 0.5454545454545454,
+        "kelvin": [
+          267.31,
+          277.28,
+          280.44
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 421,
+        "total": 473,
+        "validFraction": 0.8900634249471459,
+        "kelvin": [
+          262.7,
+          266.28,
+          273.3
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-3-0",
+      "lat": -23.910067963627547,
+      "lon": -68.49221434806607,
+      "day": {
+        "count": 474,
+        "total": 474,
+        "validFraction": 1.0,
+        "kelvin": [
+          283.34,
+          288.51,
+          290.23
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 474,
+        "total": 474,
+        "validFraction": 1.0,
+        "kelvin": [
+          273.06,
+          278.32,
+          279.94
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-3-1",
+      "lat": -23.910067963627547,
+      "lon": -68.29532860883964,
+      "day": {
+        "count": 474,
+        "total": 474,
+        "validFraction": 1.0,
+        "kelvin": [
+          282.82,
+          287.46,
+          290.28
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 474,
+        "total": 474,
+        "validFraction": 1.0,
+        "kelvin": [
+          273.49,
+          277.0,
+          280.34
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-3-2",
+      "lat": -23.910067963627547,
+      "lon": -68.09844286961321,
+      "day": {
+        "count": 399,
+        "total": 475,
+        "validFraction": 0.84,
+        "kelvin": [
+          284.96,
+          287.46,
+          289.12
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 437,
+        "total": 475,
+        "validFraction": 0.92,
+        "kelvin": [
+          273.58,
+          277.4,
+          279.78
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-3-3",
+      "lat": -23.910067963627547,
+      "lon": -67.90155713038679,
+      "day": {
+        "count": 39,
+        "total": 476,
+        "validFraction": 0.0819327731092437,
+        "kelvin": [
+          269.2,
+          270.42,
+          284.98
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 130,
+        "total": 476,
+        "validFraction": 0.27310924369747897,
+        "kelvin": [
+          265.24,
+          270.5,
+          273.38
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-3-4",
+      "lat": -23.910067963627547,
+      "lon": -67.70467139116036,
+      "day": {
+        "count": 192,
+        "total": 475,
+        "validFraction": 0.40421052631578946,
+        "kelvin": [
+          265.96,
+          268.08,
+          270.46
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 393,
+        "total": 475,
+        "validFraction": 0.8273684210526315,
+        "kelvin": [
+          262.3,
+          265.56,
+          267.5
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-3-5",
+      "lat": -23.910067963627547,
+      "lon": -67.50778565193393,
+      "day": {
+        "count": 124,
+        "total": 475,
+        "validFraction": 0.26105263157894737,
+        "kelvin": [
+          266.76,
+          269.93,
+          275.3
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 408,
+        "total": 475,
+        "validFraction": 0.8589473684210527,
+        "kelvin": [
+          261.09,
+          264.12,
+          265.89
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-4-0",
+      "lat": -23.73020389088264,
+      "lon": -68.49221434806607,
+      "day": {
+        "count": 454,
+        "total": 454,
+        "validFraction": 1.0,
+        "kelvin": [
+          286.96,
+          288.14,
+          289.44
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 454,
+        "total": 454,
+        "validFraction": 1.0,
+        "kelvin": [
+          279.12,
+          281.05,
+          284.09
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-4-1",
+      "lat": -23.73020389088264,
+      "lon": -68.29532860883964,
+      "day": {
+        "count": 453,
+        "total": 453,
+        "validFraction": 1.0,
+        "kelvin": [
+          285.07,
+          288.82,
+          291.4
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 451,
+        "total": 453,
+        "validFraction": 0.9955849889624724,
+        "kelvin": [
+          278.3,
+          280.58,
+          283.06
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-4-2",
+      "lat": -23.73020389088264,
+      "lon": -68.09844286961321,
+      "day": {
+        "count": 450,
+        "total": 454,
+        "validFraction": 0.9911894273127754,
+        "kelvin": [
+          283.3,
+          288.16,
+          290.22
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 364,
+        "total": 454,
+        "validFraction": 0.801762114537445,
+        "kelvin": [
+          276.53,
+          280.14,
+          282.43
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-4-3",
+      "lat": -23.73020389088264,
+      "lon": -67.90155713038679,
+      "day": {
+        "count": 332,
+        "total": 453,
+        "validFraction": 0.7328918322295805,
+        "kelvin": [
+          274.56,
+          284.67,
+          287.19
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 412,
+        "total": 453,
+        "validFraction": 0.9094922737306843,
+        "kelvin": [
+          268.6,
+          272.9,
+          276.1
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-4-4",
+      "lat": -23.73020389088264,
+      "lon": -67.70467139116036,
+      "day": {
+        "count": 164,
+        "total": 453,
+        "validFraction": 0.3620309050772627,
+        "kelvin": [
+          265.7,
+          269.4,
+          272.96
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 322,
+        "total": 453,
+        "validFraction": 0.7108167770419426,
+        "kelvin": [
+          258.22,
+          261.34,
+          265.54
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-4-5",
+      "lat": -23.73020389088264,
+      "lon": -67.50778565193393,
+      "day": {
+        "count": 47,
+        "total": 453,
+        "validFraction": 0.10375275938189846,
+        "kelvin": [
+          268.59,
+          271.06,
+          276.56
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 242,
+        "total": 453,
+        "validFraction": 0.5342163355408388,
+        "kelvin": [
+          258.67,
+          261.85,
+          263.76
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-5-0",
+      "lat": -23.55033981813773,
+      "lon": -68.49221434806607,
+      "day": {
+        "count": 469,
+        "total": 475,
+        "validFraction": 0.9873684210526316,
+        "kelvin": [
+          287.68,
+          290.36,
+          293.74
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 475,
+        "total": 475,
+        "validFraction": 1.0,
+        "kelvin": [
+          280.0,
+          283.52,
+          284.52
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-5-1",
+      "lat": -23.55033981813773,
+      "lon": -68.29532860883964,
+      "day": {
+        "count": 463,
+        "total": 475,
+        "validFraction": 0.9747368421052631,
+        "kelvin": [
+          284.5,
+          285.18,
+          286.32
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 471,
+        "total": 475,
+        "validFraction": 0.991578947368421,
+        "kelvin": [
+          282.62,
+          283.4,
+          284.08
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-5-2",
+      "lat": -23.55033981813773,
+      "lon": -68.09844286961321,
+      "day": {
+        "count": 475,
+        "total": 475,
+        "validFraction": 1.0,
+        "kelvin": [
+          284.98,
+          285.64,
+          291.26
+        ],
+        "solarHours": [
+          8.7,
+          8.7
+        ]
+      },
+      "night": {
+        "count": 393,
+        "total": 475,
+        "validFraction": 0.8273684210526315,
+        "kelvin": [
+          278.02,
+          281.82,
+          283.08
+        ],
+        "solarHours": [
+          21.8,
+          21.8
+        ]
+      }
+    },
+    {
+      "id": "pilot-5-3",
+      "lat": -23.55033981813773,
+      "lon": -67.90155713038679,
+      "day": {
+        "count": 308,
+        "total": 474,
+        "validFraction": 0.6497890295358649,
+        "kelvin": [
+          284.89,
+          288.51,
+          290.41
+        ],
+        "solarHours": [
+          8.7,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 400,
+        "total": 474,
+        "validFraction": 0.8438818565400844,
+        "kelvin": [
+          271.08,
+          276.55,
+          280.76
+        ],
+        "solarHours": [
+          21.8,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-5-4",
+      "lat": -23.55033981813773,
+      "lon": -67.70467139116036,
+      "day": {
+        "count": 6,
+        "total": 475,
+        "validFraction": 0.01263157894736842,
+        "kelvin": [
+          278.02,
+          278.52,
+          278.76
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 195,
+        "total": 475,
+        "validFraction": 0.4105263157894737,
+        "kelvin": [
+          259.23,
+          262.16,
+          263.8
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    },
+    {
+      "id": "pilot-5-5",
+      "lat": -23.55033981813773,
+      "lon": -67.50778565193393,
+      "day": {
+        "count": 6,
+        "total": 476,
+        "validFraction": 0.012605042016806723,
+        "kelvin": [
+          273.1,
+          274.33,
+          274.68
+        ],
+        "solarHours": [
+          8.8,
+          8.8
+        ]
+      },
+      "night": {
+        "count": 37,
+        "total": 476,
+        "validFraction": 0.07773109243697479,
+        "kelvin": [
+          261.83,
+          263.26,
+          264.68
+        ],
+        "solarHours": [
+          21.9,
+          21.9
+        ]
+      }
+    }
+  ]
+}

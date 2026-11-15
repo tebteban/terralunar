@@ -38,7 +38,7 @@ function GlobeIcon() {
 type Item = { id: string; name: string; body: string; pendiente_mediana: number; pendiente_p90: number; rugosidad_m: number; desnivel_m: number }
 const STEPS_HOW = [
   ['01', 'Elegí un sitio', 'En la Luna o en Marte: un punto del polo sur o una región marciana.'],
-  ['02', 'Medimos', 'Relieve y clima con datos NASA: pendiente, rugosidad, desnivel, temperatura, vegetación.'],
+  ['02', 'Medimos', 'Relieve con LOLA, MOLA y DEM terrestre. Cobertura y geología cuando hay evidencia disponible.'],
   ['03', 'Compará', 'Ranking de lugares en la Tierra y maquetas 3D lado a lado, a la misma escala.'],
 ] as const
 
@@ -67,9 +67,9 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
   const [stats, setStats] = useState<{ zones: number; regions: number } | null>(null)
   const [example, setExample] = useState<{ moon: Item; earth: Item } | null>(null)
   useEffect(() => {
-    Promise.all([fetch('/zones.json').then((r) => r.json()), fetch('/discovery/regions.json').then((r) => r.json()), fetch('/compare/index.json').then((r) => r.json())])
-      .then(([z, r, c]) => {
-        setStats({ zones: z.length, regions: r.regions.length })
+    Promise.all([fetch('/compare/index.json').then((r) => r.json()), fetch('/discovery/regions.json').then((r) => r.json())])
+      .then(([c, r]) => {
+        setStats({ zones: c.items.filter((i:{body:string})=>i.body==='tierra').length, regions: r.regions.length })
         const find = (id: string) => c.items.find((i: Item) => i.id === id)
         const moon = find('luna-mons-mouton'), earth = find('mcmurdo-dry-valleys')
         if (moon && earth) setExample({ moon, earth })
@@ -179,7 +179,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
         {stats && (
           <section className="mx-auto w-full max-w-[1120px] px-6 pb-20 md:px-8" aria-label="El proyecto en cifras">
             <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4">
-              {[[9, 'regiones candidatas de Artemis III'], [stats.regions, 'regiones terrestres con datos reales'], [stats.zones, 'zonas de demostración en el ranking'], [5, 'conjuntos de datos NASA']].map(([n, label]) => (
+              {[[9, 'regiones candidatas de Artemis III'], [stats.regions, 'regiones terrestres con datos reales'], [stats.zones, 'recortes del catálogo de referencia'], [2, 'misiones planetarias de relieve']].map(([n, label]) => (
                 <div key={label} className="flex flex-col gap-1 bg-ink/90 p-6 text-left">
                   <dt className="order-2 text-sm text-mute">{label}</dt>
                   <dd className="metric text-4xl font-semibold">{n}</dd>
@@ -215,7 +215,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
 
         <footer className="landing-rise flex shrink-0 justify-center bg-ink px-6 pb-6 text-center" style={{ animationDelay: '1700ms' }}>
           <div className="flex flex-col items-center gap-2">
-            <p className="micro-cap bg-ink px-3 text-mute">Datos NASA: MODIS · GPM IMERG · NASADEM · LRO · MOLA</p>
+            <p className="micro-cap bg-ink px-3 text-mute">Relieve: LRO LOLA · MOLA · DEM terrestre</p>
             <p className="text-xs text-mute/70">Equipo q'kodigo · Santiago del Estero · NASA Space Apps Challenge 2026{mock ? ' · puntajes de demostración' : ''}</p>
           </div>
         </footer>

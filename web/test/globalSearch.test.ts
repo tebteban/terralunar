@@ -28,9 +28,12 @@ test('carga multirregional real y puntuación con datos locales, sin red',async(
  try{
   const regions=validateRegions(JSON.parse(readFileSync('../data/discovery/regions.json','utf8')))
   const all=await loadCandidates(regions,'global',true)
-  assert.ok(all.candidates.length>=65);assert.equal(all.reports.length,regions.length+1)
+  assert.ok(all.candidates.length>=65);assert.equal(all.reports.length,regions.length+2)
   assert.ok(all.candidates.some(c=>c.origin==='catalogue'));assert.ok(all.candidates.some(c=>c.region.includes('Hawái')))
+  assert.equal(all.candidates.filter(c=>c.thermal).length,38)
   const ranked=rankCandidates(all.candidates,features,weights,DEFAULT_MASK)
+  const bare=all.candidates.map(c=>({...c,thermal:undefined}))
+  assert.deepEqual(ranked.rows.map(c=>[c.id,c.score]),rankCandidates(bare,features,weights,DEFAULT_MASK).rows.map(c=>[c.id,c.score]))
   assert.ok(ranked.rows.length>20);assert.ok(ranked.rows.every(c=>Number.isFinite(c.score)&&c.score>=0&&c.score<=100))
   // Repeatability and exportable polygons.
   assert.deepEqual(ranked.rows.map(c=>c.id),rankCandidates(all.candidates,features,weights,DEFAULT_MASK).rows.map(c=>c.id))

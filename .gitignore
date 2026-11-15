@@ -15,3 +15,5 @@ pipeline/.runtime/
 .claude/agents/
 .claude/skills/
 
+
+pipeline/.thermal-deps/
