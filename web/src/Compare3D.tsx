@@ -1,10 +1,10 @@
 import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { fromUrl } from 'geotiff'
+import { fromUrl, type GeoTIFFImage } from 'geotiff'
 import { offset } from './marsData.ts'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { MARS_SITES, earthPatches, marsSitePatch, similarity } from './marsData.ts'
+import { MARS_SITES, earthIndex, earthPatch, marsSitePatch, similarity } from './marsData.ts'
 import { MOON_TOL, moonSimilarity } from './moonRelief.ts'
 import { TOLERANCES as MARS_TOL } from './marsData.ts'
 import ConsoleIcon from './ConsoleIcon.tsx'
@@ -22,6 +22,11 @@ interface Item {
 export interface CompareIndex { size_km: number; res_m: number; n: number; items: Item[] }
 
 const EXAGGERATION = 2
+
+// COG global MOLA/HRSC: su índice de teselas pesa ~1 MB. Bloques de 1 MB (2 pedidos en vez de 4–8) y una sola apertura por sesión.
+let marsDetail: Promise<GeoTIFFImage> | undefined
+const openMarsDetail = () => fromUrl('https://huggingface.co/datasets/Biscut4Biscuit/mola-hrsc-baseline-cog/resolve/main/Mars_HRSC_MOLA_BlendDEM_Global_200mp_v2_cog.tif', { blockSize: 1 << 20 } as Parameters<typeof fromUrl>[1]) // blockSize llega al BlockedSource aunque los tipos 3.0.5 no lo declaren
+  .then(t => t.getImage()).catch(e => { marsDetail = undefined; throw e })
 
 async function loadHeights(file: string) {
   return new Uint16Array(await localBuffer(`/compare/${file}`))
@@ -170,11 +175,12 @@ export default function Compare3D({ zoneId, onClose, supplied, analysisScore, an
     if (supplied || planet !== 'marte') return
     let off = false
     const site = MARS_SITES.find((s) => s.name === marsSite)!
-    Promise.all([marsSitePatch(site), earthPatches()]).then(([mars, patches]) => {
-      if (off) return
-      const zone = patches.find((p) => p.id === zoneId)
-      if (!zone) return setError('esta zona incluye mar aplanado y no entra en la comparación con Marte')
-      setMarsIndex({ size_km: 20, res_m: 2000, n: 10, items: [mars, zone] })
+    // Solo la malla terrestre que se compara, no todo el catálogo
+    Promise.all([marsSitePatch(site), earthIndex()]).then(async ([mars, items]) => {
+      const item = items.find((p) => p.id === zoneId)
+      if (!item) { if (!off) setError('esta zona incluye mar aplanado y no entra en la comparación con Marte'); return }
+      const zone = await earthPatch(item)
+      if (!off) setMarsIndex({ size_km: 20, res_m: 2000, n: 10, items: [mars, zone] })
     }).catch((e) => { if (!off) setError(String(e)) })
     return () => { off = true }
   }, [supplied, planet, marsSite, zoneId])
@@ -189,9 +195,7 @@ export default function Compare3D({ zoneId, onClose, supplied, analysisScore, an
     // 200 m cell centres on the same 20 km footprint, independent of the coarse ranking.
     const run = async () => {
       setDetailStatus('Cargando elevaciones detalladas de Marte y Tierra…')
-      const url = 'https://huggingface.co/datasets/Biscut4Biscuit/mola-hrsc-baseline-cog/resolve/main/Mars_HRSC_MOLA_BlendDEM_Global_200mp_v2_cog.tif'
-      const tiff = await fromUrl(url)
-      const image = await tiff.getImage()
+      const image = await (marsDetail ??= openMarsDetail())
       const width = image.getWidth(), height = image.getHeight(), bbox = image.getBoundingBox()
       const points: [number, number][] = []
       for (let y=0;y<100;y++) for (let x=0;x<100;x++) points.push(offset(moon.lon,moon.lat,(x-49.5)*200,(49.5-y)*200))
@@ -207,9 +211,7 @@ export default function Compare3D({ zoneId, onClose, supplied, analysisScore, an
         if(z.some(v=>!Number.isFinite(v)||v===noData)) throw new Error('El modelo detallado contiene celdas sin datos en esta región')
         out[i]=z[0]*(1-fx)*(1-fy)+z[1]*fx*(1-fy)+z[2]*(1-fx)*fy+z[3]*fx*fy
       }
-      const r=await fetch(`/compare/${earth.file}`)
-      if(!r.ok) throw new Error('No se pudo cargar el recorte terrestre detallado')
-      const data=await r.arrayBuffer(); if(data.byteLength!==250*250*2) throw new Error('Recorte terrestre inválido')
+      const data=await localBuffer(`/compare/${earth.file}`).catch(()=>{throw new Error('No se pudo cargar el recorte terrestre detallado')}); if(data.byteLength!==250*250*2) throw new Error('Recorte terrestre inválido')
       const view=new DataView(data), ground=new Float32Array(10000)
       for(let y=0;y<100;y++) for(let x=0;x<100;x++) {
         // 200 m cells average 80 m samples with fractional overlap.
