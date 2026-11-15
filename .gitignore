@@ -1,6 +1,6 @@
 pipeline/raw/
 __pycache__/
-/data/explorador/global-terreno.js
+/docs/explorador/global-terreno.js
 
 # Playwright
 web/test-results/

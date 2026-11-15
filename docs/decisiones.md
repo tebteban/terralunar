@@ -9,6 +9,16 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-023 — El atlas auxiliar sale de la entrega pública
+
+**Qué:** `data/explorador/` (atlas.html + atlas.js) se movió a `docs/explorador/`.
+**Por qué:** Vite publica todo `data/`, pero el atlas depende de `global-terreno.js` (33 MB, ignorado por
+Git y sin script que lo genere). Un clon limpio publicaba una página rota. La app ya no enlaza al atlas
+desde el 14/11. **Cómo:** `git mv` y ruta actualizada en `.gitignore`; el README de la carpeta explica cómo
+abrirlo localmente. **Descartado:** subir el archivo de 33 MB al deploy (pesa más que toda la app y no se usa).
+
+---
+
 ## D-022 — Fondo de la portada sobrio y orgánico, continuo y con formas difusas en movimiento
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: sobrio, estético, natural y legible).
 - **Problema:** la portada tenía un fondo (estrellas + Luna en puntos) y, más abajo, un bloque negro
