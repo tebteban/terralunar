@@ -1,3 +1,4 @@
+import TeamMusic from './TeamMusic.tsx'
 import { useEffect } from 'react'
 import HalftoneMoon from './HalftoneMoon.tsx'
 import SpaceBackdrop from './SpaceBackdrop.tsx'
@@ -80,7 +81,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
       </div>
 
       <div className="relative z-10 flex min-h-full flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-end px-6 md:px-8">
+        <header className="relative flex h-24 shrink-0 items-start justify-end px-6 pt-6 md:h-28 md:px-8"><TeamMusic />
           {mock && <span className="micro-cap text-mute">Datos de prueba</span>}
         </header>
 
