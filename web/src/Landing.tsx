@@ -1,3 +1,4 @@
+import { locale } from './fmt.ts'
 import TeamMusic from './TeamMusic.tsx'
 import { useEffect, useState, type PointerEvent } from 'react'
 import { moonSimilarity } from './moonRelief.ts'
@@ -201,7 +202,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
                 <thead><tr className="label-mono text-mute"><th className="py-1 pr-4 font-normal" /><th className="py-1 pr-4 font-normal">Luna</th><th className="py-1 font-normal">Tierra</th></tr></thead>
                 <tbody className="metric">
                   {([['Pendiente mediana', 'pendiente_mediana', '°'], ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel', 'desnivel_m', ' m']] as const).map(([label, k, u]) => (
-                    <tr key={k} className="border-t border-white/10"><td className="py-2 pr-4 font-sans text-mute">{label}</td><td className="py-2 pr-4">{example.moon[k].toLocaleString('es-AR')}{u}</td><td className="py-2">{example.earth[k].toLocaleString('es-AR')}{u}</td></tr>
+                    <tr key={k} className="border-t border-white/10"><td className="py-2 pr-4 font-sans text-mute">{label}</td><td className="py-2 pr-4">{example.moon[k].toLocaleString(locale())}{u}</td><td className="py-2">{example.earth[k].toLocaleString(locale())}{u}</td></tr>
                   ))}
                   <tr className="border-t border-white/10"><td className="py-2 pr-4 font-sans text-mute">Parecido</td><td colSpan={2} className="py-2 text-2xl font-semibold">{Math.round(moonSimilarity(example.moon, example.earth) * 100)}<span className="text-sm text-mute">/100</span></td></tr>
                 </tbody>

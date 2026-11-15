@@ -1,3 +1,4 @@
+import LanguageToggle from './LanguageToggle.tsx'
 import { useEffect, useRef } from 'react'
 
 // Diálogo "Fuentes y método" (idea y textos de Eze, c891b87). <dialog> nativo: Escape cierra y el foco queda adentro.
@@ -13,7 +14,7 @@ export default function MethodDialog({ open, onClose }: { open: boolean; onClose
       className="m-auto max-h-[85vh] w-[min(640px,92vw)] overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card backdrop:bg-black/60">
       <header className="mb-4 flex items-center justify-between gap-4">
         <h2 id="method-title" className="text-xl leading-7 font-bold tracking-tight">Fuentes y método</h2>
-        <button type="button" autoFocus onClick={onClose} className="btn-secondary h-9">Cerrar</button>
+        <div className="flex items-center gap-2"><LanguageToggle/><button type="button" autoFocus onClick={onClose} className="btn-secondary h-9">Cerrar</button></div>
       </header>
       <div className="flex flex-col gap-3 text-sm leading-5 text-body">
         <p>TerraLunar busca analogías parciales para preparar ensayos. Ningún lugar terrestre reproduce la gravedad, la atmósfera o la radiación de otro cuerpo.</p>

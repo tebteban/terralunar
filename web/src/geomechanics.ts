@@ -7,6 +7,7 @@ import type {Cover} from './coverageMask.ts'
 import type {ThermalEvidence} from './thermalEvidence.ts'
 import type {Relief} from './marsData.ts'
 import {covered, type GeoEarth} from './geoEarth.ts'
+import {locale} from './fmt.ts'
 
 export type GeoCriterionId = 'composition' | 'bearing' | 'thermal' | 'volatiles' | 'morphology' | 'radiation' | 'refuge'
 export type GeoInput = {features: Relief; heights?: ArrayLike<number>; thermal?: ThermalEvidence; cover?: Cover; earth?: GeoEarth}
@@ -29,7 +30,7 @@ export function ramp(value: number, zeroAt: number, oneAt: number) {
   return Math.max(0, Math.min(1, t))
 }
 const median = (v: ArrayLike<number>) => { const a = Array.from(v).filter(Number.isFinite).sort((p, q) => p - q); return a.length ? a[Math.floor(a.length / 2)] : NaN }
-const fmt = (v: number, d = 1) => v.toLocaleString('es-AR', {maximumFractionDigits: d})
+const fmt = (v: number, d = 1) => v.toLocaleString(locale(), {maximumFractionDigits: d})
 const altitude = (x: GeoInput) => x.heights && x.heights.length ? median(x.heights) : NaN
 const SLOPE_CAVEAT = 'Pendiente calculada con celdas de 2 km: subestima las pendientes locales que pide la regla (DEM de 30 m).'
 

@@ -9,6 +9,20 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-031 — App en inglés por defecto, con botón EN | ES en todas las pantallas
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Matías; la entrega global pide inglés).
+- **Cómo:** los textos del código siguen en español. `web/src/i18n.ts` traduce lo que se dibuja (nodos de texto y
+  `aria-label`, `title`, `placeholder`, `alt`) con el diccionario `web/src/i18n-en.json` (~590 frases, números
+  reemplazados por `#`). Así se tradujo toda la app sin reescribir componentes, incluidos textos que vienen de los datos.
+  `fmt.ts` formatea números según el idioma (3,278.5 en inglés, 3.278,5 en español; oeste = W/O).
+- **Botón:** `LanguageToggle.tsx`, fijo arriba al centro en escritorio y abajo a la derecha en celular; una copia
+  dentro de cada diálogo modal (un `<dialog>` modal bloquea lo que está fuera). La elección se guarda en el navegador.
+- **Cómo se armó el diccionario:** un recorrido automático con Playwright por todas las pantallas juntó los textos
+  visibles sin traducir; se tradujeron y se repitió hasta quedar solo nombres propios.
+- **Tests:** la suite e2e corre en español (idioma del código); `e2e/i18n.spec.ts` verifica inglés por defecto, el
+  cambio de idioma, que se recuerde y el botón dentro del buscador. Fuera del navegador (tests, pipeline) se usa español.
+- **Límite:** un texto nuevo que se agregue al código aparece en español hasta sumarlo al diccionario.
+
 ## D-030 — Tolerancias del ranking calibradas con datos reales
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Matías: "que la implementación de los parámetros sea real").
 - **Qué:** `pipeline/13_calibrate_tolerances.ts`. Escala de cada medida = rango intercuartil en las 300 ventanas de

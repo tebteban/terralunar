@@ -13,7 +13,7 @@ import LimitsCard from './LimitsCard.tsx'
 import { MARS_LIMITS } from './limits.ts'
 import NoWebGL from './NoWebGL.tsx'
 import { hasWebGL } from './webgl.ts'
-import { coord, num } from './fmt.ts'
+import { coord, locale, num } from './fmt.ts'
 import { MARS_SITES, elevation, earthPatches, loadMars, marsPatch, offset, similarity, type Patch } from './marsData.ts'
 
 const SITES = MARS_SITES
@@ -244,7 +244,7 @@ export default function MarsView({onPickEarth,onAnalyze,integrated=false,candida
         </select>
       </label>
       <label className="flex flex-col gap-1.5">
-        <span className="flex justify-between"><span className="label-mono text-body">Exageración visual</span><span className="metric text-sm font-bold">{exaggeration.toLocaleString('es-AR')}×</span></span>
+        <span className="flex justify-between"><span className="label-mono text-body">Exageración visual</span><span className="metric text-sm font-bold">{exaggeration.toLocaleString(locale())}×</span></span>
         <input className="accent-ink w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/>
         <span className="flex justify-between text-[10px] text-body"><span>1× (real)</span><span>3×</span></span>
       </label>
