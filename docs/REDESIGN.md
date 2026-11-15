@@ -1,3 +1,19 @@
+# Diseño vigente: Stitch TerraLunar Science Console
+
+La referencia vigente es el ZIP stitch_terralunar_terrain_analog_explorer proporcionado por el usuario. Reemplaza la propuesta grafito/ámbar anterior, conservada debajo como historial técnico.
+
+Implementación: navegación lateral negra con acciones reales, cabecera negra y selector segmentado, configuración terrestre oscura con ranking debajo de los pesos, ficha terrestre blanca con índice y radar monocromo, ficha lunar clara con métricas rectangulares, panel contextual oscuro y tarjeta blanca redondeada para Marte, comparador oscuro con dos modelos reales y filas de métricas. Inter y JetBrains Mono. Responsive con paneles móviles.
+
+Se mantienen los cálculos, datos y motores. No se trasladan de las maquetas cifras inventadas, telemetría online, resoluciones no disponibles ni controles de análisis sin conexión a un método real. Las imágenes estáticas de los planetas en Stitch se reemplazan por los visores interactivos ya existentes. El dibujo geográfico depende de la cámara, los datasets y el sitio seleccionado.
+
+Ajustes finales: etiquetas abreviadas en radar para evitar recortes; Marte con vista inicial más cercana; metadatos de comparación (ventana, celda visual y exageración) obtenidos del recorte actual.
+
+Validación: build y TypeScript; lint; pruebas de cálculo; Chrome automatizado con capturas de Tierra, Luna, Marte y comparación. Prueba de selección de Mons Mouton y Jezero, apertura/cierre de comparador y tamaños 1920, 1600, 1280 y 390 px. No se verifica Cesium autenticado en el navegador aislado ni dispositivo táctil físico.
+
+---
+
+## Historial: primera propuesta reemplazada
+
 # TerraLunar — interfaz científica
 
 Implementación sobre la aplicación existente, 2026-11-14. La especificación del usuario de dashboard científico prevalece sobre la guía anterior Uber y sobre los componentes de marketing de Linear. No se sustituyen mapas ni datos por imágenes estáticas.

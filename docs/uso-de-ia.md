@@ -43,3 +43,5 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Eliminado selector y formulario de token lunar. Cesium usa credencial existente; si falta, falla o excede 25 s de inicialización, alternativa local LRO/LOLA automática, identificada en pantalla. No se elimina la autenticación requerida por Cesium ion. |
 
 | 2026-11-14 | OpenAI Codex | Rediseño científico de interfaz existente: barra superior, configuración, visor y resultados; portales para paneles planetarios; controles, responsive y accesibilidad; conservación de motores y cálculos. Build/lint/6 pruebas y recorridos Chrome de tres planetas, ranking y comparador; ver docs/REDESIGN.md. |
+
+| 2026-11-14 | OpenAI Codex | Implementación visual basada en las cuatro pantallas y DESIGN.md del ZIP Stitch del usuario; navegación negra, fichas blancas, Inter/JetBrains Mono, radar y comparador. Conserva datos y motores, sin copiar cifras ficticias de la maqueta. Ver docs/REDESIGN.md. |

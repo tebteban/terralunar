@@ -98,9 +98,9 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
     ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel total', 'desnivel_m', ' m'],
   ]
   return (
-    <dl className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-sm">
+    <dl className="comparison-stats">
       {rows.map(([label, key, unit]) => (
-        <div key={key} className="contents">
+        <div key={key} className="comparison-stat-row">
           <dt className="text-mute">{label}</dt>
           <dd className="text-right font-medium tabular-nums">
             {Number(item[key]).toFixed(1)}{unit}
@@ -247,6 +247,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
 
       {index && moon && earth && (
         <>
+          <div className="comparison-metadata"><span>CÁMARAS SINCRONIZADAS</span><span>VENTANA: {index.size_km} × {index.size_km} km</span><span>CELDA VISUAL: {detail ? 200 : index.res_m} m</span><span>EXAGERACIÓN: ×{exaggeration}</span></div>
           <div className="grid min-h-0 flex-1 grid-rows-2 gap-3 md:grid-cols-2 md:grid-rows-1">
             {[moon, earth].map((it, slot) => (
               <section key={it.id + slot} className="flex min-h-0 flex-col overflow-hidden rounded-2xl bg-elevated">
