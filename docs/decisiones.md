@@ -9,6 +9,15 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-026 — El atlas auxiliar vuelve a la entrega pública (reemplaza D-023)
+
+**Qué:** `atlas.html`, `atlas.js` y su README vuelven a `data/explorador/`, junto a `global-terreno.js`,
+que el equipo subió a Git. **Por qué:** con el archivo de datos versionado, un clon limpio ya puede
+publicar el atlas completo; separados, no funcionaba en ningún lado. **Costo:** suma 33 MB al deploy
+(la salida pasa de ~137 MB a ~170 MB). **Cómo:** `git mv` y se quita la entrada de `.gitignore`.
+
+---
+
 ## D-025 — La búsqueda de análogos se cierra sola y se rediseña en papel limpio
 
 **Qué:** al terminar «Buscar análogos», la ventana se cierra y lleva al globo terrestre con el ranking.
@@ -37,7 +46,7 @@ consola y panel lateral (el equipo eligió papel claro).
   tienen perfil. Arcadia Planitia queda cargado pero inactivo hasta tener coordenadas y recorte MOLA.
 - **Pruebas:** `web/test/geomechanics.test.ts` (5 casos); la suite unitaria completa pasa (46).
 
-## D-023 — El atlas auxiliar sale de la entrega pública
+## D-023 — El atlas auxiliar sale de la entrega pública · **Reemplazada por D-026**
 
 **Qué:** `data/explorador/` (atlas.html + atlas.js) se movió a `docs/explorador/`.
 **Por qué:** Vite publica todo `data/`, pero el atlas depende de `global-terreno.js` (33 MB, ignorado por
