@@ -110,3 +110,15 @@ Desde la red de la sede, algunos sitios dan error de certificado SSL (`spaceapps
 | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — análisis de estilo aeroespacial | Sistema anterior, D-012 (reemplazado) | MIT |
 | [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) (Google Fonts) | Letra de toda la app (D-017; antes Inter + JetBrains Mono) | SIL Open Font License |
 | NASA SVS CGI Moon Kit (`data/moon/globe_color.jpg`) | Luna en puntos de la portada (`web/src/HalftoneMoon.tsx`) | Dominio público NASA |
+
+## Consideraciones geomecánicas (D-024)
+
+Criterios y umbrales: documento del equipo de Civil (`docs/consideraciones-geomecanicas.md`). Fuentes que cita:
+
+| Fuente | Uso |
+|---|---|
+| [NASA's Treasure Map for Water Ice on Mars (JPL)](https://www.nasa.gov/solar-system/nasas-treasure-map-for-water-ice-on-mars/) | Hielo subsuperficial en Arcadia Planitia |
+| [Morgan et al., Availability of Subsurface Water-Ice Resources (NTRS)](https://ntrs.nasa.gov/api/citations/20205008958/downloads/Morgan_etal_NA_Perspective_NATASTRON_19122833C%20.pdf) | Exceso de hielo, regolito y morfología periglaciar |
+| [NASA HLS2 Newsletter · Arcadia Planitia](https://www.nasa.gov/wp-content/uploads/2015/06/hls2_newsletter_02-19_v19_tagged.pdf) | Restricciones de ingeniería y portancia |
+| [NASA PDS Geosciences Node](https://pds-geosciences.wustl.edu/) | MOLA / LOLA para calibrar umbrales |
+

@@ -16,3 +16,23 @@ Cosas que la app necesita y todavía no existen. Se anotan acá en vez de invent
 - **Polígonos de aterrizaje Artemis III:** el comparador usa centros IAU de los accidentes (Mons Mouton, Mons Malapert) y un punto de un estudio (Nobile Rim 2). Si aparece la fuente oficial, reemplazar.
 - **Búsqueda desde la Luna:** compara solo contra las zonas de `zones.json` (hoy 20 mock). Cuando el pipeline extraiga ~200 candidatas, correr `02_compare_patches.py` para sus métricas. Tolerancias del parecido (pendiente 5°, p90 8°, rugosidad 3 m, desnivel 1000 m) son provisorias: validar con Civil.
 - **Perfil Marte:** no existe (es lo primero que se recorta).
+
+## Consideraciones geomecánicas (D-024, documento de Civil `docs/consideraciones-geomecanicas.md`)
+Criterios que hoy quedan **pendientes** en la ficha porque falta el dato terrestre (no se inventa nota):
+- **Granulometría y composición (15 %):** reflectancia NIR del recorte (Sentinel-2 banda 8 o Landsat 8/9), ya
+  que la regla pide NIR 0,25–0,40 (Luna) o 0,15–0,30 (Marte) además del NDVI.
+- **Capacidad portante (15 %):** densidad aparente del suelo (p. ej. SoilGrids `bdod`, 250 m) o ensayos de campo.
+- **Volátiles y evaporitas (20 %):** mapa de permafrost / glaciares de escombros con profundidad y % de hielo
+  (p. ej. ESA CCI Permafrost; inventarios de glaciares de escombros de la Puna/Andes).
+- **Refugio subterráneo (10 %):** DEM de 30 m (NASADEM / Copernicus GLO-30) por candidato para medir desniveles
+  de 2–50 m y pendientes de flanco; con celdas de 2 km no se resuelven.
+- **Oscilaciones térmicas:** hoy se usa una sola fecha MODIS (día − noche). La regla pide amplitud diaria o
+  estacional: falta una serie temporal.
+- **Radiación:** se usa la altitud, como indica la regla; el índice UV no está integrado.
+- **Supermáscara:** depende de la capa de cobertura; donde falta agua, NDVI o zonas urbanas, la máscara se
+  informa como incompleta.
+- **Arcadia Planitia:** el perfil está cargado, pero el sitio no está entre los destinos de Marte de la app.
+  Faltan las coordenadas del área de estudio (p. ej. del boletín NASA HLS2) y su recorte MOLA para activarlo.
+- **Tramos intermedios de las reglas:** el documento fija los extremos (1,0 y 0,0); los tramos lineales entre
+  ellos son provisorios. Validar con Civil.
+

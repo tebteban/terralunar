@@ -9,6 +9,23 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-024 — Consideraciones geomecánicas de Civil, aplicadas solo con datos medidos
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban; documento del equipo de Civil).
+- **Qué:** `docs/consideraciones-geomecanicas.md` define 7 criterios con pesos (morfología 20 %, volátiles
+  20 %, portancia 15 %, composición 15 %, térmica 10 %, radiación 10 %, refugio 10 %), reglas de 0 a 1 y una
+  supermáscara (NDVI < 0,1 · sin agua · sin zonas urbanas) para Mons Mouton y Arcadia Planitia.
+- **Cómo:** `web/src/geomechanics.ts` traduce el documento a código y `GeomechanicsCard.tsx` lo muestra en la
+  ficha de cada candidato terrestre. **Regla de veracidad:** un criterio solo recibe nota si el candidato tiene
+  el dato medido; si no, queda "Pendiente" con el dato que falta. El índice geomecánico es **parcial**: promedio
+  ponderado de los criterios medidos, siempre con el % del peso que cubre, multiplicado por la supermáscara
+  (descartado ⇒ 0). Hoy se miden: morfología (pendiente y altitud del DEM a 2 km), radiación (altitud) y
+  oscilación térmica (MODIS día − noche, una fecha), hasta 40 % del peso. Los tramos entre los extremos del
+  documento son lineales y provisorios.
+- **Qué no se hizo:** no se mezcla con el ranking de relieve (sigue siendo semejanza topográfica); no se
+  aplican los umbrales de Mons Mouton a otros sitios (Malapert, Nobile, Jezero…): esos destinos muestran que no
+  tienen perfil. Arcadia Planitia queda cargado pero inactivo hasta tener coordenadas y recorte MOLA.
+- **Pruebas:** `web/test/geomechanics.test.ts` (5 casos); la suite unitaria completa pasa (46).
+
 ## D-023 — El atlas auxiliar sale de la entrega pública
 
 **Qué:** `data/explorador/` (atlas.html + atlas.js) se movió a `docs/explorador/`.
