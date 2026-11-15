@@ -5,21 +5,15 @@ import { OBJExporter } from 'three/addons/exporters/OBJExporter.js'
 // Misma malla para la vista 3D y para la exportación: lado `size` en metros, centrada en su altura media.
 export function terrainGeometry(h: ArrayLike<number>, inputN: number, size: number, exaggeration: number) {
   if (h.length !== inputN * inputN) throw new Error('Tamaño de recorte inválido')
-  // Smooth rendering only: bilinear interpolation cannot add observed terrain detail.
-  const n = inputN < 32 ? 100 : inputN
+  // Sin remuestrear: un vértice por celda medida, para no inventar relieve entre mediciones.
+  const n = inputN
   const geo = new THREE.PlaneGeometry(size, size, n - 1, n - 1)
   geo.rotateX(-Math.PI / 2)
   const pos = geo.attributes.position
   let sum = 0
   for (let i = 0; i < h.length; i++) sum += h[i]
   const mean = sum / h.length
-  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-    const gx = x / (n - 1) * (inputN - 1), gy = y / (n - 1) * (inputN - 1)
-    const x0 = Math.floor(gx), y0 = Math.floor(gy), x1 = Math.min(inputN - 1, x0 + 1), y1 = Math.min(inputN - 1, y0 + 1)
-    const fx = gx - x0, fy = gy - y0
-    const value = h[y0 * inputN + x0] * (1 - fx) * (1 - fy) + h[y0 * inputN + x1] * fx * (1 - fy) + h[y1 * inputN + x0] * (1 - fx) * fy + h[y1 * inputN + x1] * fx * fy
-    pos.setY(y * n + x, (value - mean) * exaggeration)
-  }
+  for (let i = 0; i < h.length; i++) pos.setY(i, (h[i] - mean) * exaggeration)
   geo.computeVertexNormals()
   return geo
 }

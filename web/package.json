@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test test/score.test.ts test/mars.test.ts test/scientific.test.ts test/discovery.test.ts test/terrainML.test.ts test/analogyScope.test.ts test/coverageMask.test.ts test/integrated.test.ts test/recent.test.ts test/regions.test.ts test/earthSelection.test.ts test/globalSearch.test.ts test/analysisRun.test.ts test/thermalEvidence.test.ts test/geomechanics.test.ts test/terrainExport.test.ts",
+    "test": "node --test test/score.test.ts test/mars.test.ts test/scientific.test.ts test/discovery.test.ts test/terrainML.test.ts test/analogyScope.test.ts test/coverageMask.test.ts test/integrated.test.ts test/recent.test.ts test/regions.test.ts test/earthSelection.test.ts test/globalSearch.test.ts test/analysisRun.test.ts test/thermalEvidence.test.ts test/geomechanics.test.ts test/terrainExport.test.ts test/earthTerrain.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:update": "playwright test --update-snapshots"

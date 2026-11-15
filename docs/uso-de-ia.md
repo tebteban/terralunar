@@ -84,3 +84,4 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Exportación desde el comparador 3D: datos de la comparación en JSON y modelos STL/OBJ de cada relieve (`terrainExport.ts`, `Compare3D.tsx`, tests) | — |
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | STL con base sólida; búsqueda de análogos que se cierra al terminar y rediseño de la ventana (`ScientificSearch.tsx`, `AnalogyScope.tsx`, `index.css`, e2e); D-025 | — |
 | 2026-11-15 | Claude Code (Claude Opus 5.5) | Atlas auxiliar de vuelta en `data/explorador/` con su archivo de datos; D-026 | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Comparador 3D con relieve terrestre real a 80 m para cualquier candidato (tiles AWS Terrarium, `earthTerrain.ts`) y mallas sin suavizar (`terrainExport.ts`, `Compare3D.tsx`, tests) | — |
