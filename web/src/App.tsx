@@ -83,6 +83,12 @@ export default function App() {
   const [attempt, setAttempt] = useState(0)
   const [filter, setFilter] = useState<'todos' | 'conocidos' | 'nuevos' | 'argentina'>('todos')
   const [showAll, setShowAll] = useState(false)
+  // Panel lateral ocultable (escritorio) en Luna, Marte y búsqueda personalizada; se recuerda en el navegador
+  const [panelHidden, setPanelHidden] = useState(() => { try { return localStorage.getItem('terralunar.panel-oculto') === '1' } catch { return false } })
+  const togglePanel = (hidden: boolean) => {
+    setPanelHidden(hidden)
+    try { localStorage.setItem('terralunar.panel-oculto', hidden ? '1' : '0') } catch { /* sin almacenamiento: solo esta sesión */ }
+  }
 
   useEffect(() => {
     Promise.all([getJSON<Zone[]>('/zones.json'), getJSON<Record<string, Profile>>('/profiles.json')])
@@ -191,6 +197,9 @@ export default function App() {
 
   const visibleDims = Object.entries(profile.dimensions).filter(([k]) => custom === null || k in custom)
   const section = (p: Panel) => (panel === p ? 'contents' : 'hidden lg:contents')
+  const collapsible = body !== 'tierra' || custom !== null
+  const collapsed = collapsible && panelHidden
+  const panelName = body === 'luna' ? 'Luna' : body === 'marte' ? 'Marte' : 'Búsqueda personalizada'
 
   return (
     <div className="flex h-full flex-col bg-space">
@@ -205,7 +214,28 @@ export default function App() {
         ))}
       </nav>
       <div className="relative flex min-h-0 flex-1 flex-col lg:flex-row">
-      <aside className={`${panel === 'mapa' ? 'hidden' : 'absolute inset-0 z-20 flex'} flex-col gap-7 overflow-y-auto border-hairline bg-rail p-6 text-canvas lg:static lg:flex lg:w-[340px] lg:shrink-0 lg:border-r xl:w-[390px]`}>
+      {/* Barra fina para volver a mostrar el panel cuando está oculto (solo escritorio) */}
+      {collapsed && (
+        <div className="hidden w-12 shrink-0 flex-col items-center gap-3 border-r border-hairline bg-rail py-4 lg:flex">
+          <button type="button" onClick={() => togglePanel(false)} aria-expanded={false} aria-controls="panel-lateral"
+            title={`Mostrar panel · ${panelName}`} aria-label={`Mostrar panel de ${panelName}`}
+            className="grid size-9 cursor-pointer place-items-center rounded-full text-canvas transition-colors hover:bg-elevated">
+            <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <button type="button" onClick={() => togglePanel(false)} tabIndex={-1} aria-hidden="true"
+            className="label-mono cursor-pointer rotate-180 text-mute transition-colors [writing-mode:vertical-rl] hover:text-canvas">
+            Mostrar panel · {panelName}
+          </button>
+        </div>
+      )}
+      <aside id="panel-lateral" className={`${panel === 'mapa' ? 'hidden' : 'absolute inset-0 z-20 flex'} flex-col gap-7 overflow-y-auto border-hairline bg-rail p-6 text-canvas lg:static lg:w-[340px] lg:shrink-0 lg:border-r xl:w-[390px] ${collapsed ? 'lg:hidden' : 'panel-in lg:flex'}`}>
+        {collapsible && (
+          <button type="button" onClick={() => togglePanel(true)} aria-expanded={true} aria-controls="panel-lateral"
+            className="-mt-2 -mb-3 hidden cursor-pointer items-center gap-1.5 self-end rounded-full px-3 py-1.5 text-xs text-mute transition-colors hover:bg-elevated hover:text-canvas lg:inline-flex">
+            <svg viewBox="0 0 16 16" className="size-3.5" aria-hidden="true"><path d="M10 3.5 5.5 8 10 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            Ocultar panel
+          </button>
+        )}
         <button type="button" className="btn-primary" onClick={() => setScientificOpen(true)}>Buscar en todas las regiones</button>
         <header className="flex flex-col gap-1">
           <h1 className="text-xl leading-7 font-bold tracking-tight">TerraLunar</h1>
