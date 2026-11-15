@@ -1,3 +1,8 @@
 pipeline/raw/
 __pycache__/
 /data/explorador/global-terreno.js
+
+# Playwright
+web/test-results/
+web/playwright-report/
+.playwright-mcp/

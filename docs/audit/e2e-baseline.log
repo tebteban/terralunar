@@ -1,0 +1,411 @@
+
+Running 34 tests using 2 workers
+
+  ok  2 [desktop] › e2e\custom.spec.ts:4:3 › Búsqueda personalizada (formulario) › vacío: el CTA está deshabilitado y la vista previa lo explica (4.8s)
+  ok  1 [desktop] › e2e\a11y.spec.ts:11:1 › portada sin violaciones WCAG AA (15.7s)
+  ok  3 [desktop] › e2e\custom.spec.ts:12:3 › Búsqueda personalizada (formulario) › válido: elegir variables arma pesos que suman 100 % y muestra 5 mejores (11.4s)
+  ok  5 [desktop] › e2e\custom.spec.ts:28:3 › Búsqueda personalizada (formulario) › cambiar importancia y limpiar (21.2s)
+  ok  4 [desktop] › e2e\a11y.spec.ts:16:1 › personalizado sin violaciones WCAG AA (22.7s)
+  ok  6 [desktop] › e2e\explore.spec.ts:5:3 › Explorar: ranking, pesos y ficha › ranking de 20 zonas con puntajes 0–100 y pesos que suman ~100 % (1.7s)
+  ok  8 [desktop] › e2e\explore.spec.ts:21:3 › Explorar: ranking, pesos y ficha › mover un slider marca "Personalizado" y Restaurar vuelve al preset (5.5s)
+  ok  9 [desktop] › e2e\explore.spec.ts:31:3 › Explorar: ranking, pesos y ficha › todos los pesos en 0 muestra un aviso (estado inválido) (5.9s)
+  ok 10 [desktop] › e2e\explore.spec.ts:38:3 › Explorar: ranking, pesos y ficha › la ficha muestra datos con formato, límites de la analogía y enlace a Worldview (10.6s)
+  ok 11 [desktop] › e2e\explore.spec.ts:61:3 › Explorar: ranking, pesos y ficha › el diálogo Fuentes y método abre y cierra con Escape (6.0s)
+  ok  7 [desktop] › e2e\a11y.spec.ts:22:1 › explorar con ficha abierta sin violaciones WCAG AA (31.7s)
+  ok 12 [desktop] › e2e\landing.spec.ts:5:3 › Portada › muestra las tres opciones y datos NASA, sin errores de consola (4.8s)
+  ok 14 [desktop] › e2e\landing.spec.ts:19:3 › Portada › atajos de teclado 1/2/3 y botón atrás del navegador (5.2s)
+  ok 15 [desktop] › e2e\landing.spec.ts:32:3 › Portada › navegación por teclado: Tab llega a las opciones y Enter las activa (1.4s)
+  x  13 [desktop] › e2e\a11y.spec.ts:29:1 › Marte sin violaciones WCAG AA (9.7s)
+  ok 17 [desktop] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (23.8s)
+  x  16 [desktop] › e2e\moon-mars.spec.ts:5:3 › Luna y Marte › Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D (35.1s)
+  ok 18 [desktop] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (4.2s)
+A snapshot doesn't exist at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts-snapshots\landing-desktop-win32.png, writing actual.
+  ok 19 [desktop] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (2.1s)
+A snapshot doesn't exist at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts-snapshots\personalizado-desktop-win32.png, writing actual.
+  ok 21 [desktop] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (2.5s)
+  x  22 [desktop] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (30.1s)
+  x  20 [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA (36.3s)
+  x  24 [tablet] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (2.0s)
+  ok 25 [tablet] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (2.3s)
+A snapshot doesn't exist at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts-snapshots\landing-tablet-win32.png, writing actual.
+  ok 26 [tablet] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (1.8s)
+A snapshot doesn't exist at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts-snapshots\personalizado-tablet-win32.png, writing actual.
+  ok 27 [tablet] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.7s)
+  x  28 [tablet] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (1.1s)
+  x  23 [desktop] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía (16.4s)
+A snapshot doesn't exist at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts-snapshots\landing-mobile-win32.png, writing actual.
+  ok 30 [mobile] › e2e\responsive.spec.ts:5:1 › portada: sin desborde y captura de regresión (11.2s)
+  x  29 [mobile] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio (12.0s)
+A snapshot doesn't exist at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts-snapshots\personalizado-mobile-win32.png, writing actual.
+  ok 31 [mobile] › e2e\responsive.spec.ts:13:1 › personalizado: sin desborde y captura de regresión (1.8s)
+  x  33 [mobile] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport (1.5s)
+  ok 32 [mobile] › e2e\navigation.spec.ts:34:1 › el hash #marte abre directo la vista de Marte (3.1s)
+  x  34 [sin-webgl] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía (16.0s)
+
+
+  1) [desktop] › e2e\a11y.spec.ts:29:1 › Marte sin violaciones WCAG AA ─────────────────────────────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "color-contrast (serious): 1 nodos — .bg-mars\\/10",
+    + ]
+
+      30 |   await page.goto('/#marte')
+      31 |   await expect(page.getByRole('heading', { name: 'Elegí un lugar en Marte' })).toBeVisible()
+    > 32 |   expect(resumen(await audit(page))).toEqual([])
+         |                                      ^
+      33 | })
+      34 |
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\a11y.spec.ts:32:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\a11y-Marte-sin-violaciones-WCAG-AA-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\a11y-Marte-sin-violaciones-WCAG-AA-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\a11y-Marte-sin-violaciones-WCAG-AA-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\a11y-Marte-sin-violaciones-WCAG-AA-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop] › e2e\moon-mars.spec.ts:5:3 › Luna y Marte › Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('dl').filter({ hasText: 'Pendiente mediana' }).getByText(/^[\d.]+,\d m$/)
+    Expected: 2
+    Received: 1
+    Timeout:  15000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('dl').filter({ hasText: 'Pendiente mediana' }).getByText(/^[\d.]+,\d m$/) with timeout 15000ms
+      - waiting for locator('dl').filter({ hasText: 'Pendiente mediana' }).getByText(/^[\d.]+,\d m$/)
+        19 × locator resolved to 1 element
+           - unexpected value "1"
+
+
+      12 |     await expect(dl.getByRole('definition')).toHaveCount(4)
+      13 |     await expect(dl.getByText(/^\d+,\d°$/)).toHaveCount(2) // pendientes con coma decimal (es-AR)
+    > 14 |     await expect(dl.getByText(/^[\d.]+,\d m$/)).toHaveCount(2)
+         |                                                 ^
+      15 |     const lista = page.getByRole('list').filter({ has: page.getByRole('button', { name: 'Comparar relieve 3D' }) })
+      16 |     await expect(lista.getByRole('listitem')).toHaveCount(6)
+      17 |     await lista.getByRole('button', { name: 'Comparar relieve 3D' }).first().click()
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\moon-mars.spec.ts:14:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\moon-mars-Luna-y-Marte-Lun-67f9d-dos-y-abre-el-comparador-3D-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\moon-mars-Luna-y-Marte-Lun-67f9d-dos-y-abre-el-comparador-3D-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\moon-mars-Luna-y-Marte-Lun-67f9d-dos-y-abre-el-comparador-3D-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\moon-mars-Luna-y-Marte-Lun-67f9d-dos-y-abre-el-comparador-3D-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('status')
+    Expected substring: "latitud entre"
+    Received string:    "10.00°, 0.00° · zoom 1.9"
+    Timeout: 15000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('status') with timeout 15000ms
+      - waiting for getByRole('status')
+        28 × locator resolved to <output class="metric pointer-events-none absolute bottom-2 left-6 z-[1] hidden text-[11px] text-mute md:block">10.00°, 0.00° · zoom 1.9</output>
+           - unexpected value "10.00°, 0.00° · zoom 1.9"
+
+
+      33 |     await lat.fill('120')
+      34 |     await page.getByRole('button', { name: 'Ir' }).click()
+    > 35 |     await expect(page.getByRole('status')).toContainText('latitud entre')
+         |                                            ^
+      36 |     await page.getByRole('button', { name: 'Jezero' }).click()
+      37 |     await expect(page.getByRole('heading', { name: 'Punto elegido en Marte' })).toBeVisible({ timeout: 90_000 })
+      38 |     const dl = page.locator('dl').filter({ hasText: 'Pendiente mediana' })
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\moon-mars.spec.ts:35:44
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\moon-mars-Luna-y-Marte-Mar-44702-zero-devuelve-métricas-MOLA-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport 
+
+    Error: Tierra debe medir ≥ 40 px de alto
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 40
+    Received:    32
+
+      32 |   for (const name of ['Tierra', 'Luna', 'Marte']) {
+      33 |     const b = (await nav.getByRole('button', { name, exact: true }).boundingBox())!
+    > 34 |     expect(b.height, `${name} debe medir ≥ 40 px de alto`).toBeGreaterThanOrEqual(40)
+         |                                                            ^
+      35 |   }
+      36 | })
+      37 |
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts:34:60
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/WebGL/)
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/WebGL/) with timeout 15000ms
+      - waiting for getByText(/WebGL/)
+
+
+       7 |   await page.goto('/#explorar')
+       8 |   await expect(page.getByRole('button', { name: /#01/ })).toBeVisible()
+    >  9 |   await expect(page.getByText(/WebGL/)).toBeVisible()
+         |                                         ^
+      10 |   await page.getByRole('navigation', { name: 'Cuerpo visualizado' }).getByRole('button', { name: 'Luna', exact: true }).click()
+      11 |   await expect(page.getByText(/WebGL/).first()).toBeVisible()
+      12 |   await page.getByRole('navigation', { name: 'Cuerpo visualizado' }).getByRole('button', { name: 'Marte', exact: true }).click()
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\webgl.spec.ts:9:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [tablet] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio 
+
+    Error: la página no debe desbordar horizontalmente
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 768
+    Received:    844
+
+       at helpers.ts:24
+
+      22 | export async function noHorizontalScroll(page: Page) {
+      23 |   const [sw, cw] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])
+    > 24 |   expect(sw, 'la página no debe desbordar horizontalmente').toBeLessThanOrEqual(cw)
+         |                                                             ^
+      25 | }
+      26 |
+        at noHorizontalScroll (C:\Users\Esteban\Desktop\nasa space app\web\e2e\helpers.ts:24:61)
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\navigation.spec.ts:15:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-tablet\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [tablet] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport 
+
+    Error: la página no debe desbordar horizontalmente
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 768
+    Received:    844
+
+       at helpers.ts:24
+
+      22 | export async function noHorizontalScroll(page: Page) {
+      23 |   const [sw, cw] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])
+    > 24 |   expect(sw, 'la página no debe desbordar horizontalmente').toBeLessThanOrEqual(cw)
+         |                                                             ^
+      25 | }
+      26 |
+        at noHorizontalScroll (C:\Users\Esteban\Desktop\nasa space app\web\e2e\helpers.ts:24:61)
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts:23:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-tablet\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [mobile] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio 
+
+    Error: la página no debe desbordar horizontalmente
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 390
+    Received:    454
+
+       at helpers.ts:24
+
+      22 | export async function noHorizontalScroll(page: Page) {
+      23 |   const [sw, cw] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])
+    > 24 |   expect(sw, 'la página no debe desbordar horizontalmente').toBeLessThanOrEqual(cw)
+         |                                                             ^
+      25 | }
+      26 |
+        at noHorizontalScroll (C:\Users\Esteban\Desktop\nasa space app\web\e2e\helpers.ts:24:61)
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\navigation.spec.ts:15:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-mobile\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-mobile\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\navigation-recorre-todas-l-fa272-rar-→-Luna-→-Marte-→-Inicio-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [mobile] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport 
+
+    Error: la página no debe desbordar horizontalmente
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 390
+    Received:    454
+
+       at helpers.ts:24
+
+      22 | export async function noHorizontalScroll(page: Page) {
+      23 |   const [sw, cw] = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth])
+    > 24 |   expect(sw, 'la página no debe desbordar horizontalmente').toBeLessThanOrEqual(cw)
+         |                                                             ^
+      25 | }
+      26 |
+        at noHorizontalScroll (C:\Users\Esteban\Desktop\nasa space app\web\e2e\helpers.ts:24:61)
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\responsive.spec.ts:23:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-mobile\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-mobile\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\responsive-explorar-la-bar-c5d42-nking-entran-en-el-viewport-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [sin-webgl] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: /#01/ })
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: /#01/ }) with timeout 15000ms
+      - waiting for getByRole('button', { name: /#01/ })
+
+
+       6 |   const con = watchConsole(page)
+       7 |   await page.goto('/#explorar')
+    >  8 |   await expect(page.getByRole('button', { name: /#01/ })).toBeVisible()
+         |                                                           ^
+       9 |   await expect(page.getByText(/WebGL/)).toBeVisible()
+      10 |   await page.getByRole('navigation', { name: 'Cuerpo visualizado' }).getByRole('button', { name: 'Luna', exact: true }).click()
+      11 |   await expect(page.getByText(/WebGL/).first()).toBeVisible()
+        at C:\Users\Esteban\Desktop\nasa space app\web\e2e\webgl.spec.ts:8:59
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-sin-webgl\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-sin-webgl\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-sin-webgl\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\webgl-sin-WebGL-Tierra-Lun-6cab8-n-vez-de-una-pantalla-vacía-sin-webgl\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10 failed
+    [desktop] › e2e\a11y.spec.ts:29:1 › Marte sin violaciones WCAG AA ──────────────────────────────
+    [desktop] › e2e\moon-mars.spec.ts:5:3 › Luna y Marte › Luna: elegir Mons Mouton da 4 métricas LOLA, 6 parecidos y abre el comparador 3D 
+    [desktop] › e2e\moon-mars.spec.ts:28:3 › Luna y Marte › Marte: latitud inválida muestra error; Jezero devuelve métricas MOLA 
+    [desktop] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport 
+    [desktop] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía 
+    [tablet] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio 
+    [tablet] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport 
+    [mobile] › e2e\navigation.spec.ts:5:1 › recorre todas las vistas: Inicio → Personalizado → Explorar → Luna → Marte → Inicio 
+    [mobile] › e2e\responsive.spec.ts:21:1 › explorar: la barra de controles y el ranking entran en el viewport 
+    [sin-webgl] › e2e\webgl.spec.ts:5:1 › sin WebGL: Tierra, Luna y Marte muestran un aviso en vez de una pantalla vacía 
+  24 passed (3.4m)
