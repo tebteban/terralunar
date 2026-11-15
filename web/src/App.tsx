@@ -32,10 +32,15 @@ export default function App(){
   setPanelHidden(hidden)
   try{localStorage.setItem('terralunar.panel-oculto',hidden?'1':'0')}catch{/* La sesión conserva el estado. */}
  }
- const collapsible=body!=='tierra'||personalized
+ const collapsible=true // D-020: el panel izquierdo se puede ocultar en Tierra, Luna, Marte y búsqueda personalizada
  const collapsed=collapsible&&panelHidden
- const panelName={tierra:'Búsqueda personalizada',luna:'Luna',marte:'Marte'}[body]
+ const panelName={tierra:personalized?'Búsqueda personalizada':'Tierra',luna:'Luna',marte:'Marte'}[body]
  const row=run?.rows.find(r=>r.id===selectedId)
+ // D-021: ficha terrestre como pestaña flotante; se despliega sola con un análisis nuevo o al elegir un candidato
+ const [earthPanelOpen,setEarthPanelOpen]=useState(false)
+ const earthSignal=`${run?.id??''}|${selectedId??''}`
+ const [lastEarthSignal,setLastEarthSignal]=useState(earthSignal)
+ if(earthSignal!==lastEarthSignal){setLastEarthSignal(earthSignal);if(run||selectedId)setEarthPanelOpen(true)}
  const comparison=useMemo(()=>run&&row?comparisonFor(run,row):null,[run,row])
  const mapped=useMemo(()=>run?.rows.map(r=>({zone:r.zone,score:r.score/100}))??[],[run])
  const visible=run?.rows.filter(r=>filter==='all'||r.origin===filter)??[]
@@ -87,7 +92,7 @@ export default function App(){
     {visited.includes('luna')&&<div className={body==='luna'?'h-full':'hidden'}><Suspense fallback={<Loading/>}><MoonMap integrated candidatesPanel={run?.resolvedTarget.body==='luna'?ranking:undefined} onAnalyze={analyze} onPickEarth={select}/></Suspense></div>}
     {visited.includes('marte')&&<div className={body==='marte'?'h-full':'hidden'}><Suspense fallback={<Loading/>}><MarsView active={body==='marte'} integrated candidatesPanel={run?.resolvedTarget.body==='marte'?ranking:undefined} onAnalyze={analyze} onPickEarth={select}/></Suspense></div>}
     <nav className="absolute left-2 right-2 top-16 z-10 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-hairline bg-rail p-1 shadow-float sm:left-4 sm:right-auto" aria-label="Cuerpo visualizado"><button aria-label="Volver al inicio" onClick={()=>{setStarted(false);history.pushState(null,'',location.pathname)}} className="min-h-10 px-3"><ConsoleIcon name="back"/></button>{(['tierra','luna','marte'] as const).map(b=><button key={b} aria-pressed={body===b} onClick={()=>visit(b)} className="min-h-10 rounded-full px-4 text-sm capitalize text-mute aria-pressed:bg-canvas aria-pressed:text-ink">{{tierra:"Tierra",luna:"Luna",marte:"Marte"}[b]}</button>)}<button aria-label="Comparador 3D" disabled={!comparison} onClick={()=>setComparing(true)} className="min-h-10 rounded-full px-3 text-sm disabled:opacity-40">Comparador 3D</button></nav>
-    {body==='tierra'&&<SurfacePanel label="Ficha y candidatos terrestres">{run&&row?<Suspense fallback={<p>Cargando ficha…</p>}><EvidenceCard run={run} row={row} onCompare={()=>setComparing(true)} onClose={()=>setSelectedId(null)}/></Suspense>:<><h2 className="font-bold">Límites de la analogía</h2><p className="text-sm">El relieve regional no determina composición, temperatura, recursos ni seguridad operativa.</p></>}{ranking}</SurfacePanel>}
+    {body==='tierra'&&<SurfacePanel label="Ficha y candidatos terrestres" collapsible open={earthPanelOpen} onOpenChange={setEarthPanelOpen}>{run&&row?<Suspense fallback={<p>Cargando ficha…</p>}><EvidenceCard run={run} row={row} onCompare={()=>setComparing(true)} onClose={()=>setSelectedId(null)}/></Suspense>:<><h2 className="font-bold">Límites de la analogía</h2><p className="text-sm">El relieve regional no determina composición, temperatura, recursos ni seguridad operativa.</p></>}{ranking}</SurfacePanel>}
    </main>
   </div>
   {scientificOpen&&<ScientificSearch initialRun={draftTarget?null:run} selectedTarget={draftTarget??run?.selectedTarget} onRun={accept} onClose={()=>{setScientificOpen(false);setDraftTarget(null)}} onSelect={select} onShowMap={()=>visit('tierra')}/>}
