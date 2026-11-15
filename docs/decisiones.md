@@ -9,6 +9,24 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-026 — Panel de validación con análogos USGS reservados
+- **Fecha:** 2026-11-15 · **Estado:** vigente (CLAUDE.md: la validación "nunca se recorta").
+- **Qué:** `pipeline/12_validation.py` mide el relieve de los 192 análogos USGS (división fit 137 / test 55 hecha
+  por hash del nombre antes de calcular, sin tocar) y de 300 ventanas de tierra al azar (semilla 20261115, entre
+  56° S y 60° N, ≥ 90 % tierra), con el mismo muestreo que los candidatos. `web/src/validation.ts` los puntúa con
+  la misma función del ranking (`reliefScore`, ahora compartida) y `ValidationPanel.tsx` lo muestra debajo de los
+  resultados de la búsqueda, recalculado con el destino y los pesos elegidos.
+- **Reglas fijadas antes de ver resultados:** métrica = % de sitios `test` con semejanza ≥ percentil 90 del fondo
+  al azar (azar puro ≈ 10 %); se descartan ventanas con < 50 % de tierra; `fit` se muestra aparte y no es la
+  métrica; se informa la probabilidad binomial de obtener ese acierto por azar.
+- **Resultado (pesos iguales, primera corrida, sin ajustar nada):** Mons Mouton 3 de 54 sitios `test` (6 %,
+  probabilidad por azar 92 %); Mons Malapert y Nobile Rim 2, 1 de 54 (2 %). **El relieve solo no distingue a los
+  análogos USGS mejor que el azar.** Lectura: casi todos son cráteres de impacto terrestres, erosionados y de
+  relieve suave a 2 km, que son análogos del *proceso* de impacto, no de la *forma* de una meseta o un macizo del
+  polo sur. No se cambian umbrales, pesos ni división para "mejorar" el número.
+- **Límite declarado:** la lista USGS es casi toda de cráteres de impacto: valida "parecido a un análogo planetario
+  conocido", no aptitud para un ensayo concreto. Falta la lista curada de análogos de ensayo (datos faltantes).
+
 ## D-025 — Datos terrestres reales para los criterios geomecánicos pendientes
 - **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: completar `docs/datos-faltantes.md` con datos reales).
 - **Qué:** `pipeline/11_geomechanics.py` mide, para las 176 ventanas de 20 km que usa la app, seis capas reales

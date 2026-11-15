@@ -67,6 +67,10 @@ export async function loadCandidates(regions:Region[],scope:string,recent:boolea
  return {candidates,reports,referencePoints}
 }
 
+/** Semejanza de relieve al destino: la MISMA fórmula para el ranking y para la validación (validation.ts). */
+export function reliefScore(features:Relief,reference:Relief,weights:Record<string,number>){
+ return combine(Object.entries(TOLERANCES).map(([id,t])=>({id,weight:weights[id],value:targetMatch(features[id as keyof Relief],reference[id as keyof Relief],t)})))
+}
 export function rankCandidates(candidates:Candidate[],reference:Relief,weights:Record<string,number>,policy:MaskPolicy,bounds?:SearchBounds,referencePoints: {lon:number;lat:number}[]=[]){
  // Validate even when no candidate survives the filters.
  combine(Object.entries(TOLERANCES).map(([id,t])=>({id,weight:weights[id],value:targetMatch(reference[id as keyof Relief],reference[id as keyof Relief],t)})))
@@ -80,7 +84,7 @@ export function rankCandidates(candidates:Candidate[],reference:Relief,weights:R
   if(decision.status==='excluded'){counts.excluded++;continue}
   if(decision.status==='unknown'){counts.unknown++;continue}
   if(c.origin==='sampled'&&known.some(k=>distanceKm(k,{lon:c.zone.centroid[0],lat:c.zone.centroid[1]})<30)){counts.nearReference++;continue}
-  const result=combine(Object.entries(TOLERANCES).map(([id,t])=>({id,weight:weights[id],value:targetMatch(c.features[id as keyof Relief],reference[id as keyof Relief],t)})))
+  const result=reliefScore(c.features,reference,weights)
   rows.push({...c,score:result.score!,contributions:result.contributions,filterStatus:decision.status})
  }
  rows.sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id));counts.eligible=rows.length

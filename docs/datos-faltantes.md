@@ -42,3 +42,7 @@ faltaba. Estado por ítem:
   es 1369 µSv/día ≈ 0,50 Sv/año, más que los 0,32–0,40 Sv/año del documento. Revisar con Civil.
 - **Tramos intermedios de las reglas:** siguen provisorios (D-025 detalla cada uno). Validar con Civil.
 
+## Validación (D-026)
+- **Resultado actual:** con relieve solo, los análogos USGS `test` no superan al azar (6 % contra 10 % esperado para
+  Mons Mouton). Para una validación con sentido falta la **lista curada de análogos de ensayo** (movilidad,
+  excavación, hábitat) con cita por sitio, dividida fit/test antes de calcular. Le toca a Civil.
