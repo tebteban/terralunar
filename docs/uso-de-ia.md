@@ -60,3 +60,27 @@ Registro de todo texto o código generado con IA (requisito de la NASA: qué her
 | 2026-11-14 | OpenAI Codex | Paginación STAC acotada y verificable, consulta sin descarga, pruebas de cursores, deduplicación y truncamiento; conserva datos procesados. |
 | 2026-11-15 | Claude Code (Claude Fable 5.1) + skills `impeccable`, `ui-ux-pro-max`, Playwright MCP | Auditoría de diseño y UX (`AUDIT.md`), dirección de arte (`DESIGN.md`), suite e2e (`web/e2e/`, `web/playwright.config.ts`), layout por pestañas en pantallas angostas, fallback sin WebGL (`webgl.ts`, `NoWebGL.tsx`), formato de datos (`fmt.ts`), leyenda del mapa, Δ con tolerancia en el comparador, tokens e íconos (`index.css`, `ConsoleIcon.tsx`), carga diferida de visores; `CHANGELOG-DESIGN.md`; D-019 | — |
 | 2026-11-15 | OpenAI Codex | Auditoría de navegación Luna/Marte, destinos, perfiles de ensayo, huellas de recortes terrestres y pruebas de regresión | — |
+
+| 2026-11-15 | OpenAI Codex | Revisión de merge c396da6 en develop, SurfacePanel compartido, Luna local sin token, formato y caché del comparador |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel lateral de Tierra rediseñado: tarjeta Objetivo con lo que pide la Luna, pesos con barra apilada y 5 niveles, ranking top 5 con filtros (Todos/Conocidos/Nuevos/Argentina) y tarjeta de Validación (`web/src/App.tsx`, `SHORT` en `score.ts`) | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Portada: íconos de Luna y Marte renderizados con datos reales (`pipeline/06_landing_icons.py`: LRO LROC y MOLA), globo de líneas, secciones Cómo funciona, cifras (calculadas de los datos), ejemplo Mons Mouton ↔ McMurdo con botón al comparador y pie con el equipo | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel lateral ocultable con barra izquierda en Luna, Marte y búsqueda personalizada (`web/src/App.tsx`, `web/src/index.css`); D-020 | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Ficha de Luna y Marte como pestaña flotante desplegable (`web/src/SurfacePanel.tsx`, `MoonMap.tsx`, `MarsView.tsx`); D-021 | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Recentrado del globo lunar según la ficha plegada o desplegada (`SurfacePanel` controlado, `MoonGlobe panelOpen`); D-021 | — |
+
+| 2026-11-15 | OpenAI Codex | AnalysisRun compartido, ficha con evidencia real, retiro del mock del recorrido principal, continuidad con comparador 3D y pruebas de integración |
+
+| 2026-11-15 | OpenAI Codex | Paso 3: requisitos por ensayo, separación de contexto topográfico y compatibilidad pendiente, pruebas unitarias y de navegador |
+| 2026-11-15 | OpenAI Codex | Ingestión MOD11A1 HDF real con QC, proyección, percentiles día/noche, evidencia en ficha y exportación; pruebas. Paso 4 parcial: sin índice térmico ni series planetarias integradas. |
+
+| 2026-11-15 | OpenAI Codex | Adaptación de D-020 y D-021 al flujo de ejecución científica y evidencia MODIS | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Panel izquierdo ocultable y ficha flotante también en la Tierra, sobre el flujo unificado (`web/src/App.tsx`); D-020/D-021 | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Fondo orgánico continuo de la portada con manchas difusas en movimiento, grano y viñeta (`web/src/OrganicBackdrop.tsx`, `Landing.tsx`, `index.css`); D-022 | — |
+| 2026-11-15 | OpenAI Codex | Ingestión de unidades USGS para nueve destinos y franjas térmicas LRO Diviner; cruce con MODIS por hora solar y evidencia en ficha y exportación. | — |
+| 2026-11-15 | OpenAI Codex | 75 ventanas DEM en Tassili, Lut y Chihuahua; vista inicial de candidatos fuera del catálogo y exclusión por proximidad también en búsquedas regionales. | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Mapa y ranking con el mismo filtro (`App.tsx`, `ScientificSearch.tsx`); suite e2e actualizada al flujo vigente (`web/e2e/`); búsqueda regional que usa solo el índice del catálogo (`globalSearch.ts`, `marsData.ts`); D-023 (atlas fuera de la entrega); README de `web/` | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Traducción a código del documento de consideraciones geomecánicas de Civil: `web/src/geomechanics.ts`, `GeomechanicsCard.tsx`, pruebas `web/test/geomechanics.test.ts`; datos faltantes y D-024. El contenido técnico (criterios, umbrales, pesos, fuentes) es del equipo | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Comparador 3D más rápido en Marte: COG en bloques de 1 MB abierto una vez por sesión y una sola malla terrestre en vez del catálogo (`Compare3D.tsx`, `marsData.ts`) | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Exportación desde el comparador 3D: datos de la comparación en JSON y modelos STL/OBJ de cada relieve (`terrainExport.ts`, `Compare3D.tsx`, tests) | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | STL con base sólida; búsqueda de análogos que se cierra al terminar y rediseño de la ventana (`ScientificSearch.tsx`, `AnalogyScope.tsx`, `index.css`, e2e); D-025 | — |
+| 2026-11-15 | Claude Code (Claude Opus 5.5) | Atlas auxiliar de vuelta en `data/explorador/` con su archivo de datos; D-026 | — |

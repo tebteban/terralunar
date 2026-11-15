@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { gotoExplore, openRanking } from './helpers'
+import { gotoExplore, openSurface } from './helpers'
 
 // axe-core sobre cada pantalla. Se excluyen los lienzos WebGL (MapLibre/three) y la atribución de MapLibre, que no controlamos.
 const audit = (page: Parameters<typeof AxeBuilder>[0]['page']) =>
@@ -13,22 +13,22 @@ test('portada sin violaciones WCAG AA', async ({ page }) => {
   expect(resumen(await audit(page))).toEqual([])
 })
 
-test('personalizado sin violaciones WCAG AA', async ({ page }) => {
+test('buscador de análogos sin violaciones WCAG AA', async ({ page }) => {
   await page.goto('/#personalizado')
-  await page.getByRole('button', { name: 'Rover', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Comparar entornos de misión' })).toBeVisible()
   expect(resumen(await audit(page))).toEqual([])
 })
 
 test('explorar con ficha abierta sin violaciones WCAG AA', async ({ page }) => {
   await gotoExplore(page)
-  await openRanking(page)
-  await page.getByRole('button', { name: /#01/ }).click()
-  await expect(page.getByRole('article')).toBeVisible()
+  await page.getByRole('button', { name: /Ficha y candidatos terrestres/ }).click()
+  await expect(page.getByRole('heading', { name: 'Límites de la analogía' })).toBeVisible()
   expect(resumen(await audit(page))).toEqual([])
 })
 
 test('Marte sin violaciones WCAG AA', async ({ page }) => {
   await page.goto('/#marte')
+  await openSurface(page, 'Ficha de Marte')
   await expect(page.getByRole('heading', { name: 'Elegí un lugar en Marte' })).toBeVisible()
   expect(resumen(await audit(page))).toEqual([])
 })

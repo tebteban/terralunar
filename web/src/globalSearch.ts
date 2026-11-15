@@ -1,4 +1,5 @@
-import {earthPatches,metrics,TOLERANCES,type Relief} from './marsData.ts'
+import {thermalAt,type ThermalEvidence} from './thermalEvidence.ts'
+import {earthIndex,earthPatches,metrics,TOLERANCES,type Relief} from './marsData.ts'
 import {earthPatchZone} from './earthSelection.ts'
 import {withinBounds,type Region,type SearchBounds} from './regions.ts'
 import {maskDecision,type Cover,type MaskPolicy} from './coverageMask.ts'
@@ -8,7 +9,7 @@ import {combine,targetMatch} from './scientificEngine.ts'
 import {classify,type TerrainModel} from './terrainML.ts'
 import type {Zone} from './score.ts'
 
-export type Candidate={id:string;name:string;source:string;zone:Zone;features:Relief;origin:'catalogue'|'sampled';region:string;cover?:Cover;coverSource:string;geology:Record<string,unknown>[];ml?:ReturnType<typeof classify>;modelId?:string}
+export type Candidate={thermal?:ThermalEvidence;file?:string;heights?:Float32Array;id:string;name:string;source:string;zone:Zone;features:Relief;origin:'catalogue'|'sampled';region:string;cover?:Cover;coverSource:string;geology:Record<string,unknown>[];ml?:ReturnType<typeof classify>;modelId?:string}
 export type SearchResult=Candidate & {score:number;contributions:ReturnType<typeof combine>['contributions'];filterStatus:string}
 export type CoverageReport={name:string;count:number;status:string;extent?:number[][];manifestHash?:string}
 async function json(url:string,signal?:AbortSignal){const r=await fetch(url,{signal});if(!r.ok)throw Error(`${url}: HTTP ${r.status}`);return r.json()}
@@ -16,6 +17,8 @@ async function sha(text:string){return Array.from(new Uint8Array(await crypto.su
 
 export async function loadCandidates(regions:Region[],scope:string,recent:boolean,signal?:AbortSignal){
  const candidates:Candidate[]=[],reports:CoverageReport[]=[]
+ const references=await earthIndex().catch(()=>{throw Error('No se pudo cargar el catálogo para comprobar qué candidatos quedan fuera de los sitios de referencia.')})
+ const referencePoints=references.map(({lon,lat})=>({lon,lat}))
  if(scope==='global'||scope==='catalogue'){
   try{const patches=await earthPatches();for(const p of patches)candidates.push({...p,zone:earthPatchZone(p),features:p,origin:'catalogue',region:'Catálogo mundial',coverSource:'Sin cobertura terrestre integrada para este recorte',geology:[]});reports.push({name:'Catálogo mundial de referencia',count:patches.length,status:'DEM real; sin máscara de cobertura integrada'})}
   catch(e){if(signal?.aborted)throw e;reports.push({name:'Catálogo mundial',count:0,status:String(e)})}
@@ -42,24 +45,29 @@ export async function loadCandidates(regions:Region[],scope:string,recent:boolea
     const features=metrics(new Float32Array(p.heights));let ml:ReturnType<typeof classify>|undefined
     try{if(model)ml=classify(model,features)}catch{/* Auxiliary ML never invalidates physical measurements. */}
     const name=region.name.replace(/ · \d+ ventanas$/,'')+' · '+p.name
-    out.push({id:p.id,name,source:p.source,zone:{...pilotZone(p),name},features,origin:'sampled',region:region.name,cover:covers.find(c=>c.id===p.id),coverSource,geology:geologyAt(p.lon,p.lat,geology),ml,modelId:model?region.id:undefined})
+    out.push({id:p.id,name,source:p.source,zone:{...pilotZone(p),name},features,heights:new Float32Array(p.heights),origin:'sampled',region:region.name,cover:covers.find(c=>c.id===p.id),coverSource,geology:geologyAt(p.lon,p.lat,geology),ml,modelId:model?region.id:undefined})
    }
    return {items:out,report:{name:region.name,count:out.length,status:`${invalid} ventanas inválidas; ${coverSource}`,extent:manifest.extent,manifestHash:hash}}
   }catch(e){if(signal?.aborted)throw e;return {items:out,report:{name:region.name,count:0,status:String(e)}}}
  }))
  for(const entry of loaded){candidates.push(...entry.items);reports.push(entry.report)}
+ try{
+  const thermal=await json('/thermal/modis-observations.json',signal)
+  for(const c of candidates)c.thermal=thermalAt(thermal,c.id,c.zone.centroid[0],c.zone.centroid[1])
+  reports.push({name:'Temperatura superficial MODIS',count:candidates.filter(c=>c.thermal).length,status:'Observación terrestre parcial; no modifica el índice topográfico'})
+ }catch(e){if(signal?.aborted)throw e;reports.push({name:'Temperatura superficial MODIS',count:0,status:'Sin observaciones disponibles: '+String(e)})}
  if(signal?.aborted)throw new DOMException('Cancelado','AbortError')
  if(!candidates.length)throw Error('No hay recortes válidos disponibles en esta búsqueda.')
- return {candidates,reports}
+ return {candidates,reports,referencePoints}
 }
 
-export function rankCandidates(candidates:Candidate[],reference:Relief,weights:Record<string,number>,policy:MaskPolicy,bounds?:SearchBounds){
+export function rankCandidates(candidates:Candidate[],reference:Relief,weights:Record<string,number>,policy:MaskPolicy,bounds?:SearchBounds,referencePoints: {lon:number;lat:number}[]=[]){
  // Validate even when no candidate survives the filters.
  combine(Object.entries(TOLERANCES).map(([id,t])=>({id,weight:weights[id],value:targetMatch(reference[id as keyof Relief],reference[id as keyof Relief],t)})))
  if(bounds)withinBounds(0,0,bounds)
  const inArea=candidates.filter(c=>!bounds||withinBounds(c.zone.centroid[0],c.zone.centroid[1],bounds))
  const counts={loaded:candidates.length,inArea:inArea.length,excluded:0,unknown:0,nearReference:0,eligible:0}
- const known=candidates.filter(c=>c.origin==='catalogue').map(c=>({lon:c.zone.centroid[0],lat:c.zone.centroid[1]}))
+ const known=[...referencePoints,...candidates.filter(c=>c.origin==='catalogue').map(c=>({lon:c.zone.centroid[0],lat:c.zone.centroid[1]}))]
  const rows:SearchResult[]=[]
  for(const c of inArea){
   const decision=maskDecision(c.cover,policy)

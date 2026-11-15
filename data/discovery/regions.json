@@ -54,6 +54,33 @@
       "recent": false,
       "model": false,
       "geology": false
+    },
+    {
+      "id": "tassili",
+      "name": "Tassili y alrededores · Argelia · 25 ventanas",
+      "base": "/discovery/tassili/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
+    },
+    {
+      "id": "lut",
+      "name": "Desierto de Lut · Irán · 25 ventanas",
+      "base": "/discovery/lut/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
+    },
+    {
+      "id": "chihuahua",
+      "name": "Desierto de Chihuahua · México · 25 ventanas",
+      "base": "/discovery/chihuahua/",
+      "coverage": false,
+      "recent": false,
+      "model": false,
+      "geology": false
     }
   ]
 }

@@ -55,6 +55,9 @@ export function presetWeights(profile: Profile, preset: Preset): Weights {
   return Object.fromEntries(Object.entries(profile.dimensions).map(([k, d]) => [k, d.weights[preset]]))
 }
 
+// etiquetas cortas de cada variable (radar de la ficha y panel lateral)
+export const SHORT: Record<string, string> = { lst: 'TEMP', ndvi: 'VEG', nieve: 'HIELO', lluvia: 'ARIDEZ', cobertura: 'SUELO', pendiente: 'PEND', rugosidad: 'RUG' }
+
 const num = (v: number) => v.toLocaleString('es-AR', { maximumFractionDigits: 2 }).replace('-', '−')
 // "Lo que pide la Luna": la meseta del trapecio difuso (donde la nota es 1), en las unidades de la variable
 export function target(d: Dimension) {

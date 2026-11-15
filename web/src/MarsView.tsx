@@ -1,3 +1,5 @@
+import type {ReactNode} from 'react'
+import SurfacePanel from './SurfacePanel.tsx'
 import { earthPatchZone, type PickEarth } from './earthSelection.ts'
 import AnalogyScope from './AnalogyScope.tsx'
 import { profileScope } from './analogyScope.ts'
@@ -32,14 +34,20 @@ function imageBlob(url: string) {
   return request
 }
 let protocolCount = 0
-export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth;onAnalyze?:(target:SearchTarget)=>void}) {
+export default function MarsView({onPickEarth,onAnalyze,integrated=false,candidatesPanel,active=true}: {onPickEarth:PickEarth;integrated?:boolean;candidatesPanel?:ReactNode;active?:boolean;onAnalyze?:(target:SearchTarget)=>void}) {
   const [experiment,setExperiment]=useState('regional')
   const canRank=profileScope(experiment).canScreen
+  useEffect(()=>{if(active)requestAnimationFrame(()=>map.current?.resize())},[active])
   const container=useRef<HTMLDivElement>(null), scene=useRef<HTMLDivElement>(null), map=useRef<MapLibre|null>(null)
   const choose=useRef<(lon:number,lat:number)=>void>(()=>{})
   const [cameraInfo,setCameraInfo]=useState('') // de Eze (c891b87)
   const [status,setStatus]=useState('Cargando topografía NASA MOLA…'),[error,setError]=useState('')
   const [pick,setPick]=useState<Patch|null>(null),[earth,setEarth]=useState<Patch[]>([])
+  // Ficha plegable (D-021): se abre sola con un punto nuevo (el vuelo al punto ya deja su lugar)
+  const [panelOpen,setPanelOpen]=useState(false)
+  const pickKey=pick?`${pick.lat},${pick.lon}`:undefined
+  const [lastPickKey,setLastPickKey]=useState(pickKey)
+  if(pickKey!==lastPickKey){setLastPickKey(pickKey);if(pickKey)setPanelOpen(true)}
   const [compare,setCompare]=useState<string|null>(null),[flat,setFlat]=useState(false)
   const [coordinates,setCoordinates]=useState({lon:'77.58',lat:'18.44'})
   const [imagery,setImagery]=useState<'viking'|'themis'>('viking')
@@ -207,7 +215,7 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
     </div>
     {cameraInfo&&<p aria-hidden="true" className="hud pointer-events-none absolute bottom-2 left-6 z-[1] hidden text-mute lg:block">{cameraInfo}</p>}
     {(status||error)&&<p role={error?'alert':'status'} className="chip-dark absolute bottom-6 left-6 z-[1] max-w-sm font-mono text-xs font-normal"><span className={`size-2 shrink-0 rounded-full ${error?'bg-warn':'bg-mars'}`} aria-hidden="true"/>{error||status}</p>}
-    <aside className="rise-in absolute inset-x-2 bottom-2 z-10 flex max-h-[56%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:bottom-6 lg:right-6 lg:top-[7.5rem] lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
+    <SurfacePanel label="Ficha de Marte" collapsible open={panelOpen} onOpenChange={setPanelOpen}>
       <header className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between gap-2">
           <span className="label-mono text-body">Cuerpo seleccionado · exploratorio</span>
@@ -240,11 +248,11 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
         <input className="accent-ink w-full" type="range" min="1" max="3" step=".25" value={exaggeration} onChange={e=>{const v=Number(e.target.value);setExaggeration(v);exagRef.current=v;if(map.current?.getSource('terrain')&&map.current.getZoom()>4)map.current.setTerrain({source:'terrain',exaggeration:v})}}/>
         <span className="flex justify-between text-[10px] text-body"><span>1× (real)</span><span>3×</span></span>
       </label>
-      {pick&&<>{onAnalyze&&canRank&&<button className="btn-primary" onClick={()=>onAnalyze({experiment,name:pick.name,body:"marte",lat:pick.lat,lon:pick.lon,features:pick,source:pick.source,cell_m:2000,window_km:20})}>Buscar análogos de esta región</button>}
+      {pick&&<>{onAnalyze&&canRank&&<button className="btn-primary" onClick={()=>onAnalyze({experiment,name:pick.name,body:"marte",lat:pick.lat,lon:pick.lon,features:pick,heights:pick.heights,source:pick.source,cell_m:2000,window_km:20})}>Buscar análogos de esta región</button>}
         <p className="hud text-xs text-body">{coord(pick.lat,pick.lon,3)} · ventana de 20 × 20 km</p>
         {Math.abs(pick.lat)>85&&<p className="text-xs text-body">Recorte polar calculado; el mapa Mercator no representa el casquete más allá de ±85°.</p>}
         <dl className="grid grid-cols-2 gap-2">{labels.map(([k,label,unit])=><div key={k} className="flex flex-col gap-1 rounded-2xl bg-canvas-soft p-4"><dt className="text-[13px] text-body">{label}</dt><dd className="metric text-[22px] leading-7 font-semibold">{num(pick[k])} {unit}</dd><span className="micro-cap text-[10px] text-body">MOLA MEGDR</span></div>)}</dl>
-        <section className="flex flex-col gap-2">
+        {!integrated&&<>        <section className="flex flex-col gap-2">
           <h3 className="flex items-center justify-between gap-2"><span className="text-lg leading-7 font-bold tracking-tight">Paisajes terrestres de contexto</span><span className="label-mono text-[10px] text-body">relieve /100</span></h3>
           <ol className="flex flex-col gap-2">{(canRank?matches:[]).slice(0,6).map(({e,score},i)=><li key={e.id} className="flex flex-col gap-2.5 rounded-2xl bg-canvas-softer p-4 transition-colors hover:bg-canvas-soft">
             <div className="flex items-center gap-3"><span className="min-w-0 flex-1 truncate font-bold">{e.name}</span><span className={`metric rounded-full px-2.5 py-1 text-xs font-bold ${i===0?'bg-ink text-canvas':'bg-pressed text-ink'}`}>{Math.round(score*100)}</span></div>
@@ -252,6 +260,7 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
           </li>)}</ol>
         </section>
         <button className="min-h-10 self-start text-sm font-medium underline underline-offset-2" onClick={exportJson}>Exportar comparación JSON</button>
+</>}
       </>}
       <LimitsCard items={MARS_LIMITS} title="Límites de la analogía (Marte)"/>
       <details className="group flex flex-col gap-2 border-t border-pressed pt-3 font-mono text-[11px] leading-relaxed text-body">
@@ -260,7 +269,7 @@ export default function MarsView({onPickEarth,onAnalyze}: {onPickEarth:PickEarth
         <p>Ranking exploratorio entre recortes disponibles, no búsqueda mundial exhaustiva. Ajuste por diferencias con tolerancias provisorias: 5° (mediana), 8° (p90), 200 m (rugosidad a 6 km), 1000 m (desnivel). No incluye temperatura, composición, hielo ni habitabilidad. Las zonas con mar aplanado del catálogo se excluyen.</p>
         <a className="underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">Fuente y documentación NASA PDS MOLA</a>
       </details>
-    </aside>
+    {integrated&&candidatesPanel}</SurfacePanel>
     {compare&&supplied&&<Compare3D zoneId={compare} supplied={supplied} onClose={()=>setCompare(null)}/>}
   </div>
 }

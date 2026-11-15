@@ -1,3 +1,5 @@
+import type {ReactNode} from 'react'
+import SurfacePanel from './SurfacePanel.tsx'
 import { earthPatchZone, type PickEarth } from './earthSelection.ts'
 import AnalogyScope from './AnalogyScope.tsx'
 import { profileScope } from './analogyScope.ts'
@@ -8,8 +10,6 @@ import Compare3D, { type CompareIndex } from './Compare3D.tsx'
 import { LIMITS } from './limits.ts'
 import LimitsCard from './LimitsCard.tsx'
 import MoonGlobe, { type GlobeIndex } from './MoonGlobe.tsx'
-import MoonView from './MoonView.tsx'
-import { latLonToPx } from './moonProj.ts'
 import { MOON_TOL, moonSimilarity } from './moonRelief.ts'
 import NoWebGL from './NoWebGL.tsx'
 import { hasWebGL } from './webgl.ts'
@@ -33,21 +33,25 @@ const similarity = moonSimilarity
 
 interface Pick { line: number; sample: number; lat: number; lon: number; m: Metrics }
 
-export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEarth;onAnalyze?:(target:SearchTarget)=>void }) {
+export default function MoonMap({ onPickEarth,onAnalyze,integrated=false,candidatesPanel }: { onPickEarth: PickEarth;integrated?:boolean;candidatesPanel?:ReactNode;onAnalyze?:(target:SearchTarget)=>void }) {
   const [experiment,setExperiment]=useState('regional')
   const canRank=profileScope(experiment).canScreen
   const [index, setIndex] = useState<MoonIndex | null>(null)
   const [grid, setGrid] = useState<Uint16Array | null>(null)
   const [earth, setEarth] = useState<EarthItem[]>([])
   const [pick, setPick] = useState<Pick | null>(null)
+  // Ficha plegable (D-021): el estado vive acá para que el globo use todo el ancho cuando está plegada
+  const [panelOpen, setPanelOpen] = useState(false)
+  const pickKey = pick ? `${pick.lat},${pick.lon}` : undefined
+  const [lastPickKey, setLastPickKey] = useState(pickKey)
+  if (pickKey !== lastPickKey) {
+    setLastPickKey(pickKey)
+    if (pickKey) setPanelOpen(true)
+  }
   const [compare, setCompare] = useState<CompareIndex | null>(null)
   const [compareId, setCompareId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
-  // Con token de Cesium se usa la Luna de alta resolución (MoonView); sin token, el globo propio (MoonGlobe).
-  const [hiRes, setHiRes] = useState(() => {
-    try { return !!(localStorage.getItem('terralunar.cesium-token') || import.meta.env.VITE_CESIUM_ION_TOKEN) } catch { return !!import.meta.env.VITE_CESIUM_ION_TOKEN }
-  })
 
   useEffect(() => {
     let alive = true
@@ -101,7 +105,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
       const ii = Math.min(N - 1, Math.max(0, i0 + i)), jj = Math.min(N - 1, Math.max(0, j0 + j))
       moonH[i * C + j] = dem[ii * N + jj]
     }
-    const src = new DataView(await (await fetch(`/compare/${e.file}`)).arrayBuffer()), earthH = new Float32Array(C * C)
+    const src = new DataView(await localBuffer(`/compare/${e.file}`)), earthH = new Float32Array(C * C)
     for (let y = 0; y < C; y++) for (let x = 0; x < C; x++) { // promedio de bloques 10 x 10 de 80 m
       let sum = 0
       for (let j = 0; j < 10; j++) for (let i = 0; i < 10; i++) sum += src.getUint16(((y * 10 + j) * 250 + x * 10 + i) * 2, true)
@@ -120,15 +124,10 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
 
   return (
     <div className="relative h-full w-full bg-space">
-      {pick&&onAnalyze&&canRank&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
+      {!integrated&&pick&&onAnalyze&&canRank&&<button className="absolute bottom-4 left-4 z-30 btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
       {!hasWebGL() && <NoWebGL what="la Luna en 3D" href="https://trek.nasa.gov/moon/" label="Abrir NASA Moon Trek" />}
       {!index && !error && hasWebGL() && <div className="flex h-full items-center justify-center" role="status"><div className="flex w-56 flex-col gap-2"><span className="hud text-mute">Cargando relieve LOLA…</span><span className="loading-bar" aria-hidden="true" /></div></div>}
-      {index && hasWebGL() && hiRes && <MoonView onUnavailable={() => setHiRes(false)} onPick={(lat, lon) => {
-        if (lat > -80) return outside(lat)
-        const p = latLonToPx(index, lat, lon)
-        setNotice(null); setPick(pickAt(p.line, p.sample))
-      }} />}
-      {index && hasWebGL() && !hiRes && <MoonGlobe index={index} pick={pick}
+      {index && hasWebGL() && <MoonGlobe index={index} pick={pick} panelOpen={panelOpen}
         onPick={(line, sample) => { setNotice(null); setPick(pickAt(line, sample)) }}
         onOutside={outside} />}
       <div className="pointer-events-none absolute left-4 top-32 z-[1] hidden flex-col gap-1 rounded-2xl border border-hairline bg-rail/85 px-4 py-3 shadow-float lg:flex">
@@ -136,14 +135,14 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
         <span className="metric text-[22px] leading-7 font-semibold text-canvas">Polo sur · 80°S — 90°S</span>
         <span className="hud text-mute">LRO LOLA · proyección polar</span>
       </div>
-      {!hiRes && <p className="chip-dark pointer-events-none absolute bottom-6 left-6 z-[1] hidden font-mono text-xs font-normal lg:inline-flex">
+      {<p className="chip-dark pointer-events-none absolute bottom-6 left-6 z-[1] hidden font-mono text-xs font-normal lg:inline-flex">
         Arrastrá para girar · rueda para acercar · clic en el polo sur
       </p>}
       {notice && <p role="status" className="absolute left-6 top-56 z-[1] max-w-sm rounded-2xl border border-pressed bg-canvas p-4 text-sm text-ink shadow-card">{notice}</p>}
       {compare && compareId && <Compare3D zoneId={compareId} supplied={compare} onClose={() => { setCompare(null); setCompareId(null) }} />}
       {error && <p role="alert" className="chip-dark absolute left-6 top-56 z-[1] max-w-sm text-xs">No se pudieron cargar los datos lunares: {error}</p>}
 
-      <aside className="rise-in absolute inset-x-2 bottom-2 top-auto z-10 flex max-h-[56%] flex-col gap-5 [&>*]:shrink-0 overflow-y-auto rounded-2xl border border-pressed bg-canvas p-6 text-ink shadow-card lg:inset-x-auto lg:bottom-6 lg:right-6 lg:top-[7.5rem] lg:max-h-none lg:w-[400px] xl:top-6 xl:w-[420px]">
+      <SurfacePanel label="Ficha de la Luna" collapsible open={panelOpen} onOpenChange={setPanelOpen}>
         <label className="flex flex-col gap-2 text-sm">Destino de misión · Luna
           <select aria-label="Destino lunar" value={index?.sites.find(s=>s.line===pick?.line&&s.sample===pick?.sample)?.name ?? ''} onChange={e=>{const site=index?.sites.find(s=>s.name===e.target.value);if(site)setPick(pickAt(site.line,site.sample))}}>
             <option value="">{pick?'Punto seleccionado en el mapa':'Elegí una región o un punto'}</option>
@@ -189,7 +188,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
                 </div>
               ))}
             </dl>
-            <section className="flex flex-col gap-2">
+            {!integrated&&<>            <section className="flex flex-col gap-2">
               <h3 className="text-lg leading-7 font-bold tracking-tight">Paisajes terrestres de contexto</h3>
               <ol className="flex flex-col gap-2">
                 {(canRank?matches:[]).map(({ e, s }, i) => (
@@ -216,7 +215,9 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
                 Solo relieve: no incluye temperatura ni suelo. Métricas a 80 m; no comparar este puntaje directamente con Marte a 2 km. La búsqueda científica utiliza 2 km en ambos cuerpos.
               </p>
             </section>
+</>}
             <LimitsCard items={LIMITS} />
+            {integrated&&<button className="btn-primary" onClick={analyze}>Buscar análogos de esta región</button>}
             <p className="flex justify-between gap-2 border-t border-pressed pt-2 font-mono text-[11px] text-body">
               <span>Fuente: {index?.source}</span>
               <span className="shrink-0">cada {index ? (index.grid.stride_px * index.lola_res_m) / 1000 : 4} km</span>
@@ -224,7 +225,7 @@ export default function MoonMap({ onPickEarth,onAnalyze }: { onPickEarth: PickEa
             <button type="button" onClick={() => setPick(null)} className="btn-secondary w-full">Elegir otro lugar</button>
           </>
         )}
-      </aside>
+      {integrated&&candidatesPanel}</SurfacePanel>
     </div>
   )
 }

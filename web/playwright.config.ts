@@ -15,6 +15,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: `http://localhost:${PORT}`,
+    channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     locale: 'es-AR',

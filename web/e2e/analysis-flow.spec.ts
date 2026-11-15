@@ -1,0 +1,38 @@
+import {test,expect} from '@playwright/test'
+
+test('una ejecución conserva destino, puntaje, recorte y parámetros; no carga mock',async({page},testInfo)=>{
+ test.slow()
+ const requests:string[]=[];page.on('request',r=>requests.push(r.url()))
+ await page.goto('/#personalizado')
+ const dialog=page.locator('dialog[open]')
+ await dialog.getByLabel('Destino de misión').selectOption('luna-mons-malapert')
+ await dialog.getByLabel('Cobertura de búsqueda').selectOption('catalogue')
+ await dialog.getByRole('button',{name:'Buscar análogos topográficos',exact:true}).click()
+ await expect(dialog).toBeHidden({timeout:45000}) // la búsqueda cierra el diálogo y muestra los candidatos en la Tierra
+ await page.getByRole('region',{name:'Candidatos de la ejecución'}).getByRole('listitem').first().getByRole('button').click()
+ const card=page.getByRole('region',{name:'Evidencia del candidato'})
+ await expect(card).toBeVisible()
+ await expect(card).toContainText('Malapert')
+ const score=await card.getByTestId('candidate-score').innerText()
+ await card.getByRole('button',{name:'Comparar relieve 3D',exact:true}).click()
+ const cmp=page.getByRole('dialog',{name:'Comparador de relieve planetario y terrestre'})
+ await expect(cmp.locator('canvas')).toHaveCount(2)
+ await expect(cmp).toContainText('Malapert')
+ await expect(cmp.getByText('Parecido de relieve:',{exact:false})).toContainText(String(Math.round(Number(score.split('/')[0].trim().replace(',','.')))))
+ await expect(cmp.getByRole('status')).toContainText('Mallas a 80 m',{timeout:30000})
+ const json=page.waitForEvent('download');await cmp.getByRole('button',{name:'Datos (JSON)'}).click()
+ expect((await json).suggestedFilename()).toMatch(/^terralunar-comparacion-.+\.json$/)
+ const stl=page.waitForEvent('download');await cmp.getByRole('button',{name:/Modelo 3D de .+ en STL/}).last().click()
+ expect((await stl).suggestedFilename()).toMatch(/^terralunar-.+-20km-x\d+\.stl$/)
+ await cmp.getByRole('button',{name:/Cerrar/}).click()
+ await page.getByRole('button',{name:'Editar análisis',exact:true}).click()
+ await expect(dialog.getByLabel('Destino de misión')).toHaveValue('luna-mons-malapert')
+ await expect(dialog.getByRole('region',{name:'Resultados científicos'})).toBeVisible()
+ await dialog.getByRole('button',{name:'Cerrar',exact:true}).click()
+ await expect(card.getByTestId('candidate-score')).toHaveText(score)
+ await card.scrollIntoViewIfNeeded()
+ await page.screenshot({path:testInfo.outputPath('analysis-real.png')})
+ expect(requests.some(u=>/\/(zones|profiles)\.json/.test(u))).toBe(false)
+ for(const width of [390,768]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)}
+})
+

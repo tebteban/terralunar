@@ -17,10 +17,10 @@ export default function MethodDialog({ open, onClose }: { open: boolean; onClose
       </header>
       <div className="flex flex-col gap-3 text-sm leading-5 text-body">
         <p>TerraLunar busca analogías parciales para preparar ensayos. Ningún lugar terrestre reproduce la gravedad, la atmósfera o la radiación de otro cuerpo.</p>
-        <h3 className="label-mono mt-2 text-ink">Catálogo terrestre</h3>
-        <p>Cada variable se convierte en una nota de 0 a 1 con una función difusa (trapecio) según lo que pide el sitio lunar. El puntaje es el promedio ponderado <span className="metric">S = Σ wᵢ · notaᵢ / Σ wᵢ</span>. Los puntajes actuales del catálogo son de prueba: no son resultados científicos definitivos.</p>
-        <h3 className="label-mono mt-2 text-ink">Luna y Marte</h3>
-        <p>Comparación de pendiente, rugosidad y desnivel en ventanas de 20 × 20 km con tolerancias provisorias. Luna: cobertura del polo sur (LRO LOLA). Marte: comparación regional a 2 km por celda (MOLA). Los pesos del catálogo terrestre no se aplican a estas comparaciones. La imagen de fondo puede tener otra resolución que la del análisis.</p>
+        <h3 className="label-mono mt-2 text-ink">Análisis activo</h3>
+        <p>La búsqueda compara relieve medido en ventanas de 20 × 20 km, con celdas de 2 km. Cada variable recibe un ajuste máximo de 1 que disminuye con la diferencia respecto del destino, usando tolerancias provisorias. El índice es la suma ponderada normalizada de esos ajustes.</p>
+        <p>La ejecución conserva destino, ensayo, pesos, filtros, fuentes y resultados al pasar al mapa y al comparador. Los ensayos distintos de topografía solo tienen preselección del entorno; todavía no se calcula su compatibilidad integral.</p>
+        <p>La imagen y la malla pueden tener una resolución distinta de la usada para calcular. La cobertura es discontinua: catálogo de referencia y ventanas procesadas. La cobertura terrestre es un filtro opcional y la geología es contexto, no puntajes mineralógicos.</p>
         <ul className="flex flex-col gap-1 font-mono text-xs">
           <li><a className="underline" href="https://pds-geosciences.wustl.edu/missions/lro/lola.htm" target="_blank" rel="noreferrer">NASA PDS · LRO LOLA</a></li>
           <li><a className="underline" href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noreferrer">NASA PDS · MGS MOLA</a></li>

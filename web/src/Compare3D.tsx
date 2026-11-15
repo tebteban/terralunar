@@ -1,31 +1,36 @@
+import { localBuffer } from './localData.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { fromUrl } from 'geotiff'
+import { fromUrl, type GeoTIFFImage } from 'geotiff'
 import { offset } from './marsData.ts'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { MARS_SITES, earthPatches, marsSitePatch, similarity } from './marsData.ts'
+import { MARS_SITES, earthIndex, earthPatch, marsSitePatch, similarity } from './marsData.ts'
 import { MOON_TOL, moonSimilarity } from './moonRelief.ts'
 import { TOLERANCES as MARS_TOL } from './marsData.ts'
 import ConsoleIcon from './ConsoleIcon.tsx'
 import NoWebGL from './NoWebGL.tsx'
 import { hasWebGL } from './webgl.ts'
-import { coord, degrees, meters } from './fmt.ts'
+import { coord, degrees, meters, num } from './fmt.ts'
+import { terrainFile, terrainGeometry } from './terrainExport.ts'
 
 // Comparador Luna vs Tierra: dos maquetas del MISMO tamaño (20 x 20 km), misma resolución (80 m),
 // misma exageración vertical y misma luz. Girar una gira la otra.
 interface Item {
   id: string; name: string; body: 'luna' | 'tierra' | 'marte'; heights?: Float32Array; file: string; lat: number; lon: number
   pendiente_mediana: number; pendiente_p90: number; rugosidad_m: number; desnivel_m: number
-  source: string; ref?: string; url?: string; agua?: number
+  visualHeights?:Float32Array; source: string; ref?: string; url?: string; agua?: number
 }
 export interface CompareIndex { size_km: number; res_m: number; n: number; items: Item[] }
 
 const EXAGGERATION = 2
 
+// COG global MOLA/HRSC: su índice de teselas pesa ~1 MB. Bloques de 1 MB (2 pedidos en vez de 4–8) y una sola apertura por sesión.
+let marsDetail: Promise<GeoTIFFImage> | undefined
+const openMarsDetail = () => fromUrl('https://huggingface.co/datasets/Biscut4Biscuit/mola-hrsc-baseline-cog/resolve/main/Mars_HRSC_MOLA_BlendDEM_Global_200mp_v2_cog.tif', { blockSize: 1 << 20 } as Parameters<typeof fromUrl>[1]) // blockSize llega al BlockedSource aunque los tipos 3.0.5 no lo declaren
+  .then(t => t.getImage()).catch(e => { marsDetail = undefined; throw e })
+
 async function loadHeights(file: string) {
-  const res = await fetch(`/compare/${file}`)
-  if (!res.ok) throw new Error(`${file}: ${res.status}`)
-  return new Uint16Array(await res.arrayBuffer())
+  return new Uint16Array(await localBuffer(`/compare/${file}`))
 }
 
 type Shared = { cams: THREE.PerspectiveCamera[]; controls: OrbitControls[]; syncing: boolean }
@@ -70,26 +75,9 @@ function Terrain({ item, index, link, slot, exaggeration, meshHeights, meshN }: 
     const ro = new ResizeObserver(resize)
     ro.observe(el)
     ;(meshHeights ? Promise.resolve(meshHeights) : item.heights ? Promise.resolve(item.heights) : loadHeights(item.file)).then((h) => {
-      const inputN = meshN ?? index.n
       if (disposed) return
-      if (h.length !== inputN * inputN) throw new Error('Tamaño de recorte inválido')
-      // Smooth rendering only: bilinear interpolation cannot add observed terrain detail.
-      const n = inputN < 32 ? 100 : inputN
-      const geo = new THREE.PlaneGeometry(size, size, n - 1, n - 1)
-      geo.rotateX(-Math.PI / 2)
-      const pos = geo.attributes.position
       // centrada en su altura media: la cámara (compartida) orbita alrededor del centro de cada maqueta
-      let sum = 0
-      for (const value of h) sum += value
-      const mean = sum / h.length
-      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-        const gx = x / (n - 1) * (inputN - 1), gy = y / (n - 1) * (inputN - 1)
-        const x0 = Math.floor(gx), y0 = Math.floor(gy), x1 = Math.min(inputN - 1, x0 + 1), y1 = Math.min(inputN - 1, y0 + 1)
-        const fx = gx - x0, fy = gy - y0
-        const value = h[y0 * inputN + x0] * (1-fx) * (1-fy) + h[y0 * inputN + x1] * fx * (1-fy) + h[y1 * inputN + x0] * (1-fx) * fy + h[y1 * inputN + x1] * fx * fy
-        pos.setY(y * n + x, (value - mean) * exaggeration)
-      }
-      geo.computeVertexNormals()
+      const geo = terrainGeometry(h, meshN ?? index.n, size, exaggeration)
       const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: item.body === 'marte' ? '#c29276' : '#adb5bd', roughness: 1, side: THREE.DoubleSide }))
       scene.add(mesh)
       render()
@@ -101,12 +89,12 @@ function Terrain({ item, index, link, slot, exaggeration, meshHeights, meshN }: 
 }
 
 // En la Tierra se muestra el Δ contra el objetivo y si entra en la tolerancia del método (ok/warn).
-function Stats({ item, other }: { item: Item; other?: Item }) {
+function Stats({ item, other, regional }: { item: Item; other?: Item; regional?:boolean }) {
   const rows: [string, 'pendiente_mediana' | 'pendiente_p90' | 'rugosidad_m' | 'desnivel_m', string][] = [
     ['Pendiente mediana', 'pendiente_mediana', '°'], ['Pendiente alta (p90)', 'pendiente_p90', '°'],
     ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel total', 'desnivel_m', ' m'],
   ]
-  const tol = other?.body === 'marte' ? MARS_TOL : MOON_TOL
+  const tol = regional || other?.body === 'marte' ? MARS_TOL : MOON_TOL
   return (
     <dl className="flex flex-col divide-y divide-white/10">
       {rows.map(([label, key, unit]) => {
@@ -130,7 +118,7 @@ function Stats({ item, other }: { item: Item; other?: Item }) {
   )
 }
 
-export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: string; onClose: () => void; supplied?: CompareIndex }) {
+export default function Compare3D({ zoneId, onClose, supplied, analysisScore, analysisId }: { zoneId: string; onClose: () => void; supplied?: CompareIndex;analysisScore?:number;analysisId?:string }) {
   const [loadedIndex, setIndex] = useState<CompareIndex | null>(null)
   // Desde la ficha terrestre se puede comparar con la Luna (LOLA 80 m) o con Marte (MOLA, celdas de 2 km)
   const [planet, setPlanet] = useState<'luna' | 'marte'>('luna')
@@ -139,7 +127,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   const index = supplied ?? (planet === 'marte' ? marsIndex : loadedIndex)
   // celdas de 2 km (Marte) aplanan el relieve: arranca más exagerado; a 80–800 m alcanza con ×2
   const [exaggeration, setExaggeration] = useState(supplied && supplied.res_m >= 2000 ? 6 : EXAGGERATION)
-  const [highRes, setHighRes] = useState<{key: string; mars: Float32Array; earth: Float32Array} | null>(null)
+  const [highRes, setHighRes] = useState<{key: string; mars: Float32Array; earth: Float32Array;n?:number;cell?:number} | null>(null)
   const [detailStatus, setDetailStatus] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [moonId, setMoonId] = useState<string | null>(null)
@@ -171,11 +159,12 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
     if (supplied || planet !== 'marte') return
     let off = false
     const site = MARS_SITES.find((s) => s.name === marsSite)!
-    Promise.all([marsSitePatch(site), earthPatches()]).then(([mars, patches]) => {
-      if (off) return
-      const zone = patches.find((p) => p.id === zoneId)
-      if (!zone) return setError('esta zona incluye mar aplanado y no entra en la comparación con Marte')
-      setMarsIndex({ size_km: 20, res_m: 2000, n: 10, items: [mars, zone] })
+    // Solo la malla terrestre que se compara, no todo el catálogo
+    Promise.all([marsSitePatch(site), earthIndex()]).then(async ([mars, items]) => {
+      const item = items.find((p) => p.id === zoneId)
+      if (!item) { if (!off) setError('esta zona incluye mar aplanado y no entra en la comparación con Marte'); return }
+      const zone = await earthPatch(item)
+      if (!off) setMarsIndex({ size_km: 20, res_m: 2000, n: 10, items: [mars, zone] })
     }).catch((e) => { if (!off) setError(String(e)) })
     return () => { off = true }
   }, [supplied, planet, marsSite, zoneId])
@@ -185,14 +174,12 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   const earth = index?.items.find((i) => i.id === zoneId)
   const detail = highRes && moon && earth && highRes.key === `${moon.id}|${moon.lat}|${moon.lon}|${earth.id}` ? highRes : null // nunca el relieve de otro sitio
   useEffect(() => {
-    if (!moon || !earth || moon.body !== 'marte') return // el modelo de 200 m es solo de Marte
+    if (!moon || !earth || !earth.file || moon.body !== 'marte') return // el modelo de 200 m es solo de Marte
     let cancelled = false
     // 200 m cell centres on the same 20 km footprint, independent of the coarse ranking.
     const run = async () => {
       setDetailStatus('Cargando elevaciones detalladas de Marte y Tierra…')
-      const url = 'https://huggingface.co/datasets/Biscut4Biscuit/mola-hrsc-baseline-cog/resolve/main/Mars_HRSC_MOLA_BlendDEM_Global_200mp_v2_cog.tif'
-      const tiff = await fromUrl(url)
-      const image = await tiff.getImage()
+      const image = await (marsDetail ??= openMarsDetail())
       const width = image.getWidth(), height = image.getHeight(), bbox = image.getBoundingBox()
       const points: [number, number][] = []
       for (let y=0;y<100;y++) for (let x=0;x<100;x++) points.push(offset(moon.lon,moon.lat,(x-49.5)*200,(49.5-y)*200))
@@ -208,9 +195,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
         if(z.some(v=>!Number.isFinite(v)||v===noData)) throw new Error('El modelo detallado contiene celdas sin datos en esta región')
         out[i]=z[0]*(1-fx)*(1-fy)+z[1]*fx*(1-fy)+z[2]*(1-fx)*fy+z[3]*fx*fy
       }
-      const r=await fetch(`/compare/${earth.file}`)
-      if(!r.ok) throw new Error('No se pudo cargar el recorte terrestre detallado')
-      const data=await r.arrayBuffer(); if(data.byteLength!==250*250*2) throw new Error('Recorte terrestre inválido')
+      const data=await localBuffer(`/compare/${earth.file}`).catch(()=>{throw new Error('No se pudo cargar el recorte terrestre detallado')}); if(data.byteLength!==250*250*2) throw new Error('Recorte terrestre inválido')
       const view=new DataView(data), ground=new Float32Array(10000)
       for(let y=0;y<100;y++) for(let x=0;x<100;x++) {
         // 200 m cells average 80 m samples with fractional overlap.
@@ -228,20 +213,73 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
   }, [supplied, moon, earth])
 
 
+  useEffect(()=>{
+    if(!moon||!earth||moon.body!=='luna'||!earth.file||(!moon.file&&!moon.visualHeights))return
+    let cancelled=false
+    const load=async()=>{
+      const raw=new Uint16Array(await localBuffer('/compare/'+earth.file))
+      if(raw.length!==62500)throw Error('Recorte terrestre incompleto')
+      let mh:Float32Array,eh:Float32Array,n:number,cell:number
+      if(moon.file){const lunar=new Uint16Array(await localBuffer('/compare/'+moon.file));if(lunar.length!==62500)throw Error('Recorte lunar incompleto');mh=new Float32Array(lunar);eh=new Float32Array(raw);n=250;cell=80}
+      else {mh=moon.visualHeights!;n=25;cell=800;eh=new Float32Array(n*n);for(let y=0;y<n;y++)for(let x=0;x<n;x++){let sum=0;for(let j=0;j<10;j++)for(let i=0;i<10;i++)sum+=raw[(y*10+j)*250+x*10+i];eh[y*n+x]=sum/100}}
+      if(!cancelled){setHighRes({key:`${moon.id}|${moon.lat}|${moon.lon}|${earth.id}`,mars:mh,earth:eh,n,cell});setDetailStatus(`Mallas a ${cell} m. El puntaje de esta ejecución conserva las métricas a ${index?.res_m} m.`)}
+    }
+    load().catch(e=>{if(!cancelled)setDetailStatus('Detalle no disponible: '+String(e)+'. Se conserva la malla regional.')})
+    return()=>{cancelled=true}
+  },[moon,earth,index?.res_m])
   const tag = (body: string) => body === 'marte'
     ? 'border-mars/40 bg-mars/15 text-[#ffb59c]'
     : body === 'luna' ? 'border-white/20 bg-canvas text-ink' : 'border-white/20 bg-pressed text-ink'
   const toolbar = 'flex items-center gap-2 rounded-full border border-white/[0.07] bg-obsidian px-4 py-2 text-sm'
   const bodyName = (b: string) => b === 'luna' ? 'Luna' : b === 'marte' ? 'Marte' : 'Tierra'
   // Parecido de relieve con la misma fórmula y tolerancias que el panel de origen (Luna o Marte)
-  const score = moon && earth ? (moon.body === 'marte' ? similarity(moon, earth) : moonSimilarity(moon, earth)) : null
-  const cell = index ? (detail ? 200 : index.res_m) : 0
+  const score = analysisScore!==undefined ? analysisScore/100 : moon && earth ? (moon.body === 'marte' ? similarity(moon, earth) : moonSimilarity(moon, earth)) : null
+  const cell = index ? (detail ? (detail.cell??200) : index.res_m) : 0
   const short = (src: string) => src.split(/[;(]/)[0].trim()
+  const [exportMsg, setExportMsg] = useState('')
+  // La misma grilla que dibuja cada panel: detalle si llegó, si no la del índice.
+  async function gridFor(it: Item, slot: number) {
+    if (detail) return { h: slot === 0 ? detail.mars : detail.earth, n: detail.n ?? 100, cell: detail.cell ?? 200 }
+    return { h: it.heights ?? new Float32Array(await loadHeights(it.file)), n: index!.n, cell: index!.res_m }
+  }
+  const slug = (s: string) => s.normalize('NFD').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').toLowerCase()
+  function save(name: string, data: BlobPart, type: string) {
+    const url = URL.createObjectURL(new Blob([data], { type }))
+    const a = document.createElement('a'); a.href = url; a.download = name; a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+  async function exportFile(kind: 'json' | 'stl' | 'obj', slot = 0) {
+    if (!index || !moon || !earth) return
+    setExportMsg('Preparando archivo…')
+    try {
+      const items = [moon, earth]
+      if (kind === 'json') {
+        const grids = await Promise.all(items.map(gridFor))
+        const tol = index.res_m >= 2000 || moon.body === 'marte' ? MARS_TOL : MOON_TOL
+        save(`terralunar-comparacion-${slug(moon.name)}-${slug(earth.name)}.json`, JSON.stringify({
+          formato: 'terralunar-comparacion/1', generado: new Date().toISOString(), analisis: analysisId ?? null,
+          escala: { ventana_km: index.size_km, celda_metricas_m: index.res_m, exageracion_vista: exaggeration },
+          parecido_relieve: score === null ? null : Math.round(score * 100), tolerancias: tol,
+          nota: 'Métricas calculadas sobre la grilla del índice. Alturas en metros con origen vertical propio de cada fuente: solo las diferencias son comparables.',
+          sitios: items.map((it, i) => ({
+            id: it.id, nombre: it.name, cuerpo: it.body, lat: it.lat, lon: it.lon, fuente: it.source, referencia: it.ref ?? null, url: it.url ?? null,
+            metricas: { pendiente_mediana_grados: it.pendiente_mediana, pendiente_p90_grados: it.pendiente_p90, rugosidad_m: it.rugosidad_m, desnivel_m: it.desnivel_m },
+            grilla: { n: grids[i].n, celda_m: grids[i].cell, alturas_m: Array.from(grids[i].h, v => Math.round(v * 10) / 10) },
+          })),
+        }, null, 2), 'application/json')
+      } else {
+        const it = items[slot], g = await gridFor(it, slot)
+        const data = terrainFile(g.h, g.n, index.size_km * 1000, exaggeration, kind, it.name)
+        save(`terralunar-${slug(it.name)}-${index.size_km}km-x${exaggeration}.${kind}`, data, kind === 'stl' ? 'model/stl' : 'model/obj')
+      }
+      setExportMsg('')
+    } catch (e) { setExportMsg('No se pudo exportar: ' + String(e)) }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col gap-4 overflow-y-auto bg-space p-4 text-canvas md:p-6" role="dialog" aria-label="Comparador de relieve planetario y terrestre">
       <header className="flex flex-wrap items-center gap-3 border-b border-white/10 pb-4">
-        <h2 className="mr-2 text-xl leading-7 font-bold tracking-tight">Comparar relieve en 3D</h2>
+        {analysisId&&<span className="sr-only" data-testid="comparison-run">{analysisId}</span>}<h2 className="mr-2 text-xl leading-7 font-bold tracking-tight">Comparar relieve en 3D</h2>
         {!supplied && <div className="flex gap-1 rounded-full border border-white/[0.07] bg-rail p-1" aria-label="Cuerpo a comparar">
           {(['luna', 'marte'] as const).map((b) => (
             <button key={b} type="button" aria-pressed={planet === b}
@@ -263,8 +301,8 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
             {moons.map((m) => <option key={m.id} value={m.id} className="bg-obsidian">{m.name}</option>)}
           </select>
         </label>}
-        {(supplied || planet === 'marte') && <label className={toolbar}>
-          <span className="label-mono whitespace-nowrap text-mute">Exageración vertical: <span className="metric font-bold text-canvas">×{exaggeration}</span></span>
+        {<label className={toolbar}>
+          <span className="label-mono whitespace-nowrap text-mute">Exageración vertical: <span className="metric font-bold text-canvas">×{num(exaggeration)}</span></span>
           <input aria-label="Exageración vertical" className="w-28" type="range" min="1" max="12" step="1" value={exaggeration} onChange={e => setExaggeration(Number(e.target.value))} />
         </label>}
         <button type="button" onClick={onClose} className="btn-ghost ml-auto h-10">Cerrar <ConsoleIcon name="close" /></button>
@@ -279,7 +317,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
           <span className="hidden shrink-0 gap-5 md:flex">
             <span>GRILLA: {index.size_km} × {index.size_km} km</span>
             <span>CELDA: {cell} m</span>
-            <span className="text-canvas">RELIEVE ×{exaggeration}</span>
+            <span className="text-canvas">RELIEVE ×{num(exaggeration)}</span>
           </span>
         </div>
       )}
@@ -310,12 +348,12 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                 {/* Visor 3D de alto fijo, como en la maqueta: no depende del espacio que sobre */}
                 <div className="hud-frame relative h-72 w-full overflow-hidden rounded-xl border border-white/10 bg-ink sm:h-96">
                   <div className="absolute inset-0 cursor-grab active:cursor-grabbing">
-                    <Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={detail ? (slot === 0 ? detail.mars : detail.earth) : undefined} meshN={detail ? 100 : undefined} />
+                    <Terrain item={it} index={index} link={link} slot={slot} exaggeration={exaggeration} meshHeights={detail ? (slot === 0 ? detail.mars : detail.earth) : undefined} meshN={detail ? (detail.n??100) : undefined} />
                   </div>
                   <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-4 font-mono text-[11px] text-mute">
                     <div className="flex justify-between">
-                      <span>{Math.abs(it.lat).toFixed(2)}° {it.lat < 0 ? 'S' : 'N'}</span>
-                      <span>{Math.abs(it.lon).toFixed(2)}° {it.lon < 0 ? 'O' : 'E'}</span>
+                      <span>{coord(it.lat,it.lon)}</span>
+
                     </div>
                     <svg className="mx-auto size-12 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 48 48" aria-hidden="true">
                       <circle cx="24" cy="24" r="16" strokeDasharray="2 2" strokeWidth="0.75" />
@@ -331,7 +369,7 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
                   </div>
                 </div>
 
-                <div className="mt-4"><Stats item={it} other={it.body === 'tierra' ? moon : undefined} /></div>
+                <div className="mt-4"><Stats regional={index.res_m>=2000} item={it} other={it.body === 'tierra' ? moon : undefined} /></div>
                 {!!it.agua && <p className="mt-2 text-xs text-canvas">Incluye {Math.round(it.agua * 100)} % de mar (aplanado a nivel 0).</p>}
                 <p className="mt-3 border-t border-white/10 pt-3 font-mono text-[11px] leading-4 text-mute uppercase">
                   Fuente: {it.source}{it.ref && <> · Ubicación: <a className="underline" href={it.url} target="_blank" rel="noreferrer">{it.ref}</a></>}
@@ -344,7 +382,19 @@ export default function Compare3D({ zoneId, onClose, supplied }: { zoneId: strin
             <ConsoleIcon name="rotate" className="text-mute" />
             <span>Ambas maquetas: <strong className="metric">{index.size_km} × {index.size_km} km</strong>, misma escala, misma luz. <span className="text-mute">Arrastrá para girar: las dos giran juntas.</span></span>
           </p>
-          {detailStatus && moon?.body === 'marte' && <p role="status" className="text-center font-mono text-xs text-mute">{detailStatus}</p>}
+          {detailStatus && <p role="status" className="text-center font-mono text-xs text-mute">{detailStatus}</p>}
+
+          <div role="group" aria-label="Exportar comparación" className="flex flex-wrap items-center justify-center gap-2">
+            <span className="label-mono text-mute">Exportar</span>
+            <button type="button" className="btn-ghost h-10" onClick={() => exportFile('json')}>Datos (JSON)</button>
+            {[moon, earth].map((it, slot) => (['stl', 'obj'] as const).map(f => (
+              <button key={it.id + slot + f} type="button" className="btn-ghost h-10" aria-label={`Modelo 3D de ${it.name} en ${f.toUpperCase()}`} onClick={() => exportFile(f, slot)}>
+                {bodyName(it.body)} · {f.toUpperCase()}
+              </button>
+            )))}
+            <span className="hud w-full text-center text-mute">Modelos en metros con la exageración ×{num(exaggeration)} de la vista. STL: sólido con base, listo para imprimir. OBJ: superficie para Blender.</span>
+            {exportMsg && <p role="status" className="w-full text-center text-xs text-canvas">{exportMsg}</p>}
+          </div>
 
           <footer className="flex flex-col items-stretch gap-4 border-t border-white/10 pt-4 md:flex-row">
             {score !== null && (

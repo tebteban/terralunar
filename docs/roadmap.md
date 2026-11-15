@@ -89,6 +89,8 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 - ✅ Selector Tierra/Luna tapaba el puntaje de la ficha → el equipo lo movió a la izquierda (D-007) (Presentación)
 - ✅ Preset seguía marcado al cambiar pesos → "Personalizado · Restaurar" (D-004) (Validez)
 - ✅ Pesos en % real + aviso con todo en 0 (D-005, D-006) (Presentación)
+- ✅ Auditoría 15/11: mapa y ranking muestran el mismo filtro; suite e2e al día (33/33); una malla faltante ya no bloquea la búsqueda regional; atlas fuera del deploy (D-023); README de `web/` (Presentación, Validez)
+- ⬜ Auditoría 15/11: revisar 2–3 candidatos fuera del catálogo con imágenes y cartografía (Civil) (Validez)
 
 ### Siguientes
 - ⬜ **Panel de validación**: % de los análogos `test` que caen en el 10 % superior, y esos sitios en

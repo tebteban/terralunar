@@ -1,6 +1,5 @@
 pipeline/raw/
 __pycache__/
-/data/explorador/global-terreno.js
 
 # Playwright
 web/test-results/
@@ -9,3 +8,11 @@ web/playwright-report/
 pipeline/.deps/
 
 pipeline/.runtime/
+
+# Claude & Impeccable local artifacts
+.impeccable/
+.claude/agents/
+.claude/skills/
+
+
+pipeline/.thermal-deps/

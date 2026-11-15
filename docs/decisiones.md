@@ -9,6 +9,95 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-026 — El atlas auxiliar vuelve a la entrega pública (reemplaza D-023)
+
+**Qué:** `atlas.html`, `atlas.js` y su README vuelven a `data/explorador/`, junto a `global-terreno.js`,
+que el equipo subió a Git. **Por qué:** con el archivo de datos versionado, un clon limpio ya puede
+publicar el atlas completo; separados, no funcionaba en ningún lado. **Costo:** suma 33 MB al deploy
+(la salida pasa de ~137 MB a ~170 MB). **Cómo:** `git mv` y se quita la entrada de `.gitignore`.
+
+---
+
+## D-025 — La búsqueda de análogos se cierra sola y se rediseña en papel limpio
+
+**Qué:** al terminar «Buscar análogos», la ventana se cierra y lleva al globo terrestre con el ranking.
+La ventana pasa a pasos numerados en una columna (destino, ensayo, cobertura, pesos), con selectores,
+casillas y plegables propios y un único «Opciones avanzadas». **Por qué:** el equipo esperaba ver los
+candidatos al buscar, y el formulario anterior (controles nativos, cajas anidadas) se veía sin terminar.
+**Cómo:** `ScientificSearch.tsx`, `AnalogyScope.tsx` y clases `.field`, `.step-num`, `.check` en `index.css`.
+El detalle de resultados y el GeoJSON siguen en «Editar análisis». **Descartado:** estilo oscuro de
+consola y panel lateral (el equipo eligió papel claro).
+
+---
+## D-024 — Consideraciones geomecánicas de Civil, aplicadas solo con datos medidos
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban; documento del equipo de Civil).
+- **Qué:** `docs/consideraciones-geomecanicas.md` define 7 criterios con pesos (morfología 20 %, volátiles
+  20 %, portancia 15 %, composición 15 %, térmica 10 %, radiación 10 %, refugio 10 %), reglas de 0 a 1 y una
+  supermáscara (NDVI < 0,1 · sin agua · sin zonas urbanas) para Mons Mouton y Arcadia Planitia.
+- **Cómo:** `web/src/geomechanics.ts` traduce el documento a código y `GeomechanicsCard.tsx` lo muestra en la
+  ficha de cada candidato terrestre. **Regla de veracidad:** un criterio solo recibe nota si el candidato tiene
+  el dato medido; si no, queda "Pendiente" con el dato que falta. El índice geomecánico es **parcial**: promedio
+  ponderado de los criterios medidos, siempre con el % del peso que cubre, multiplicado por la supermáscara
+  (descartado ⇒ 0). Hoy se miden: morfología (pendiente y altitud del DEM a 2 km), radiación (altitud) y
+  oscilación térmica (MODIS día − noche, una fecha), hasta 40 % del peso. Los tramos entre los extremos del
+  documento son lineales y provisorios.
+- **Qué no se hizo:** no se mezcla con el ranking de relieve (sigue siendo semejanza topográfica); no se
+  aplican los umbrales de Mons Mouton a otros sitios (Malapert, Nobile, Jezero…): esos destinos muestran que no
+  tienen perfil. Arcadia Planitia queda cargado pero inactivo hasta tener coordenadas y recorte MOLA.
+- **Pruebas:** `web/test/geomechanics.test.ts` (5 casos); la suite unitaria completa pasa (46).
+
+## D-023 — El atlas auxiliar sale de la entrega pública · **Reemplazada por D-026**
+
+**Qué:** `data/explorador/` (atlas.html + atlas.js) se movió a `docs/explorador/`.
+**Por qué:** Vite publica todo `data/`, pero el atlas depende de `global-terreno.js` (33 MB, ignorado por
+Git y sin script que lo genere). Un clon limpio publicaba una página rota. La app ya no enlaza al atlas
+desde el 14/11. **Cómo:** `git mv` y ruta actualizada en `.gitignore`; el README de la carpeta explica cómo
+abrirlo localmente. **Descartado:** subir el archivo de 33 MB al deploy (pesa más que toda la app y no se usa).
+
+---
+
+## D-022 — Fondo de la portada sobrio y orgánico, continuo y con formas difusas en movimiento
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban: sobrio, estético, natural y legible).
+- **Problema:** la portada tenía un fondo (estrellas + Luna en puntos) y, más abajo, un bloque negro
+  con un degradé para tapar el corte: se notaba la costura.
+- **Cómo:** `web/src/OrganicBackdrop.tsx`, fijo detrás de todo el recorrido (sin costuras). Capas: cielo
+  con estrellas, tres manchas de luz difusa que derivan muy lento (48–66 s; arena, pizarra y terracota,
+  colores apagados y de bajo contraste), grano fino tipo película (SVG `feTurbulence`) y viñeta suave
+  que oscurece el centro para que el texto se lea. La Luna en puntos (LRO) queda como horizonte, más
+  tenue y fundida arriba y abajo. Se quitaron el bloque negro y el degradé. Solo se anima `transform`;
+  con "reducir movimiento" todo queda quieto.
+- **Formas abstractas:** se eligieron manchas difusas y lentas en vez de figuras nítidas o rápidas, que
+  distraerían de las opciones y bajarían la legibilidad.
+
+## D-021 — Ficha de Luna y Marte como pestaña flotante desplegable
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban).
+- **Cómo:** `SurfacePanel` acepta `collapsible`. En Luna y Marte la ficha arranca plegada como una
+  pestaña flotante ("Ficha de la Luna · Tocá para desplegar", arriba a la derecha; abajo en celular).
+  Al tocarla se despliega la ficha completa, con "Minimizar" fijo arriba. Cuando el usuario elige un
+  punto en el globo, la ficha se despliega sola (`openSignal`) para que vea los resultados. La ficha de
+  la Tierra no cambia: se abre al elegir una zona.
+- **Recentrado:** el estado de la ficha vive en `MoonMap`/`MarsView` (modo controlado de `SurfacePanel`).
+  El globo lunar reserva el lugar de la ficha solo si está desplegada (`MoonGlobe panelOpen`); plegada,
+  usa todo el ancho y los controles +/−/N/◎ pasan al borde derecho.
+- **Límites de la analogía:** siguen dentro de la ficha; plegarla es una elección del usuario y la ficha
+  se abre sola al haber resultados, así que los límites se ven junto a cada resultado.
+
+- **Ampliación (2026-11-15, después del flujo unificado de Eze):** también la Tierra. El panel izquierdo
+  se puede ocultar en todas las vistas (la barra dice "Tierra" o "Búsqueda personalizada"), y la ficha
+  "Ficha y candidatos terrestres" es pestaña flotante: se despliega sola al ejecutar un análisis nuevo o
+  al elegir un candidato, para que los resultados no queden escondidos (`web/src/App.tsx`).
+
+## D-020 — Panel lateral ocultable en Luna, Marte y búsqueda personalizada
+- **Fecha:** 2026-11-15 · **Estado:** vigente (pedido de Esteban).
+- **Por qué:** en Luna y Marte el panel lateral solo muestra un resumen fijo, y en la búsqueda
+  personalizada ocupa lugar que puede aprovechar el globo o el mapa. El usuario decide si lo ve.
+- **Cómo:** en escritorio (`lg`), botón "Ocultar panel" arriba del panel; oculto, queda una barra fina
+  a la izquierda con "›" y el texto vertical "Mostrar panel · Luna/Marte/Búsqueda personalizada". La
+  preferencia se guarda en `localStorage` (`terralunar.panel-oculto`). Al volver, el panel entra
+  deslizándose (`.panel-in`, respeta "reducir movimiento"). Mapas y globos se reajustan solos
+  (ResizeObserver). En el catálogo terrestre con preset el panel queda fijo; en celular siguen las
+  pestañas Ajustes · Mapa · Ranking. Código en `web/src/App.tsx`.
+
 ## D-019 — Auditoría de diseño: consola de misión, mobile por pestañas, fallback WebGL y suite e2e
 - **Fecha:** 2026-11-15 · **Estado:** vigente. Informe en `AUDIT.md`, dirección de arte en `DESIGN.md` (raíz), cambios en `CHANGELOG-DESIGN.md`.
 - **Por qué:** el recorrido con Playwright mostró que en celular la página desbordaba (454 px en 390), el ranking
@@ -261,3 +350,7 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ## Revisión Luna/Marte — 2026-11-15
 Ver en Tierra transmite coordenadas, huella de muestreo de 20 km y puntaje calculado, sin reutilizar polígonos ni puntajes mock. La geometría replica earth_patch del pipeline (111320 m/grado, corrección coseno). Ambos visores usan el motor WLC para los mismos cuatro descriptores; no se equiparan tolerancias de rugosidad a 80 m y 2 km. La búsqueda científica es la ruta de escala común a 2 km. Perfiles de ensayo compartidos; aterrizaje separado de movilidad. Solo topografía regional puede emitir ranking con los datos actuales. Destinos de Marte seleccionables, sin afirmar aprobación para bases. Selección lunar informa el centro de la grilla realmente utilizado.
+
+
+## Formato compartido tras el merge
+Las fichas planetarias y terrestres comparten SurfacePanel. La Luna usa siempre datos LOLA locales sin selección implícita por token. Ver revision-merge-2026-11-15.md.

@@ -1,13 +1,14 @@
 import TeamMusic from './TeamMusic.tsx'
-import { useEffect, type PointerEvent } from 'react'
+import { useEffect, useState, type PointerEvent } from 'react'
+import { moonSimilarity } from './moonRelief.ts'
 import HalftoneMoon from './HalftoneMoon.tsx'
-import SpaceBackdrop from './SpaceBackdrop.tsx'
+import OrganicBackdrop from './OrganicBackdrop.tsx'
 
-export type LandingChoice = 'luna' | 'marte' | 'personalizado'
+export type LandingChoice = 'luna' | 'marte' | 'personalizado' | 'ejemplo'
 
 const TITLE = 'TerraLunar'
 
-const OPTIONS: { id: LandingChoice; key: string; title: string; tag: string; text: string }[] = [
+const OPTIONS: { id: Exclude<LandingChoice, 'ejemplo'>; key: string; title: string; tag: string; text: string }[] = [
   { id: 'luna', key: '1', title: 'Luna', tag: 'Principal', text: 'Elegí una región del polo sur lunar y buscá entornos terrestres comparables.' },
   { id: 'marte', key: '2', title: 'Marte', tag: 'Exploratorio', text: 'Explorá el relieve de Marte y compará con lugares de la Tierra.' },
   { id: 'personalizado', key: '3', title: 'Búsqueda global', tag: 'Datos reales', text: 'Compará el catálogo mundial y las regiones procesadas; elegí el ensayo y sus pesos.' },
@@ -23,20 +24,23 @@ export function Chevron({ className = '' }: { className?: string }) {
   )
 }
 
-// Ícono de "Personalizado": tres controles deslizantes, la idea de ajustar a gusto
-function SlidersIcon() {
+// Ícono de "Búsqueda global": la Tierra en líneas (meridianos y paralelos), al lado de las fotos de Luna y Marte
+function GlobeIcon() {
   return (
-    <svg viewBox="0 0 40 40" className="size-10" aria-hidden="true">
-      <circle cx="20" cy="20" r="19.5" fill="none" stroke="currentColor" strokeOpacity=".35" />
-      {[[12, 23], [20, 14], [28, 20]].map(([x, y]) => (
-        <g key={x}>
-          <path d={`M${x} 11v18`} stroke="currentColor" strokeWidth="1.5" />
-          <circle cx={x} cy={y} r="3" fill="#000" stroke="currentColor" strokeWidth="1.5" />
-        </g>
-      ))}
+    <svg viewBox="0 0 48 48" className="size-12" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.2">
+      <circle cx="24" cy="24" r="22" />
+      <ellipse cx="24" cy="24" rx="9" ry="22" strokeOpacity=".6" />
+      <path d="M2 24h44M6 13h36M6 35h36" strokeOpacity=".45" />
     </svg>
   )
 }
+
+type Item = { id: string; name: string; body: string; pendiente_mediana: number; pendiente_p90: number; rugosidad_m: number; desnivel_m: number }
+const STEPS_HOW = [
+  ['01', 'Elegí un sitio', 'En la Luna o en Marte: un punto del polo sur o una región marciana.'],
+  ['02', 'Medimos', 'Relieve con LOLA, MOLA y DEM terrestre. Cobertura y geología cuando hay evidencia disponible.'],
+  ['03', 'Compará', 'Ranking de lugares en la Tierra y maquetas 3D lado a lado, a la misma escala.'],
+] as const
 
 // Barra superior de las pantallas internas: transparente, todo en mayúsculas.
 export function TopBar({ step, mock, onHome }: { step: 1 | 2; mock: boolean; onHome?: () => void }) {
@@ -60,6 +64,18 @@ export function TopBar({ step, mock, onHome }: { step: 1 | 2; mock: boolean; onH
 
 // Portada mínima: el nombre en el centro entrando letra por letra, una frase y tres opciones en fila.
 export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) => void; mock: boolean }) {
+  const [stats, setStats] = useState<{ zones: number; regions: number } | null>(null)
+  const [example, setExample] = useState<{ moon: Item; earth: Item } | null>(null)
+  useEffect(() => {
+    Promise.all([fetch('/compare/index.json').then((r) => r.json()), fetch('/discovery/regions.json').then((r) => r.json())])
+      .then(([c, r]) => {
+        setStats({ zones: c.items.filter((i:{body:string})=>i.body==='tierra').length, regions: r.regions.length })
+        const find = (id: string) => c.items.find((i: Item) => i.id === id)
+        const moon = find('luna-mons-mouton'), earth = find('mcmurdo-dry-valleys')
+        if (moon && earth) setExample({ moon, earth })
+      })
+      .catch(() => {}) // la portada funciona igual sin cifras
+  }, [])
   // Atajos de teclado 1, 2, 3
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -80,12 +96,14 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
   }
 
   return (
-    <div className="relative h-full overflow-x-hidden overflow-y-auto bg-ink text-canvas" onPointerMove={onMove}>
-      <SpaceBackdrop bodies={false} />
+    <div className="relative h-full overflow-x-hidden overflow-y-auto bg-space text-canvas" onPointerMove={onMove}>
+      <OrganicBackdrop />
 
       {/* La Luna asoma desde abajo, tenue, como horizonte: acompaña sin competir con el contenido */}
+      <div className="moon-horizon pointer-events-none absolute inset-x-0 top-0 z-[1] h-full overflow-hidden" aria-hidden="true">
       <div className="hero-moon pointer-events-none absolute left-1/2 top-[72%] aspect-square w-[max(160vw,900px)] -translate-x-1/2 md:top-[68%] md:w-[min(120vw,1400px)]" aria-hidden="true">
         <HalftoneMoon className="h-full w-full" annotate={false} />
+      </div>
       </div>
 
       <div className="relative z-10 flex min-h-full flex-col">
@@ -120,8 +138,8 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
                     <span className="option-icon relative grid shrink-0 place-items-center">
                       <span className="option-halo absolute -inset-3 rounded-full" aria-hidden="true" />
                       {o.id === 'personalizado'
-                        ? <SlidersIcon />
-                        : <span className={`pick-icon ${o.id === 'luna' ? 'pick-moon' : 'pick-mars'}`} aria-hidden="true" />}
+                        ? <GlobeIcon />
+                        : <img src={`/landing/${o.id === 'luna' ? 'moon' : 'mars'}.png`} alt="" width={48} height={48} className="size-12 rounded-full" />}
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col gap-1.5 sm:items-center">
                       <span className="micro-cap text-mute">{o.tag}</span>
@@ -141,8 +159,64 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
           </section>
         </main>
 
+        {/* Debajo de la primera pantalla, fondo sólido: la Luna de puntos queda solo como horizonte del inicio */}
+        <div className="relative">
+        <section className="mx-auto w-full max-w-[1120px] px-6 pt-8 pb-20 md:px-8" aria-labelledby="how-title">
+          <h2 id="how-title" className="label-mono mb-6 text-center text-mute">Cómo funciona</h2>
+          <ol className="grid gap-6 sm:grid-cols-3">
+            {STEPS_HOW.map(([n, title, text], i) => (
+              <li key={n} className="relative flex flex-col gap-2 border-t border-white/15 pt-5 text-left">
+                {i < 2 && <span className="absolute -top-px right-0 hidden h-px w-6 bg-canvas/40 sm:block" aria-hidden="true" />}
+                <span className="metric text-sm text-mute">{n}</span>
+                <span className="text-lg font-semibold">{title}</span>
+                <span className="text-sm leading-[1.6] text-mute">{text}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {stats && (
+          <section className="mx-auto w-full max-w-[1120px] px-6 pb-20 md:px-8" aria-label="El proyecto en cifras">
+            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-4">
+              {[[9, 'regiones candidatas de Artemis III'], [stats.regions, 'regiones terrestres con datos reales'], [stats.zones, 'recortes del catálogo de referencia'], [2, 'misiones planetarias de relieve']].map(([n, label]) => (
+                <div key={label} className="flex flex-col gap-1 bg-space/85 p-6 text-left backdrop-blur-sm">
+                  <dt className="order-2 text-sm text-mute">{label}</dt>
+                  <dd className="metric text-4xl font-semibold">{n}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        {example && (
+          <section className="mx-auto w-full max-w-[1120px] px-6 pb-20 md:px-8" aria-labelledby="example-title">
+            <div className="flex flex-col gap-6 rounded-2xl border border-white/15 bg-white/[0.03] p-6 md:flex-row md:items-center md:p-8">
+              <div className="flex flex-1 flex-col gap-2 text-left">
+                <span className="label-mono text-mute">Ejemplo</span>
+                <h2 id="example-title" className="text-2xl font-semibold">{example.moon.name.replace(/ \(.*\)/, '')} <span className="text-mute">↔</span> {example.earth.name}</h2>
+                <p className="text-sm text-mute">Una meseta del polo sur lunar y un desierto polar de la Antártida: relieve medido con LOLA y elevación terrestre, en ventanas de 20 × 20 km.</p>
+                <button type="button" onClick={() => onPick('ejemplo')} className="btn-primary mt-2 self-start">Ver la comparación 3D <Chevron /></button>
+              </div>
+              <table className="w-full max-w-sm text-left text-sm md:w-auto">
+                <thead><tr className="label-mono text-mute"><th className="py-1 pr-4 font-normal" /><th className="py-1 pr-4 font-normal">Luna</th><th className="py-1 font-normal">Tierra</th></tr></thead>
+                <tbody className="metric">
+                  {([['Pendiente mediana', 'pendiente_mediana', '°'], ['Rugosidad', 'rugosidad_m', ' m'], ['Desnivel', 'desnivel_m', ' m']] as const).map(([label, k, u]) => (
+                    <tr key={k} className="border-t border-white/10"><td className="py-2 pr-4 font-sans text-mute">{label}</td><td className="py-2 pr-4">{example.moon[k].toLocaleString('es-AR')}{u}</td><td className="py-2">{example.earth[k].toLocaleString('es-AR')}{u}</td></tr>
+                  ))}
+                  <tr className="border-t border-white/10"><td className="py-2 pr-4 font-sans text-mute">Parecido</td><td colSpan={2} className="py-2 text-2xl font-semibold">{Math.round(moonSimilarity(example.moon, example.earth) * 100)}<span className="text-sm text-mute">/100</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        </div>
+
         <footer className="landing-rise flex shrink-0 justify-center px-6 pb-6 text-center" style={{ animationDelay: '1700ms' }}>
-          <p className="micro-cap bg-ink px-3 text-mute">Datos NASA: MODIS · GPM IMERG · NASADEM · LRO · MOLA</p>
+          <div className="flex flex-col items-center gap-2">
+            <p className="micro-cap px-3 text-mute">Relieve: LRO LOLA · MOLA · DEM terrestre</p>
+            <p className="text-xs text-mute/70">Equipo q'kodigo · Santiago del Estero · NASA Space Apps Challenge 2026{mock ? ' · puntajes de demostración' : ''}</p>
+          </div>
         </footer>
       </div>
     </div>

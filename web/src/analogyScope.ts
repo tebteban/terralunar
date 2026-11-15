@@ -1,3 +1,4 @@
+import {missionRequirements,missionStatus} from './missionCriteria.ts'
 export const DIMENSIONS = [
  {id:'terrain',name:'Terreno y topografía',available:true,missing:'Obstáculos, bloques y relieve a escala de rover.',source:'LOLA, MOLA y Terrain Tiles integrados; cálculo regional a 2 km.'},
  {id:'geology',name:'Geología, mineralogía y materiales',available:false,missing:'Unidades compatibles, espectros, composición y muestras.',source:'Propuestos: SIGAM, mapas USGS, CRISM y M3.'},
@@ -20,7 +21,7 @@ export const PROFILES=[
  {id:'caves',name:'Exploración subterránea',dimensions:['subsurface','geology','operations'],use:'Preparar navegación y estudio del subsuelo.'},
  {id:'habitat',name:'Construcción y operaciones humanas',dimensions:['operations','terrain','thermal','geology'],use:'Ensayar infraestructura con validación geotécnica y condiciones de carga.'},
 ]
-export function profileScope(id:string){const profile=PROFILES.find(p=>p.id===id);if(!profile)throw Error('Perfil desconocido');return {version:'analogy-scope/2',profile,canRank:id==='regional',canScreen:true,plan:experimentPlan(id),dimensions:DIMENSIONS.filter(d=>profile.dimensions.includes(d.id)),limitations:['La gravedad terrestre no reproduce la lunar ni la marciana.','La atmósfera terrestre no reproduce el vacío lunar ni la atmósfera tenue marciana.','El relieve y el factor de vista del cielo no reproducen ni miden la dosis de radiación espacial.'],scope:'Búsqueda multirregional entre ventanas procesadas y catálogo mundial. Cobertura discontinua; no barrido exhaustivo del planeta.'}}
+export function profileScope(id:string){const profile=PROFILES.find(p=>p.id===id);if(!profile)throw Error('Perfil desconocido');return {version:'analogy-scope/3',requirements:missionRequirements(id),assessment:missionStatus(id),profile,canRank:id==='regional',canScreen:true,plan:experimentPlan(id),dimensions:DIMENSIONS.filter(d=>profile.dimensions.includes(d.id)),limitations:['La gravedad terrestre no reproduce la lunar ni la marciana.','La atmósfera terrestre no reproduce el vacío lunar ni la atmósfera tenue marciana.','El relieve y el factor de vista del cielo no reproducen ni miden la dosis de radiación espacial.'],scope:'Búsqueda multirregional entre ventanas procesadas y catálogo mundial. Cobertura discontinua; no barrido exhaustivo del planeta.'}}
 
 export const RELIEF_LABELS: Record<string,string> = {pendiente_mediana:'Pendiente mediana (°)',pendiente_p90:'Pendiente p90 (°)',rugosidad_m:'Rugosidad regional (m)',desnivel_m:'Desnivel (m)'}
 const PLANS:Record<string,{question:string;measure:string;products:string;weights:number[]}> = {
@@ -37,5 +38,5 @@ const PLANS:Record<string,{question:string;measure:string;products:string;weight
 }
 export function experimentPlan(id:string){
  const p=PLANS[id];if(!p)throw Error('Ensayo desconocido')
- return {...p,scoreLabel:id==='regional'?'Similitud topográfica':'Similitud topográfica de contexto',stage:id==='regional'?'Comparación regional':'Etapa 1 · preselección del entorno',weights:Object.fromEntries(Object.keys(RELIEF_LABELS).map((k,i)=>[k,p.weights[i]])),calibration:'Pesos exploratorios de demostración, no requisitos de ingeniería validados.'}
+ return {...p,scoreLabel:id==='regional'?'Similitud topográfica':'Similitud topográfica de contexto',requiresContextConsent:id!=='regional',stage:id==='regional'?'Comparación regional':'Evaluación del ensayo incompleta',weights:Object.fromEntries(Object.keys(RELIEF_LABELS).map((k,i)=>[k,p.weights[i]])),calibration:'Pesos exploratorios de demostración, no requisitos de ingeniería validados.'}
 }

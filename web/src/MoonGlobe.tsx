@@ -13,6 +13,7 @@ export interface GlobeIndex {
   sites: { name: string; lat: number; lon: number; line: number; sample: number }[]
 }
 interface Props {
+  panelOpen?: boolean // ficha lateral desplegada: el globo deja libre su lugar
   index: GlobeIndex
   pick: { line: number; sample: number } | null
   onPick: (line: number, sample: number) => void
@@ -27,7 +28,7 @@ function toXYZ(lat: number, lon: number, r: number) {
   return new THREE.Vector3(-Math.cos(phi) * Math.sin(theta) * r, Math.cos(theta) * r, Math.sin(phi) * Math.sin(theta) * r)
 }
 
-export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
+export default function MoonGlobe({ index, pick, onPick, onOutside, panelOpen = true }: Props) {
   const box = useRef<HTMLDivElement>(null)
   const cameraLabel = useRef<HTMLParagraphElement>(null)
   const api = useRef<{ showPick: (p: Props['pick'], fly?: boolean) => void; reset: () => void; zoom: (factor: number) => void; north: () => void } | null>(null)
@@ -329,11 +330,11 @@ export default function MoonGlobe({ index, pick, onPick, onOutside }: Props) {
   return (
     <div className="hud-frame relative h-full w-full overflow-hidden bg-space">
       <SpaceBackdrop />
-      <div ref={box} className="absolute inset-0 lg:right-[470px]" role="region" aria-label="Globo 3D de la Luna. Arrastrá para moverte, rueda para acercar; clic en el polo sur para analizar." />
+      <div ref={box} className={`absolute inset-0 ${panelOpen ? 'lg:right-[470px]' : ''}`} role="region" aria-label="Globo 3D de la Luna. Arrastrá para moverte, rueda para acercar; clic en el polo sur para analizar." />
       <button type="button" onClick={() => api.current?.reset()}
         className="chip-dark absolute left-4 top-4 min-h-10">Ver planeta</button>
       <p ref={cameraLabel} aria-hidden="true" className="hud pointer-events-none absolute bottom-20 left-6 hidden text-mute lg:block" />
-      <div className="absolute right-4 bottom-6 z-[1] flex flex-col gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float lg:right-[494px]">
+      <div className={`absolute right-4 bottom-6 z-[1] flex flex-col gap-1 rounded-full border border-hairline bg-rail p-1 shadow-float ${panelOpen ? 'lg:right-[494px]' : 'lg:right-6'}`}>
         <button type="button" aria-label="Acercar Luna" title="Acercar" onClick={() => api.current?.zoom(0.75)} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">+</button>
         <button type="button" aria-label="Alejar Luna" title="Alejar" onClick={() => api.current?.zoom(1.33)} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">−</button>
         <button type="button" aria-label="Orientar Luna al norte" title="Norte arriba" onClick={() => api.current?.north()} className="metric grid size-9 place-items-center rounded-full text-sm font-bold text-canvas hover:bg-elevated">N</button>
