@@ -109,11 +109,11 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 - ⬜ El comparador detallado de Marte baja datos de una copia en Hugging Face (no de NASA): si se cae,
   usa la grilla de 2 km. Probar antes de la demo.
 - ⬜ Filtro "solo candidatos nuevos" (zonas que no son análogos conocidos). (Creatividad)
-- ⬜ Leyenda de colores del mapa. (Presentación)
+- ✅ Leyenda de colores del mapa (D-019). (Presentación)
 - ⬜ Estado en la URL (preset, pesos, zona) para compartir. (Presentación)
 - ⬜ Versión en inglés (selector ES/EN). (Presentación, jurado global)
-- ⬜ Celular: pestañas Controles / Mapa / Ranking y ficha como panel inferior. (Presentación)
-- ⬜ Aviso de datos mock más visible; aviso si el mapa base no carga.
+- ✅ Celular: pestañas Ajustes / Mapa / Ranking y ficha como hoja inferior (D-019). (Presentación)
+- ⬜ Aviso de datos mock más visible; aviso si el mapa base no carga. (Sin WebGL ya hay aviso, D-019.)
 - ✅ Portada + búsqueda personalizada (pantallas Inicio → Personalizado → Explorar) (D-011) (Presentación)
 - ⬜ Personalizado para Marte: necesita un perfil de variables de Marte en `profiles.json`.
 - ✅ Diseño blanco y negro según `docs/DESIGN.md` (lo hizo el equipo)
@@ -124,7 +124,8 @@ Leyenda: ✅ hecho · 🔄 en curso · ⬜ pendiente. Entre paréntesis, el crit
 - ✅ Rotación lenta del globo (Tierra y Marte) en vista global
 - ✅ Fondo decorativo sin Júpiter/Saturno (D-014)
 - ✅ Sistema de diseño "TerraLunar Science Console" en todas las pantallas (D-014) (Presentación)
-- ⬜ Limpieza: `Workspace.tsx` sin uso, `web/README.md` es la plantilla de Vite, bundle de 1,6 MB.
+- 🔄 Limpieza: `Workspace.tsx` borrado y visores con carga diferida (D-019); falta `web/README.md` (plantilla de Vite).
+- ⬜ Pendientes de `AUDIT.md`: panel de validación, estado en la URL, ES/EN, valor real por variable en la ficha.
 
 ### Orden de recorte si falta tiempo (de `CLAUDE.md`)
 Perfil Marte → zoom a 30 m → imágenes de detalle → tercer preset → diseño fino.

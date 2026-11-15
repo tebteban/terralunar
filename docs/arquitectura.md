@@ -116,6 +116,13 @@ Scripts actuales (uno por paso, numerados en orden):
 - `develop`: donde se integra el trabajo nuevo. Se revisa y se mergea a `main`.
 - Deploy: Vercel, estático, desde `main`.
 
+## Pruebas
+
+- Unitarias: `npm test` en `web/` (cálculo del ranking y Marte).
+- End-to-end: `npm run test:e2e` en `web/` (Playwright, Chromium). Proyectos: desktop 1440, tablet 768, mobile 390 y
+  `sin-webgl` (Chromium con `--disable-3d-apis`). Incluye axe-core (WCAG AA) y capturas de regresión de portada y
+  Personalizado (`web/e2e/*-snapshots/`). Levanta `vite` en 5174 si no está corriendo.
+
 ## Comandos
 
 ```bash
@@ -139,3 +146,4 @@ npm run build              # build de producción (chequea tipos)
 | 2026-11-14 | Fuentes Archivo (títulos) y JetBrains Mono (lecturas técnicas) por Google Fonts, junto a Inter | D-011 |
 | 2026-11-14 | Sistema de diseño aeroespacial (`docs/DESIGN.md`): Barlow Condensed + Barlow reemplazan a Inter, Archivo y JetBrains Mono | D-012 |
 | 2026-11-14 | Sistema "TerraLunar Science Console": vuelven Inter y JetBrains Mono; nuevo `LimitsCard.tsx` | D-014 |
+- 2026-11-15: `@playwright/test` y `@axe-core/playwright` como devDependencies (suite e2e, D-019). Sin dependencias nuevas en producción.

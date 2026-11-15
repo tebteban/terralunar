@@ -9,6 +9,28 @@ borra: se marca como **Reemplazada por D-XXX**.
 
 ---
 
+## D-019 — Auditoría de diseño: consola de misión, mobile por pestañas, fallback WebGL y suite e2e
+- **Fecha:** 2026-11-15 · **Estado:** vigente. Informe en `AUDIT.md`, dirección de arte en `DESIGN.md` (raíz), cambios en `CHANGELOG-DESIGN.md`.
+- **Por qué:** el recorrido con Playwright mostró que en celular la página desbordaba (454 px en 390), el ranking
+  quedaba enterrado, en tablet la ficha tapaba el selector de cuerpo y sin WebGL la app quedaba negra. Además había
+  23 controles de menos de 44 px, dos textos por debajo de AA y tres formatos distintos de coordenadas.
+- **Cómo:**
+  - **Pantallas angostas (< 1024 px):** pestañas `Ajustes · Mapa · Ranking` arriba; la barra lateral se abre como
+    panel sobre el mapa y las fichas (Tierra, Luna, Marte) son hojas inferiores que dejan ver el globo. El layout
+    lado a lado pasa de `md` a `lg`; entre 1024 y 1279 la ficha empieza debajo del selector de cuerpo.
+  - **Sin WebGL:** `web/src/webgl.ts` detecta una vez; cada visor (Tierra, Luna, Marte, maquetas) muestra `NoWebGL`
+    con un enlace a Worldview/Trek y el resto de la app sigue usable.
+  - **Datos como instrumento:** `web/src/fmt.ts` (es-AR, hemisferio en coordenadas, metros enteros o con un decimal),
+    leyenda de similitud en el mapa, gauge en cada fila del ranking, "nota · peso · la Luna pide" por variable en la
+    ficha y Δ con tolerancia (punto ok/warn) en el comparador.
+  - **Tokens nuevos** en `index.css`: `mars-ink`, `moon`, `ok`, `warn`, `sim-mid`, fuente `hud` (JetBrains Mono solo
+    para coordenadas/códigos/HUD), easings y duraciones; utilidades `hud`, `hud-frame`, `loading-bar`, `view-in`,
+    `rise-in`, `row`. Íconos SVG (`ConsoleIcon`) en lugar de `↗ ✕ ⟲ ←`.
+  - **Carga:** `Compare3D`, `MoonMap`, `MarsView` y `ZoneCard` con `lazy()`; el chunk principal baja de 2,34 MB.
+  - **Suite e2e** (`web/e2e`, `npm run test:e2e`): 34 pruebas en desktop/tablet/mobile + proyecto sin WebGL, axe-core.
+- **Descartado:** grano/ruido de fondo (riesgo de verse sucio en proyector), forzar 44 px en los controles
+  segmentados (quedan en 40 px dentro de contenedores de 48), reemplazar el `select` de destino (se decide con el equipo).
+
 ## D-018 — Portada: opciones sin cajas, con entrada deslizada y resalte al pasar el cursor
 - **Fecha:** 2026-11-14 · **Estado:** vigente (pedido de Esteban: más sofisticado, sacar los bloques).
 - **Cómo:** las tres opciones (Luna, Marte, Personalizado) dejaron de ser tarjetas. Son columnas
