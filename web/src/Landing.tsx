@@ -1,5 +1,4 @@
 import { locale } from './fmt.ts'
-import TeamMusic from './TeamMusic.tsx'
 import { useEffect, useState, type PointerEvent } from 'react'
 import { moonSimilarity } from './moonRelief.ts'
 import HalftoneMoon from './HalftoneMoon.tsx'
@@ -108,7 +107,7 @@ export default function Landing({ onPick, mock }: { onPick: (c: LandingChoice) =
       </div>
 
       <div className="relative z-10 flex min-h-full flex-col">
-        <header className="relative flex h-24 shrink-0 items-start justify-end px-6 pt-6 md:h-28 md:px-8"><TeamMusic />
+        <header className="relative flex h-24 shrink-0 items-start justify-end px-6 pt-6 md:h-28 md:px-8"><img src="/qkodigo-logo.png" alt="Equipo QKODIGO" className="pointer-events-none absolute left-1 -top-10 h-44 w-44 object-contain sm:left-2 sm:-top-12 sm:h-52 sm:w-52"/>
           {mock && <span className="micro-cap text-mute">Datos de prueba</span>}
         </header>
 
